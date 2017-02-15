@@ -57,7 +57,7 @@ public class SelectRouteActivityNew extends Activity implements View.OnClickList
         setInit();
 
 
-        db =  new DBManager(this);
+        db = DBManager.getInstance(this);
         isHasVisited(this);
 
 
@@ -136,12 +136,9 @@ public class SelectRouteActivityNew extends Activity implements View.OnClickList
 
             Toast.makeText(this, "잠시만 기다려 주세요. Database 를 확인하는 중입니다.", Toast.LENGTH_SHORT).show();
 
-            db.dbBeginTransaction();
-//            addRouteList();
-//            addStationList();
+            addRouteList();
+            addStationList();
             addRouteStationList();
-            db.dbTransactionSuccessful();
-            db.dbEndTransaction();
         }
     }
 
@@ -152,6 +149,7 @@ public class SelectRouteActivityNew extends Activity implements View.OnClickList
 
             String line;
 
+            db.dbBeginTransaction();
             //Read each line
             while ((line = reader.readLine()) != null) {
 
@@ -177,8 +175,11 @@ public class SelectRouteActivityNew extends Activity implements View.OnClickList
 
                 addRouteUtil(r);
             }
+            db.dbTransactionSuccessful();
         } catch (IOException e) {
             Toast.makeText(this, "Fail ToT", Toast.LENGTH_SHORT).show();
+        } finally {
+            db.dbEndTransaction();
         }
     }
 
@@ -212,6 +213,8 @@ public class SelectRouteActivityNew extends Activity implements View.OnClickList
 
             String line;
 
+            db.dbBeginTransaction();
+
             //Read each line
             while ((line = reader.readLine()) != null) {
 
@@ -232,8 +235,11 @@ public class SelectRouteActivityNew extends Activity implements View.OnClickList
                 addStationUtil(s);
 
             }
+            db.dbTransactionSuccessful();
         } catch (IOException e) {
             Toast.makeText(this, "Fail ToT", Toast.LENGTH_SHORT).show();
+        } finally {
+            db.dbEndTransaction();
         }
 
     }
@@ -261,6 +267,7 @@ public class SelectRouteActivityNew extends Activity implements View.OnClickList
             BufferedReader reader = new BufferedReader(new InputStreamReader(is, "euc-kr"));
 
             String line;
+            db.dbBeginTransaction();
 
             //Read each line
             while ((line = reader.readLine()) != null) {
@@ -280,11 +287,12 @@ public class SelectRouteActivityNew extends Activity implements View.OnClickList
                 addRouteStationUtil(rs);
 
             }
+            db.dbTransactionSuccessful();
         } catch (IOException e) {
             Toast.makeText(this, "Fail ToT", Toast.LENGTH_SHORT).show();
         } finally {
+            db.dbEndTransaction();
         }
-
 
     }
 
@@ -381,6 +389,7 @@ public class SelectRouteActivityNew extends Activity implements View.OnClickList
 
         String line = "";
         try {
+            db.dbBeginTransaction();
             while ((line = in.readLine()) != null) {
 
                 //Split to separate the name from the capital
@@ -405,9 +414,12 @@ public class SelectRouteActivityNew extends Activity implements View.OnClickList
 
                 addRouteUtil(r);
             }
+            db.dbTransactionSuccessful();
             Toast.makeText(this, "R ok", Toast.LENGTH_SHORT).show();
         } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            db.dbEndTransaction();
         }
     }
 
@@ -416,6 +428,7 @@ public class SelectRouteActivityNew extends Activity implements View.OnClickList
 
         //Read each line
         try {
+            db.beginTransaction();
             while ((line = in.readLine()) != null) {
 
                 //Split to separate the name from the capital
@@ -434,9 +447,12 @@ public class SelectRouteActivityNew extends Activity implements View.OnClickList
 
                 addStationUtil(s);
             }
+            db.dbTransactionSuccessful();
             Toast.makeText(this, "S ok", Toast.LENGTH_SHORT).show();
         } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            db.dbEndTransaction();
         }
     }
 
@@ -445,6 +461,7 @@ public class SelectRouteActivityNew extends Activity implements View.OnClickList
 
         //Read each line
         try {
+            db.dbBeginTransaction();
             while ((line = in.readLine()) != null) {
 
                 //Split to separate the name from the capital
@@ -462,9 +479,12 @@ public class SelectRouteActivityNew extends Activity implements View.OnClickList
 
                 addRouteStationUtil(rs);
             }
+            db.dbTransactionSuccessful();
             Toast.makeText(this, "RS ok", Toast.LENGTH_SHORT).show();
         } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            db.dbEndTransaction();
         }
     }
 

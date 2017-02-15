@@ -115,7 +115,7 @@ public class NetworkIntentService extends IntentService {
 
             socket = new Socket();
             sAddress = new InetSocketAddress(IP, PORT);
-            Log.e("[Client]", " Server connected !!" + socket + " / " + sAddress);
+
             //타임아웃
             socket.connect(sAddress, HandlerPosition.SERVER_CONNECT_TIMEOUT);
 

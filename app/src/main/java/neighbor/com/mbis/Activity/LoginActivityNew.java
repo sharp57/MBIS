@@ -20,6 +20,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RadioButton;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
@@ -77,7 +78,8 @@ public class LoginActivityNew extends Activity implements View.OnClickListener{
 
     private Button authButton;
     private ImageView key12;
-    private ToggleButton switchButton;
+
+    private RadioButton radioButton01, radioButton02;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -122,40 +124,52 @@ public class LoginActivityNew extends Activity implements View.OnClickListener{
 
         eventFileManager = new FileManager(packetFileName);
 
-        noButton = (EditText) findViewById(R.id.noButton);
-        busNumButton = (EditText) findViewById(R.id.busNumButton);
-
-        noButton.setText("12341234");
-        busNumButton.setText("5678");
-
-
         setInit();
     }
     private void setInit(){
         authButton = (Button) findViewById(R.id.authButton);
         key12 = (ImageView) findViewById(R.id.key12);
-        switchButton = (ToggleButton) findViewById(R.id.switchButton);
+        noButton = (EditText) findViewById(R.id.noButton);
+        busNumButton = (EditText) findViewById(R.id.busNumButton);
+        radioButton01 = (RadioButton) findViewById(R.id.option1);
+        radioButton02 = (RadioButton) findViewById(R.id.option2);
+
+
+
+        noButton.setText("12341234");
+        busNumButton.setText("5678");
 
         authButton.setOnClickListener(this);
         key12.setOnClickListener(this);
 
+        radioButton01.setOnClickListener(optionOnClickListener);
+        radioButton02.setOnClickListener(optionOnClickListener);
+        radioButton01.setChecked(true);
+
         if( MbisUtil.getPreferences(this, "mode")){
-            switchButton.setChecked(true);
+            radioButton02.setChecked(true);
         }else{
-            switchButton.setChecked(false);
+            radioButton01.setChecked(true);
         }
-        switchButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(isChecked == true){
-                    MbisUtil.setPreferences(LoginActivityNew.this,"mode",true);
-                }else{
-                    MbisUtil.setPreferences(LoginActivityNew.this,"mode",false);
-                }
-            }
-        });
     }
 
+    RadioButton.OnClickListener optionOnClickListener
+            = new RadioButton.OnClickListener() {
+
+        public void onClick(View v) {
+            if(radioButton02.isChecked() == true){
+                MbisUtil.setPreferences(LoginActivityNew.this,"mode",true);
+            }else{
+                MbisUtil.setPreferences(LoginActivityNew.this,"mode",false);
+            }
+//            Toast.makeText(
+//                    LoginActivityNew.this,
+//                    "Option 1 : " + radioButton01.isChecked() + "\n"
+//                            + "Option 2 : " + radioButton02.isChecked() + "\n",
+//                    Toast.LENGTH_LONG).show();
+
+        }
+    };
     @Override
     public void onClick(View v) {
 

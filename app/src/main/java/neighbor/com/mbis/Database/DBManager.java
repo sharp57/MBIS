@@ -33,6 +33,7 @@ public class DBManager {
     Context ctx;
 
     private SQLiteDatabase mDatabase = null;
+    private OpenHelper openHelper;
 
     private static final int DATABASE_VERSION = 1;
 
@@ -79,67 +80,149 @@ public class DBManager {
     private static final String apply_table_type = "apply_table_type";
     private static final String updatable = "updatable";
 
+    // Opener of DB and Table
+    private class OpenHelper extends SQLiteOpenHelper {
+        public OpenHelper(Context context, String name, SQLiteDatabase.CursorFactory factory,
+                          int version) {
+            super(context, name, null, version);
+            // TODO Auto-generated constructor stub
+        }
+
+        // 생성된 DB가 없을 경우에 한번만 호출됨
+        @Override
+        public void onCreate(SQLiteDatabase arg0) {
+
+//            mDatabase = ctx.openOrCreateDatabase(/*Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator  + */DATABASE_NAME, Context.MODE_PRIVATE, null);
+
+            String makeDBConfig = "CREATE TABLE IF NOT EXISTS " + TABLE_NAMERC + " (" +
+                    "_id integer primary key autoincrement," +
+                    apply_date + " TEXT," +
+                    apply_time + " TEXT," +
+                    apply_file_name + " TEXT, " +
+                    apply_table_type + " integer, " +
+                    updatable + " integer " +
+                    ");";
+
+            String makeDBR = "CREATE TABLE IF NOT EXISTS " + TABLE_NAMER + " (" +
+                    "_id integer primary key autoincrement," +
+                    route_id + " TEXT," +
+                    route_name + " TEXT," +
+                    route_form + " integer," +
+                    route_type + " integer," +
+                    route_first_start_time + " integer," +
+                    route_last_start_time + " integer," +
+                    route_average_interval + " integer," +
+                    route_average_time + " integer," +
+                    route_length + " integer," +
+                    route_station_num + " integer," +
+                    route_start_station + " TEXT," +
+                    route_important_station1 + " TEXT," +
+                    route_important_station2 + " TEXT," +
+                    route_last_station + " TEXT" +
+                    ");";
+
+            String makeDBS = "CREATE TABLE IF NOT EXISTS " + TABLE_NAMES + " (" +
+                    "_id integer primary key autoincrement," +
+                    station_id + " TEXT," +
+                    station_name + " TEXT," +
+                    station_type + " integer," +
+                    station_angle + " integer," +
+                    station_x + " TEXT," +
+                    station_y + " TEXT," +
+                    station_arrive_distance + " integer," +
+                    station_start_distance + " integer" +
+                    ");";
+
+            String makeDBRS = "CREATE TABLE IF NOT EXISTS " + TABLE_NAMERS + " (" +
+                    "_id integer primary key autoincrement," +
+                    route_id + " TEXT," +
+                    route_form + " integer," +
+                    station_id + " TEXT," +
+                    station_order + " integer," +
+                    station_distance + " integer," +
+                    station_time + " integer" +
+                    ");";
+
+
+
+            arg0.execSQL(makeDBConfig);
+            arg0.execSQL(makeDBR);
+            arg0.execSQL(makeDBS);
+            arg0.execSQL(makeDBRS);
+//        mDatabase.execSQL(makeDBRBuf);
+//        mDatabase.execSQL(makeDBSBuf);
+//        mDatabase.execSQL(makeDBRSBuf);
+        }
+
+        @Override
+        public void onUpgrade(SQLiteDatabase arg0, int arg1, int arg2) {
+            // TODO Auto-generated method stub
+        }
+    }
 
     public  DBManager(Context context) {
         ctx = context;
+        openHelper = new OpenHelper(ctx, DATABASE_NAME, null, DATABASE_VERSION);
+        mDatabase = openHelper.getWritableDatabase();
 
-        mDatabase = context.openOrCreateDatabase(/*Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator  + */DATABASE_NAME, Context.MODE_PRIVATE, null);
-
-        String makeDBConfig = "CREATE TABLE IF NOT EXISTS " + TABLE_NAMERC + " (" +
-                "_id integer primary key autoincrement," +
-                apply_date + " TEXT," +
-                apply_time + " TEXT," +
-                apply_file_name + " TEXT, " +
-                apply_table_type + " integer, " +
-                updatable + " integer " +
-                ");";
-
-        String makeDBR = "CREATE TABLE IF NOT EXISTS " + TABLE_NAMER + " (" +
-                "_id integer primary key autoincrement," +
-                route_id + " TEXT," +
-                route_name + " TEXT," +
-                route_form + " integer," +
-                route_type + " integer," +
-                route_first_start_time + " integer," +
-                route_last_start_time + " integer," +
-                route_average_interval + " integer," +
-                route_average_time + " integer," +
-                route_length + " integer," +
-                route_station_num + " integer," +
-                route_start_station + " TEXT," +
-                route_important_station1 + " TEXT," +
-                route_important_station2 + " TEXT," +
-                route_last_station + " TEXT" +
-                ");";
-
-        String makeDBS = "CREATE TABLE IF NOT EXISTS " + TABLE_NAMES + " (" +
-                "_id integer primary key autoincrement," +
-                station_id + " TEXT," +
-                station_name + " TEXT," +
-                station_type + " integer," +
-                station_angle + " integer," +
-                station_x + " TEXT," +
-                station_y + " TEXT," +
-                station_arrive_distance + " integer," +
-                station_start_distance + " integer" +
-                ");";
-
-        String makeDBRS = "CREATE TABLE IF NOT EXISTS " + TABLE_NAMERS + " (" +
-                "_id integer primary key autoincrement," +
-                route_id + " TEXT," +
-                route_form + " integer," +
-                station_id + " TEXT," +
-                station_order + " integer," +
-                station_distance + " integer," +
-                station_time + " integer" +
-                ");";
-
-
-
-        mDatabase.execSQL(makeDBConfig);
-        mDatabase.execSQL(makeDBR);
-        mDatabase.execSQL(makeDBS);
-        mDatabase.execSQL(makeDBRS);
+//
+//        mDatabase = context.openOrCreateDatabase(/*Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator  + */DATABASE_NAME, Context.MODE_PRIVATE, null);
+//
+//        String makeDBConfig = "CREATE TABLE IF NOT EXISTS " + TABLE_NAMERC + " (" +
+//                "_id integer primary key autoincrement," +
+//                apply_date + " TEXT," +
+//                apply_time + " TEXT," +
+//                apply_file_name + " TEXT, " +
+//                apply_table_type + " integer, " +
+//                updatable + " integer " +
+//                ");";
+//
+//        String makeDBR = "CREATE TABLE IF NOT EXISTS " + TABLE_NAMER + " (" +
+//                "_id integer primary key autoincrement," +
+//                route_id + " TEXT," +
+//                route_name + " TEXT," +
+//                route_form + " integer," +
+//                route_type + " integer," +
+//                route_first_start_time + " integer," +
+//                route_last_start_time + " integer," +
+//                route_average_interval + " integer," +
+//                route_average_time + " integer," +
+//                route_length + " integer," +
+//                route_station_num + " integer," +
+//                route_start_station + " TEXT," +
+//                route_important_station1 + " TEXT," +
+//                route_important_station2 + " TEXT," +
+//                route_last_station + " TEXT" +
+//                ");";
+//
+//        String makeDBS = "CREATE TABLE IF NOT EXISTS " + TABLE_NAMES + " (" +
+//                "_id integer primary key autoincrement," +
+//                station_id + " TEXT," +
+//                station_name + " TEXT," +
+//                station_type + " integer," +
+//                station_angle + " integer," +
+//                station_x + " TEXT," +
+//                station_y + " TEXT," +
+//                station_arrive_distance + " integer," +
+//                station_start_distance + " integer" +
+//                ");";
+//
+//        String makeDBRS = "CREATE TABLE IF NOT EXISTS " + TABLE_NAMERS + " (" +
+//                "_id integer primary key autoincrement," +
+//                route_id + " TEXT," +
+//                route_form + " integer," +
+//                station_id + " TEXT," +
+//                station_order + " integer," +
+//                station_distance + " integer," +
+//                station_time + " integer" +
+//                ");";
+//
+//
+//
+//        mDatabase.execSQL(makeDBConfig);
+//        mDatabase.execSQL(makeDBR);
+//        mDatabase.execSQL(makeDBS);
+//        mDatabase.execSQL(makeDBRS);
 //        mDatabase.execSQL(makeDBRBuf);
 //        mDatabase.execSQL(makeDBSBuf);
 //        mDatabase.execSQL(makeDBRSBuf);
@@ -147,48 +230,22 @@ public class DBManager {
 
     }
 
-    public void dbBeginTransaction(){
-
-        mDatabase.endTransaction();
-    }
+    public void dbBeginTransaction(){ mDatabase.beginTransaction(); }
     public void dbTransactionSuccessful(){
         mDatabase.setTransactionSuccessful();
     }
-    public void dbEndTransaction(){
-        mDatabase.endTransaction();
-    }
+    public void dbEndTransaction(){ mDatabase.endTransaction(); }
+
     public void insertRoute(ContentValues addRowValue) {
-//        try {
-//            mDatabase.beginTransaction();
-//            mDatabase.insert(TABLE_NAMER, null, addRowValue);
-//            mDatabase.setTransactionSuccessful();
-//        } catch (SQLException e) {
-//        } finally {
-//            mDatabase.endTransaction();
-//        }
+            mDatabase.insert(TABLE_NAMER, null, addRowValue);
     }
 
     public void insertStation(ContentValues addRowValue) {
-//        try {
-////            mDatabase.beginTransaction();
-//            mDatabase.insert(TABLE_NAMES, null, addRowValue);
-////            mDatabase.setTransactionSuccessful();
-//        } catch (SQLException e) {
-//        } finally {
-////            mDatabase.endTransaction();
-//        }
+            mDatabase.insert(TABLE_NAMES, null, addRowValue);
     }
 
     public void insertRouteStation(ContentValues addRowValue) {
-//        try {
-//            mDatabase.beginTransaction();
-        Util.log(tag, "insertRouteStation: " );
         mDatabase.insert(TABLE_NAMERS, null, addRowValue);
-//            mDatabase.setTransactionSuccessful();
-//        } catch (SQLException e) {
-//        } finally {
-//            mDatabase.endTransaction();
-//        }
     }
 
     public void insertConfig(ContentValues addRowValue) {
