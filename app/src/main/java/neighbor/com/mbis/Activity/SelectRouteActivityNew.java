@@ -136,9 +136,12 @@ public class SelectRouteActivityNew extends Activity implements View.OnClickList
 
             Toast.makeText(this, "잠시만 기다려 주세요. Database 를 확인하는 중입니다.", Toast.LENGTH_SHORT).show();
 
+            db.dbBeginTransaction();
 //            addRouteList();
 //            addStationList();
             addRouteStationList();
+            db.dbTransactionSuccessful();
+            db.dbEndTransaction();
         }
     }
 
@@ -259,7 +262,6 @@ public class SelectRouteActivityNew extends Activity implements View.OnClickList
 
             String line;
 
-            db.dbBeginTransaction();
             //Read each line
             while ((line = reader.readLine()) != null) {
 
@@ -278,8 +280,6 @@ public class SelectRouteActivityNew extends Activity implements View.OnClickList
                 addRouteStationUtil(rs);
 
             }
-            db.dbTransactionSuccessful();
-            db.dbEndTransaction();
         } catch (IOException e) {
             Toast.makeText(this, "Fail ToT", Toast.LENGTH_SHORT).show();
         } finally {
