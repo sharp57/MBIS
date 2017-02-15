@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="5dp"
+    android:paddingLeft="5dp"
+    android:paddingRight="5dp"
+    android:paddingTop="5dp"
+    android:background="#2d3498db"
+    >
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ListView
+            android:background="@drawable/my_border_opacity"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/mList"
+            android:padding="10dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
+
+    </FrameLayout>
+
+    <android.support.design.widget.FloatingActionButton
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:clickable="true"
+        app:fabSize="mini"
+        app:srcCompat="@android:drawable/dialog_holo_light_frame"
+        android:id="@+id/logoutButton"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="10dp"
+        />
+
+</RelativeLayout>

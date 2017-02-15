@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#f0f6ff"
+    android:gravity="center">
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <RelativeLayout
+            android:layout_width="238dp"
+            android:layout_height="153dp"
+            android:orientation="vertical">
+            <EditText
+                android:id="@+id/noButton"
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:gravity="center_vertical"
+                android:hint="@string/login_form01"
+                android:textColorHint="#555555"
+                android:background="@drawable/bg_form"/>
+            <EditText
+                android:id="@+id/busNumButton"
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:layout_below="@+id/noButton"
+                android:layout_marginTop="4dp"
+                android:gravity="center_vertical"
+                android:hint="@string/login_form02"
+                android:textColorHint="#555555"
+                android:background="@drawable/bg_form"/>
+            <Button
+                android:id="@+id/authButton"
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:layout_alignParentBottom="true"
+                android:gravity="center"
+                android:text="@string/select_menu_02_auth"
+                android:textColor="#ffffff"
+                android:background="@drawable/sel_auth"/>
+        </RelativeLayout>
+
+        <!-- 중간 공백 -->
+        <LinearLayout
+            android:layout_width="35dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+        </LinearLayout>
+        <include
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            layout="@layout/number_keyboard"/>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="545dp"
+        android:layout_height="wrap_content"
+        android:gravity="right"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="개발자 모드"
+            android:textColor="#000000"
+            android:textSize="18dp"/>
+        <ToggleButton
+            android:id="@+id/switchButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
+</LinearLayout>

@@ -1,0 +1,34 @@
+<resources>
+    <string name="app_name">MBIS</string>
+    <string name="title_activity_select_route">차량 노선 선택</string>
+    <string name="title_activity_login">사용자 인증</string>
+    <string name="select_menu_01_route">노선 선택</string>
+    <string name="select_menu_02_auth">사용자 인증</string>
+    <string name="select_menu_03_mode">모드 선택</string>
+    <string name="login_form01">사원번호</string>
+    <string name="login_form02">차량번호</string>
+    <string name="key01">1</string>
+    <string name="key02">2</string>
+    <string name="key03">3</string>
+    <string name="key04">4</string>
+    <string name="key05">5</string>
+    <string name="key06">6</string>
+    <string name="key07">7</string>
+    <string name="key08">8</string>
+    <string name="key09">9</string>
+    <string name="key10">0</string>
+    <string name="key11">-</string>
+    <string name="select_route_menu01">리무진</string>
+    <string name="select_route_menu02">좌석</string>
+    <string name="select_route_menu03">일반</string>
+    <string name="select_route_menu04">마을/지선</string>
+    <string name="select_mode01">운영 모드</string>
+    <string name="select_mode02">테스트 모드</string>
+    <string name="select_emergency_menu01">버스사고</string>
+    <string name="select_emergency_menu02">버스고장</string>
+    <string name="select_emergency_menu03">긴급공사</string>
+    <string name="select_emergency_menu04">긴급상황</string>
+    <string name="select_emergency_menu05">도로사고</string>
+
+
+</resources>

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#f0f6ff"
+    android:gravity="center">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <RelativeLayout
+            android:layout_width="265dp"
+            android:layout_height="145dp"
+            android:layout_weight="1">
+            <ImageView
+                android:id="@+id/selectModeImg01"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/sel_select_meu_mode"/>
+            <ImageView
+                android:id="@+id/selectModeIcon01"
+                android:layout_width="78dp"
+                android:layout_height="83dp"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="9dp"
+                android:src="@drawable/menu_mode_icon01"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/selectModeIcon01"
+                android:gravity="center"
+                android:text="@string/select_mode02"
+                android:textColor="#ffffff"
+                android:textSize="24dp"/>
+        </RelativeLayout>
+        <View
+            android:layout_width="15dp"
+            android:layout_height="10dp"/>
+
+        <RelativeLayout
+            android:layout_width="265dp"
+            android:layout_height="145dp"
+            android:layout_weight="1">
+            <ImageView
+                android:id="@+id/selectModeImg02"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/sel_select_meu_mode"/>
+            <ImageView
+                android:id="@+id/selectModeIcon02"
+                android:layout_width="78dp"
+                android:layout_height="83dp"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="9dp"
+                android:src="@drawable/menu_mode_icon02"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/selectModeIcon02"
+                android:gravity="center"
+                android:text="@string/select_mode02"
+                android:textColor="#ffffff"
+                android:textSize="24dp"/>
+        </RelativeLayout>
+    </LinearLayout>
+
+</LinearLayout>

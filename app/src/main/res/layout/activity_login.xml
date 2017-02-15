@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:orientation="vertical"
+    tools:context="neighbor.com.mbis.Activity.LoginActivity"
+    android:weightSum="1">
+
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_marginBottom="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="100dp"
+            android:textSize="20dp"
+            android:layout_height="wrap_content"
+            android:text="핸드폰 번호" />
+
+        <EditText
+            android:layout_marginLeft="20dp"
+            android:layout_width="220dp"
+            android:layout_height="wrap_content"
+            android:hint="'010' 과 '-' 를 제외한 8자리 숫자"
+            android:id="@+id/phoneNum" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_marginBottom="20dp"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:textSize="20dp"
+            android:text="버스 번호" />
+
+        <EditText
+            android:layout_marginLeft="20dp"
+            android:layout_width="220dp"
+            android:hint="4자리 이하의 숫자"
+            android:layout_height="wrap_content"
+            android:id="@+id/busNum" />
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:layout_marginTop="10dp"
+            android:background="@drawable/button_selector"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:onClick="nextPage"
+            android:textSize="22dp"
+            android:text="인 증 하 기"
+            android:id="@+id/sendButton" />
+
+    </LinearLayout>
+
+    <CheckBox
+        android:id="@+id/chk_auto"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:onClick="onCheckBoxClick"
+        android:text="자동 로그인" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <Button
+            android:background="@drawable/my_border"
+            android:gravity="center"
+            android:textSize="10dp"
+            android:text="\?"
+            android:padding="0dp"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:id="@+id/cheat"
+            android:onClick="nextPage"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true" />
+
+        <Button
+            android:background="@drawable/my_border"
+            android:gravity="center"
+            android:textSize="10dp"
+            android:text="!"
+            android:padding="0dp"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:id="@+id/zzzzz"
+            android:onClick="nextPage"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
+
+        <!--<ScrollView-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:layout_alignParentTop="true"-->
+            <!--android:layout_alignParentLeft="true"-->
+            <!--android:layout_alignParentStart="true"-->
+            <!--android:layout_above="@+id/cheat">-->
+
+            <!--<LinearLayout-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:orientation="vertical" >-->
+
+                <!--<TextView-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:id="@+id/recvText" />-->
+            <!--</LinearLayout>-->
+        <!--</ScrollView>-->
+    </RelativeLayout>
+
+</LinearLayout>

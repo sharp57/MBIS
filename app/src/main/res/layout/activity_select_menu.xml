@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:background="#f0f6ff"
+    android:gravity="center">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center">
+
+        <RelativeLayout
+            android:layout_width="265dp"
+            android:layout_height="145dp"
+            android:layout_weight="1">
+            <ImageView
+                android:id="@+id/selectRoute"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/sel_select_meu_route"/>
+            <ImageView
+                android:id="@+id/selectRouteIcon"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:src="@drawable/menu_icon01"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="25dp" />
+            <TextView
+                android:id="@+id/selectRouteLabel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_marginBottom="25dp"
+                android:gravity="center_horizontal"
+                android:text="@string/select_menu_01_route"
+                android:textSize="21.5dp"
+                android:textColor="#ffffff"/>
+        </RelativeLayout>
+        <View
+            android:layout_width="10dp"
+            android:layout_height="match_parent"/>
+        <RelativeLayout
+            android:layout_width="265dp"
+            android:layout_height="145dp"
+            android:layout_weight="1">
+            <ImageView
+                android:id="@+id/selectAuth"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/sel_select_meu_auth"/>
+            <ImageView
+                android:id="@+id/selectAuthIcon"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:src="@drawable/menu_icon02"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="25dp" />
+            <TextView
+                android:id="@+id/selectAuthLabel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_marginBottom="25dp"
+                android:gravity="center_horizontal"
+                android:text="@string/select_menu_02_auth"
+                android:textSize="21.5dp"
+                android:textColor="#ffffff"/>
+        </RelativeLayout>
+    </LinearLayout>
+</RelativeLayout>

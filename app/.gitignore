@@ -1,0 +1,5 @@
+/build
+/src/main/assets
+/src/androidTest
+/src/test
+#/src/main/java/neighbor/com/mbis/Network

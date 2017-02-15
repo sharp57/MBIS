@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="50dp"
+    android:layout_marginTop="255dp"
+    >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_gravity="center_horizontal|bottom">
+
+
+        <ImageView
+            android:visibility="invisible"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:padding="3dp"
+            android:src="@mipmap/ic_directions_bus_black_24dp"
+            android:id="@+id/busImage" />
+
+        <TextView
+            android:visibility="invisible"
+            android:layout_width="40dp"
+            android:layout_height="25dp"
+            android:text="arrive"
+            android:textColor="#800"
+            android:textStyle="bold"
+            android:paddingTop="5dp"
+            android:id="@+id/arriveDisplay"
+            android:layout_toRightOf="@+id/busImage"
+            android:layout_toEndOf="@+id/busImage" />
+
+
+
+        <TextView
+            android:visibility="invisible"
+            android:layout_width="40dp"
+            android:layout_height="25dp"
+            android:text="start"
+            android:textColor="#080"
+            android:textStyle="bold"
+            android:id="@+id/startDisplay"
+            android:paddingBottom="5dp"
+            android:layout_alignBottom="@+id/busImage"
+            android:layout_toRightOf="@+id/busImage"
+            android:layout_toEndOf="@+id/busImage"
+            android:layout_below="@+id/arriveDisplay" />
+
+        <TextView
+            android:layout_width="40dp"
+            android:layout_height="25dp"
+            android:text="wait"
+            android:textColor="#888"
+            android:textStyle="bold"
+            android:id="@+id/waitDisplay"
+            android:gravity="center|left"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@+id/busImage"
+            android:layout_toEndOf="@+id/busImage" />
+    </RelativeLayout>
+</LinearLayout>
