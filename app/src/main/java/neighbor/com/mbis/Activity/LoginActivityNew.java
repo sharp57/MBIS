@@ -1,4 +1,4 @@
-package neighbor.com.mbis.Activity;
+package neighbor.com.mbis.activity;
 
 import android.Manifest;
 import android.app.Activity;
@@ -16,39 +16,34 @@ import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.Toast;
-import android.widget.ToggleButton;
 
 import java.util.Calendar;
 import java.util.TimeZone;
-import java.util.concurrent.ForkJoinPool;
 
-import neighbor.com.mbis.Function.FileManager;
-import neighbor.com.mbis.Function.Func;
-import neighbor.com.mbis.Function.Setter;
-import neighbor.com.mbis.MapUtil.BytePosition;
-import neighbor.com.mbis.MapUtil.Data;
-import neighbor.com.mbis.MapUtil.Form.Form_Header;
-import neighbor.com.mbis.MapUtil.HandlerPosition;
-import neighbor.com.mbis.MapUtil.MakeFile.MakeRouteFile;
-import neighbor.com.mbis.MapUtil.MakeFile.MakeRouteStationFile;
-import neighbor.com.mbis.MapUtil.MakeFile.MakeStationFile;
-import neighbor.com.mbis.MapUtil.OPUtil;
-import neighbor.com.mbis.MapUtil.Receive_OP;
-import neighbor.com.mbis.MapUtil.Thread.FTPInfoThread;
-import neighbor.com.mbis.MapUtil.Thread.FTPThread;
-import neighbor.com.mbis.MapUtil.Thread.SocketReadTimeout;
-import neighbor.com.mbis.MapUtil.Util;
-import neighbor.com.mbis.MapUtil.Value.MapVal;
-import neighbor.com.mbis.Network.NetworkIntentService;
-import neighbor.com.mbis.Network.NetworkUtil;
+import neighbor.com.mbis.function.FileManager;
+import neighbor.com.mbis.function.Func;
+import neighbor.com.mbis.function.Setter;
+import neighbor.com.mbis.maputil.BytePosition;
+import neighbor.com.mbis.maputil.Data;
+import neighbor.com.mbis.maputil.form.Form_Header;
+import neighbor.com.mbis.maputil.HandlerPosition;
+import neighbor.com.mbis.maputil.makefile.MakeRouteFile;
+import neighbor.com.mbis.maputil.makefile.MakeRouteStationFile;
+import neighbor.com.mbis.maputil.makefile.MakeStationFile;
+import neighbor.com.mbis.maputil.OPUtil;
+import neighbor.com.mbis.maputil.Receive_OP;
+import neighbor.com.mbis.maputil.thread.FTPInfoThread;
+import neighbor.com.mbis.maputil.thread.FTPThread;
+import neighbor.com.mbis.maputil.Util;
+import neighbor.com.mbis.maputil.value.MapVal;
+import neighbor.com.mbis.network.NetworkIntentService;
+import neighbor.com.mbis.network.NetworkUtil;
 import neighbor.com.mbis.R;
-import neighbor.com.mbis.Util.MbisUtil;
+import neighbor.com.mbis.util.MbisUtil;
 
 /**
  * Created by 권오철 on 2017-02-08.
@@ -175,7 +170,7 @@ public class LoginActivityNew extends Activity implements View.OnClickListener{
 
         switch (v.getId()){
             case R.id.authButton:
-                startActivity(new Intent(LoginActivityNew.this, SelectMenuActivity.class));
+//                startActivity(new Intent(LoginActivityNew.this, SelectMenuActivity.class));
 //                if(mService.getSocket()  == null){
 //                    return;
 //                }
@@ -191,7 +186,9 @@ public class LoginActivityNew extends Activity implements View.OnClickListener{
                         byte[] op = new byte[]{0x03};
                         mv.setDataLength(BytePosition.BODY_USER_CERTIFICATION_SIZE - BytePosition.HEADER_SIZE);
                         h.setOp_code(op);
+
                         Setter.setHeader();
+                        h.setDeviceID(Util.hexStringToByteArray(Util.getDeviceID(this)));
                         byte[] otherBusInfo = makeBodyOtherBusInfo();
                         headerBuf = Util.makeHeader(h, headerBuf);
 
@@ -267,8 +264,21 @@ public class LoginActivityNew extends Activity implements View.OnClickListener{
                             , 0x00, 0x00, 0x00, 0x00
                     };
                     try {
-                        h = Util.setHeader(h,LoginActivityNew.this,(byte)0x01,(byte)0x11, new byte[]{0x00, 0x01}, new byte[]{0x01, 0x02}, new byte[]{0x00, 0x00, 0x00});
+                        h = Util.setHeader(h,LoginActivityNew.this,(byte)0x02,(byte)0x11, new byte[]{0x00, 0x01}, new byte[]{0x01, 0x02}, new byte[]{0x00, 0x00, 0x00});
                         Data.writeData = Util.makeHeader(h, headerBuf);
+
+//                        // 0x11
+
+                        byte[] op = new byte[]{0x11};
+                        mv.setDataLength(BytePosition.BODY_BOOT_INFO_SIZE - BytePosition.HEADER_SIZE);
+                        h.setOp_code(op);
+                        Setter.setHeader();
+                        h.setDeviceID(Util.hexStringToByteArray(Util.getDeviceID(LoginActivityNew.this)));
+                        byte[] otherBusInfo = makeBodyBusBootingInfo();
+                        headerBuf = Util.makeHeader(h, headerBuf);
+
+                        Data.writeData = Func.mergyByte(headerBuf, otherBusInfo);
+
                     }catch(Exception e){
                         e.printStackTrace();
                     }
@@ -312,12 +322,36 @@ public class LoginActivityNew extends Activity implements View.OnClickListener{
 
         String date = String.format("%02d", cal.get(Calendar.YEAR) - 2000) + String.format("%02d", (cal.get(Calendar.MONTH) + 1)) + String.format("%02d", cal.get(Calendar.DATE));
         String time = String.format("%02d", ((cal.get(Calendar.HOUR_OF_DAY)) + 9)) + String.format("%02d", (cal.get(Calendar.MINUTE))) + String.format("%02d", cal.get(Calendar.SECOND));
-        byte[] dt = Func.stringToByte(date + time);
-        byte[] phone = Func.integerToByte(Integer.parseInt(noButton.getText().toString()), 4);
-        byte[] bus = Func.integerToByte(Integer.parseInt(busNumButton.getText().toString()), 2);
-        byte[] res = Func.integerToByte(mv.getReservation(), 4);
+        byte[] dt = Util.byteReverse(Func.stringToByte(date + time));
+        byte[] phone = Util.byteReverse(Func.integerToByte(Integer.parseInt(noButton.getText().toString()), 4));
+        byte[] bus = Util.byteReverse(Func.integerToByte(Integer.parseInt(busNumButton.getText().toString()), 2));
+        byte[] res = Util.byteReverse(Func.integerToByte(mv.getReservation(), 4));
 
         return Func.mergyByte(Func.mergyByte(dt, phone), Func.mergyByte(bus, res));
+    }
+
+    private byte[] makeBodyBusBootingInfo() {
+        TimeZone jst = TimeZone.getTimeZone("JST");
+        Calendar cal = Calendar.getInstance(jst);
+
+        String date = String.format("%02d", cal.get(Calendar.YEAR) - 2000) + String.format("%02d", (cal.get(Calendar.MONTH) + 1)) + String.format("%02d", cal.get(Calendar.DATE));
+        String time = String.format("%02d", ((cal.get(Calendar.HOUR_OF_DAY)) + 9)) + String.format("%02d", (cal.get(Calendar.MINUTE))) + String.format("%02d", cal.get(Calendar.SECOND));
+        byte[] dt = Util.byteReverse(Func.stringToByte(date + time));
+        byte[] dt2 = Util.byteReverse(Func.stringToByte(date + time));
+        byte[] gpsx = Util.byteReverse(Func.longToByte(3712345678l,4));
+        byte[] gpsy = Util.byteReverse(Func.longToByte(12812345678l,4));
+        byte[] angle = Util.byteReverse(Func.integerToByte(90,2));
+        byte[] speed = Util.byteReverse(Func.integerToByte(50,2));
+        byte[] busnum = Util.byteReverse(Func.integerToByte(1,2));
+        byte[] route = Util.byteReverse(Func.integerToByte(2,2));
+        byte[] dev = Util.byteReverse(Func.integerToByte(3,4));
+
+//        byte[] dt = Func.stringToByte(date + time);
+//        byte[] phone = Func.integerToByte(Integer.parseInt(noButton.getText().toString()), 4);
+//        byte[] bus = Func.integerToByte(Integer.parseInt(busNumButton.getText().toString()), 2);
+//        byte[] res = Func.integerToByte(mv.getReservation(), 4);
+
+        return Func.mergyByte(Func.mergyByte(Func.mergyByte(Func.mergyByte(Func.mergyByte(dt, dt2), Func.mergyByte(gpsx, gpsy)),Func.mergyByte(angle, speed)),Func.mergyByte(busnum, route)), dev) ;
     }
 
 
