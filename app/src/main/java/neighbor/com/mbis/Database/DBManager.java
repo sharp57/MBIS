@@ -1,4 +1,4 @@
-package neighbor.com.mbis.Database;
+package neighbor.com.mbis.database;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -6,11 +6,8 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.os.Environment;
 
-import java.io.File;
-
-import neighbor.com.mbis.MapUtil.Util;
+import neighbor.com.mbis.maputil.Util;
 
 /**
  * Created by user on 2016-08-29.
