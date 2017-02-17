@@ -18,11 +18,11 @@ public class DBManager {
     final String tag = getClass().toString();
 
     public static DBManager getInstance(Context context) {
-        Util.log("DBManager","getInstance1: " + ourInstance);
+        Util.log("DBManager", "getInstance1: " + ourInstance);
         if (ourInstance == null) {
-            Util.log("DBManager","getInstance2: " + ourInstance);
+            Util.log("DBManager", "getInstance2: " + ourInstance);
             ourInstance = new DBManager(context);
-            Util.log("DBManager","getInstance3: " + ourInstance);
+            Util.log("DBManager", "getInstance3: " + ourInstance);
         }
         return ourInstance;
     }
@@ -141,7 +141,6 @@ public class DBManager {
                     ");";
 
 
-
             arg0.execSQL(makeDBConfig);
             arg0.execSQL(makeDBR);
             arg0.execSQL(makeDBS);
@@ -157,7 +156,7 @@ public class DBManager {
         }
     }
 
-    public  DBManager(Context context) {
+    public DBManager(Context context) {
         ctx = context;
         openHelper = new OpenHelper(ctx, DATABASE_NAME, null, DATABASE_VERSION);
         mDatabase = openHelper.getWritableDatabase();
@@ -227,18 +226,24 @@ public class DBManager {
 
     }
 
-    public void dbBeginTransaction(){ mDatabase.beginTransaction(); }
-    public void dbTransactionSuccessful(){
+    public void dbBeginTransaction() {
+        mDatabase.beginTransaction();
+    }
+
+    public void dbTransactionSuccessful() {
         mDatabase.setTransactionSuccessful();
     }
-    public void dbEndTransaction(){ mDatabase.endTransaction(); }
+
+    public void dbEndTransaction() {
+        mDatabase.endTransaction();
+    }
 
     public void insertRoute(ContentValues addRowValue) {
-            mDatabase.insert(TABLE_NAMER, null, addRowValue);
+        mDatabase.insert(TABLE_NAMER, null, addRowValue);
     }
 
     public void insertStation(ContentValues addRowValue) {
-            mDatabase.insert(TABLE_NAMES, null, addRowValue);
+        mDatabase.insert(TABLE_NAMES, null, addRowValue);
     }
 
     public void insertRouteStation(ContentValues addRowValue) {
@@ -248,7 +253,7 @@ public class DBManager {
     public void insertConfig(ContentValues addRowValue) {
         try {
             mDatabase.beginTransaction();
-        mDatabase.insert(TABLE_NAMERC, null, addRowValue);
+            mDatabase.insert(TABLE_NAMERC, null, addRowValue);
             mDatabase.setTransactionSuccessful();
         } catch (SQLException e) {
         } finally {
