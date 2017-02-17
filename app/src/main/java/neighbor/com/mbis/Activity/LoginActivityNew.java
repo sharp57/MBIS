@@ -21,37 +21,41 @@ import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.Toast;
 
+import com.google.android.gms.common.api.GoogleApiClient;
+
 import org.apache.log4j.Logger;
 
+import java.io.IOException;
 import java.util.Calendar;
 import java.util.TimeZone;
 
+import neighbor.com.mbis.R;
 import neighbor.com.mbis.function.FileManager;
 import neighbor.com.mbis.function.Func;
 import neighbor.com.mbis.function.Setter;
 import neighbor.com.mbis.maputil.BytePosition;
 import neighbor.com.mbis.maputil.Data;
-import neighbor.com.mbis.maputil.form.Form_Header;
 import neighbor.com.mbis.maputil.HandlerPosition;
+import neighbor.com.mbis.maputil.OPUtil;
+import neighbor.com.mbis.maputil.Receive_OP;
+import neighbor.com.mbis.maputil.Util;
+import neighbor.com.mbis.maputil.form.Form_Header;
 import neighbor.com.mbis.maputil.makefile.MakeRouteFile;
 import neighbor.com.mbis.maputil.makefile.MakeRouteStationFile;
 import neighbor.com.mbis.maputil.makefile.MakeStationFile;
-import neighbor.com.mbis.maputil.OPUtil;
-import neighbor.com.mbis.maputil.Receive_OP;
 import neighbor.com.mbis.maputil.thread.FTPInfoThread;
 import neighbor.com.mbis.maputil.thread.FTPThread;
-import neighbor.com.mbis.maputil.Util;
 import neighbor.com.mbis.maputil.value.MapVal;
 import neighbor.com.mbis.network.NetworkIntentService;
 import neighbor.com.mbis.network.NetworkUtil;
-import neighbor.com.mbis.R;
+import neighbor.com.mbis.network.SocketConnect;
 import neighbor.com.mbis.util.MbisUtil;
 
 /**
  * Created by 권오철 on 2017-02-08.
  */
 
-public class LoginActivityNew extends Activity implements View.OnClickListener {
+public class LoginActivityNew extends Activity implements View.OnClickListener, MessageHandler.SmartServiceHandlerInterface {
 
 
     //통신 변수들
@@ -79,6 +83,8 @@ public class LoginActivityNew extends Activity implements View.OnClickListener {
     private Button key01;
     private RadioButton radioButton01, radioButton02;
     private static String TAG = LoginActivityNew.class.getSimpleName();
+    private MessageHandler handler = new MessageHandler(this);
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,13 +100,28 @@ public class LoginActivityNew extends Activity implements View.OnClickListener {
             requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 100);
         }
 
-        if (mService != null) {
-            mService.close();   // 2017.02.13
-            mService.stopSelf();
-        }
-        mService = new NetworkIntentService(NetworkUtil.IP, NetworkUtil.PORT, mHandler);
+//        if (mService != null) {
+//            mService.close();   // 2017.02.13
+//            mService.stopSelf();
+//        }
+//        mService = new NetworkIntentService(NetworkUtil.IP, NetworkUtil.PORT, mHandler);
+//        initConnection();
 
-        initConnection();
+
+//        byte[] op = new byte[]{0x03};
+//        mv.setDataLength(BytePosition.BODY_USER_CERTIFICATION_SIZE - BytePosition.HEADER_SIZE);
+//        h.setOp_code(op);
+//
+//        Setter.setHeader();
+//        h.setDeviceID(Util.hexStringToByteArray(Util.getDeviceID(this)));
+//        byte[] otherBusInfo = makeBodyOtherBusInfo();
+//        headerBuf = Util.makeHeader(h, headerBuf);
+//
+//        Data.writeData = Func.mergyByte(headerBuf, otherBusInfo);
+
+
+
+
 
         Intent intent = getIntent();
         //그냥 접속
@@ -124,6 +145,7 @@ public class LoginActivityNew extends Activity implements View.OnClickListener {
         eventFileManager = new FileManager(packetFileName);
 
         setInit();
+
     }
 
     private void setInit() {
@@ -202,7 +224,11 @@ public class LoginActivityNew extends Activity implements View.OnClickListener {
 
                         Data.writeData = Func.mergyByte(headerBuf, otherBusInfo);
 
-                        sendData();
+//                        sendData();
+
+                        SocketConnect socketConnect = new SocketConnect();
+                        socketConnect.setSocket(NetworkUtil.IP, NetworkUtil.PORT, handler ,  Data.writeData);
+                        socketConnect.start();
                     } else {
                         Toast.makeText(getApplicationContext(), "차량번호를 다시 한 번 확인 해 주세요.", Toast.LENGTH_SHORT).show();
                     }
@@ -240,7 +266,7 @@ public class LoginActivityNew extends Activity implements View.OnClickListener {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        unbindService(mConnection);
+//        unbindService(mConnection);
 
         // 2017.02.14
         if (mService != null) {
@@ -266,6 +292,7 @@ public class LoginActivityNew extends Activity implements View.OnClickListener {
 //            finish();
 //            startActivity(new Intent(getApplicationContext(), SelectMenuActivity.class));
 //        }
+
     }
 
     Handler mHandler = new Handler() {
@@ -457,6 +484,14 @@ public class LoginActivityNew extends Activity implements View.OnClickListener {
         mService.writeData();
     }
 
+//    private void sendData() {
+//        String dd = "";
+//        for (int j = 0; j < Data.writeData.length; j++) {
+//            dd = dd + String.format("%02X ", Data.writeData[j]);
+//        }
+//
+//    }
+
     private synchronized void recvData(byte opCode) {
         String dd = "";
         for (int i = 0; i < Data.readData.length; i++) {
@@ -553,4 +588,82 @@ public class LoginActivityNew extends Activity implements View.OnClickListener {
             mService = null;
         }
     };
+
+
+    @Override
+    public void handleServiceMessage(Message message) {
+
+        switch (message.what) {
+            case HandlerPosition.DATA_READ_SUCESS:
+
+                recvData(Data.readData[BytePosition.HEADER_OPCODE]);
+                break;
+
+            case HandlerPosition.TIME_CHANGE:
+                break;
+            //소켓 연결 성공!
+            case HandlerPosition.SOCKET_CONNECT_SUCCESS:
+                socketFlag = true;
+//                    Toast.makeText(getApplicationContext(), "SOCKET_CONNECT_SUCCESS", Toast.LENGTH_SHORT).show();
+                retryCountdownTimer();
+                Data.writeData
+                        = new byte[]{
+                        0x01, 0x11, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x00, 0x00, 0x00, (byte) 0x32
+                        , 0x31, 0x36, 0x31, 0x30, 0x32, 0x37, 0x31, 0x34, 0x33, 0x36, 0x30, 0x30
+                        , 0x31, 0x36, 0x31, 0x30, 0x32, 0x37, 0x31, 0x34, 0x33, 0x36, 0x30, 0x30
+                        , 0x00, 0x39, 0x36, 0x73, 0x00, (byte) 0xC1, (byte) 0xF9, 0x7F, 0x00, 0x00, 0x00, 0x00
+                        , 0x00, 0x01, 0x00, 0x01, 0x00, 0x01, 0x00, 0x01, 0x00, 0x01
+                        , 0x00, 0x00, 0x00, 0x00
+                };
+                try {
+                    h = Util.setHeader(h, LoginActivityNew.this, (byte) 0x02, (byte) 0x11, new byte[]{0x00, 0x01}, new byte[]{0x01, 0x02}, new byte[]{0x00, 0x00, 0x00});
+                    Data.writeData = Util.makeHeader(h, headerBuf);
+
+//                        // 0x11
+
+                    byte[] op = new byte[]{0x11};
+                    mv.setDataLength(BytePosition.BODY_BOOT_INFO_SIZE - BytePosition.HEADER_SIZE);
+                    h.setOp_code(op);
+                    Setter.setHeader();
+                    h.setDeviceID(Util.hexStringToByteArray(Util.getDeviceID(LoginActivityNew.this)));
+                    byte[] otherBusInfo = makeBodyBusBootingInfo();
+                    headerBuf = Util.makeHeader(h, headerBuf);
+
+                    Data.writeData = Func.mergyByte(headerBuf, otherBusInfo);
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+//                    sendData();
+                break;
+            //소켓 연결 실패!
+            case HandlerPosition.SOCKET_CONNECT_ERROR:
+                socketFlag = false;
+//                    Toast.makeText(getApplicationContext(), "SOCKET_CONNECT_ERROR", Toast.LENGTH_SHORT).show();
+                retryConnection();
+                break;
+            //연결 중 서버가 죽었을 때
+            case HandlerPosition.READ_SERVER_DISCONNECT_ERROR:
+//                    Toast.makeText(getApplicationContext(), "READ_SERVER_DISCONNECT_ERROR", Toast.LENGTH_SHORT).show();
+                retryConnection();
+                break;
+            //데이터 전송이 실패했을 때
+            case HandlerPosition.WRITE_SERVER_DISCONNECT_ERROR:
+//                    Toast.makeText(getApplicationContext(), "WRITE_SERVER_DISCONNECT_ERROR", Toast.LENGTH_SHORT).show();
+                retryConnection();
+                break;
+            //잘못된 데이터가 왔을 때
+            case HandlerPosition.READ_DATA_ERROR:
+//                    Toast.makeText(getApplicationContext(), "READ_DATA_ERROR", Toast.LENGTH_SHORT).show();
+                retryConnection();
+                retryCountdownTimer();
+                break;
+            //타임아웃!
+            case HandlerPosition.READ_TIMEOUT_ERROR:
+//                    Toast.makeText(getApplicationContext(), "READ_TIMEOUT_ERROR", Toast.LENGTH_SHORT).show();
+                retryConnection();
+                retryCountdownTimer();
+                break;
+        }
+    }
 }

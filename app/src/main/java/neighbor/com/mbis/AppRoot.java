@@ -24,7 +24,7 @@ public class AppRoot extends Application {
     public void onCreate() {
         super.onCreate();
         MultiDex.install(this);
-        handleException();
+//        handleException();
         // Configure log
         LogUtils.configLog(this);
         // init settings preferences
