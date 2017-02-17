@@ -1,9 +1,9 @@
-package neighbor.com.mbis.MapUtil.Thread;
+package neighbor.com.mbis.maputil.thread;
 
 import android.os.CountDownTimer;
 import android.os.Handler;
 
-import neighbor.com.mbis.MapUtil.HandlerPosition;
+import neighbor.com.mbis.maputil.HandlerPosition;
 
 /**
  * Created by user on 2016-09-29.

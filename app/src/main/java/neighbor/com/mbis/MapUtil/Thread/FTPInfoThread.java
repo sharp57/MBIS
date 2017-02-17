@@ -1,19 +1,12 @@
-package neighbor.com.mbis.MapUtil.Thread;
+package neighbor.com.mbis.maputil.thread;
 
-import android.util.Log;
-
-import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 
-import neighbor.com.mbis.Function.FTPManager;
-import neighbor.com.mbis.Function.Func;
-import neighbor.com.mbis.MapUtil.Data;
-import neighbor.com.mbis.MapUtil.Value.LogicBuffer;
-import neighbor.com.mbis.MapUtil.Value.MapVal;
-import neighbor.com.mbis.Network.NetworkUtil;
+import neighbor.com.mbis.function.FTPManager;
+import neighbor.com.mbis.maputil.Data;
+import neighbor.com.mbis.maputil.value.MapVal;
+import neighbor.com.mbis.network.NetworkUtil;
 
 /**
  * Created by user on 2016-11-10.

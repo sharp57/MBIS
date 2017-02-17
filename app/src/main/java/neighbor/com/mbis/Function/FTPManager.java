@@ -1,4 +1,4 @@
-package neighbor.com.mbis.Function;
+package neighbor.com.mbis.function;
 
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;

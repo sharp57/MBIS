@@ -1,4 +1,4 @@
-package neighbor.com.mbis.Util;
+package neighbor.com.mbis.util;
 
 import android.content.Context;
 import android.content.SharedPreferences;

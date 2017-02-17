@@ -1,4 +1,4 @@
-package neighbor.com.mbis.MapUtil.MakeFile;
+package neighbor.com.mbis.maputil.makefile;
 
 /**
  * Created by user on 2016-10-19.

@@ -1,9 +1,8 @@
-package neighbor.com.mbis.Network;
+package neighbor.com.mbis.network;
 
 import android.app.IntentService;
 import android.content.Intent;
 import android.os.Binder;
-import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
@@ -17,11 +16,11 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
 
-import neighbor.com.mbis.Function.Func;
-import neighbor.com.mbis.MapUtil.BytePosition;
-import neighbor.com.mbis.MapUtil.Data;
-import neighbor.com.mbis.MapUtil.HandlerPosition;
-import neighbor.com.mbis.MapUtil.Util;
+import neighbor.com.mbis.function.Func;
+import neighbor.com.mbis.maputil.BytePosition;
+import neighbor.com.mbis.maputil.Data;
+import neighbor.com.mbis.maputil.HandlerPosition;
+import neighbor.com.mbis.maputil.Util;
 
 import static java.lang.Thread.sleep;
 
@@ -77,7 +76,7 @@ public class NetworkIntentService extends IntentService {
         runFlag = true;
         this.IP = IP;
         this.PORT = PORT;
-        this.mHandler = mHandler;
+        NetworkIntentService.mHandler = mHandler;
 
         socket = new Socket();
         sAddress = new InetSocketAddress(IP, PORT);
@@ -120,7 +119,7 @@ public class NetworkIntentService extends IntentService {
             socket.connect(sAddress, HandlerPosition.SERVER_CONNECT_TIMEOUT);
 
 //            socket = new Socket(IP, PORT);
-            Log.e("[Client]", " Server connected !!" + socket + " / " + sAddress);
+            Log.e("[Client]", " Server connected !!" + socket + " / " + sAddress + " / " + socket.isConnected());
 
             is = socket.getInputStream();
             dis = new DataInputStream(is);
@@ -178,6 +177,7 @@ public class NetworkIntentService extends IntentService {
                     try {
                         Log.e("[sendData]", "222");
                         dos.write(Data.writeData);
+//                        dos.flush();
                         Log.e("[sendData]", " send byte Data !!: " + new java.math.BigInteger(Data.writeData).toString(16));
                     } catch (IOException e) {
                         mHandler.sendEmptyMessage(HandlerPosition.WRITE_SERVER_DISCONNECT_ERROR);
@@ -209,17 +209,20 @@ public class NetworkIntentService extends IntentService {
     }
 
     private synchronized void readData() {
+        Util.log(tag,"readData..");
         while (runFlag) {
             try {
                 //바이트 크기는 넉넉하게 잡아서 할 것.
                 //가변적으로 못바꾸니 넉넉하게 잡고 알아서 fix 하기
                 byte[] headerData = new byte[BytePosition.HEADER_SIZE];
+                Util.log(tag,"readData while.." + socket.isConnected());
                 dis.read(headerData);
                 byte[] dataLengthBuf = new byte[4];
                 for (int i = 0; i < 4; i++) {
                     dataLengthBuf[i] = headerData[i + BytePosition.HEADER_DATALENGTH];
                 }
-                int dataLength = Func.byteToInteger(dataLengthBuf, 4);
+                int dataLength = Func.byteToInteger(Util.byteReverse(dataLengthBuf), 4);
+                Util.log(tag,"read length." + dataLength);
                 byte[] bodyData = new byte[dataLength];
                 dis.read(bodyData);
 
@@ -230,7 +233,7 @@ public class NetworkIntentService extends IntentService {
                         Data.readFTPData = Data.readData;
                         sleep(3000);
                     }
-                    //Log.e("recv", "network : data read success: " + String.format("%02d", headerData[BytePosition.HEADER_OPCODE]));
+                    Log.e("recv", "network : data read success: " + String.format("%02d", headerData[BytePosition.HEADER_OPCODE]));
                     mHandler.sendEmptyMessage(HandlerPosition.DATA_READ_SUCESS);
                 } else {
                     //잘못된 값이 서버에서 들어왔을 때
@@ -246,9 +249,13 @@ public class NetworkIntentService extends IntentService {
                     }
                 }
             } catch (IOException e) {
+                e.printStackTrace();
+                Util.log(tag,"read error..");
                 runFlag = false;
                 mHandler.sendEmptyMessage(HandlerPosition.READ_SERVER_DISCONNECT_ERROR);
             } catch (InterruptedException e) {
+                e.printStackTrace();
+                Util.log(tag,"read error2..");
             }
 
         }

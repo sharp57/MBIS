@@ -1,4 +1,4 @@
-package neighbor.com.mbis.MapUtil.Value;
+package neighbor.com.mbis.maputil.value;
 
 /**
  * Created by user on 2016-09-07.

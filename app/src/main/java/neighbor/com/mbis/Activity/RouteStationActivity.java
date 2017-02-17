@@ -1,4 +1,4 @@
-package neighbor.com.mbis.Activity;
+package neighbor.com.mbis.activity;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -8,13 +8,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.TextView;
 
-import neighbor.com.mbis.Database.DBManager;
-import neighbor.com.mbis.Function.Func;
-import neighbor.com.mbis.MapUtil.Value.RouteBuffer;
-import neighbor.com.mbis.MapUtil.Value.StationSubBuffer_1;
-import neighbor.com.mbis.MapUtil.Value.StationSubBuffer_2;
+import neighbor.com.mbis.database.DBManager;
+import neighbor.com.mbis.function.Func;
+import neighbor.com.mbis.maputil.value.RouteBuffer;
+import neighbor.com.mbis.maputil.value.StationSubBuffer_1;
+import neighbor.com.mbis.maputil.value.StationSubBuffer_2;
 import neighbor.com.mbis.R;
-import neighbor.com.mbis.MapUtil.Value.StationBuffer;
+import neighbor.com.mbis.maputil.value.StationBuffer;
 
 public class RouteStationActivity extends AppCompatActivity {
 

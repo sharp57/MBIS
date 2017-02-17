@@ -21,7 +21,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".Activity.StartScreen"
+            android:name=".activity.StartScreen"
             android:screenOrientation="landscape"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -31,41 +31,41 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".Activity.LoginActivity"
+            android:name=".activity.LoginActivity"
             android:label="@string/title_activity_login"
             android:screenOrientation="landscape"></activity>
         <activity
-            android:name=".Activity.SelectRouteActivity"
+            android:name=".activity.SelectRouteActivity"
             android:label="@string/title_activity_select_route"
             android:screenOrientation="landscape"></activity>
         <activity
-            android:name=".Activity.RouteStationActivity"
+            android:name=".activity.RouteStationActivity"
             android:screenOrientation="landscape"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".Activity.MapActivity"
+            android:name=".activity.MapActivity"
             android:screenOrientation="landscape"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".Activity.SelectMenuActivity"
-            android:screenOrientation="landscape"
-            android:theme="@style/AppTheme.NoActionBar" />
-
-        <activity
-            android:name=".Activity.RunActivity"
+            android:name=".activity.SelectMenuActivity"
             android:screenOrientation="landscape"
             android:theme="@style/AppTheme.NoActionBar" />
 
         <activity
-            android:name=".Activity.LoginActivityNew"
+            android:name=".activity.RunActivity"
+            android:screenOrientation="landscape"
+            android:theme="@style/AppTheme.NoActionBar" />
+
+        <activity
+            android:name=".activity.LoginActivityNew"
             android:screenOrientation="landscape"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".Activity.SelectRouteActivityNew"
+            android:name=".activity.SelectRouteActivityNew"
             android:screenOrientation="landscape"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".Activity.EmergencyActivity"
+            android:name=".activity.EmergencyActivity"
             android:screenOrientation="landscape"
             android:theme="@style/AppTheme.NoActionBar" />
 
@@ -81,7 +81,7 @@
             android:value="@integer/google_play_services_version" />
 
         <service
-            android:name=".Network.NetworkIntentService"
+            android:name=".network.NetworkIntentService"
             android:exported="false"></service>
     </application>
 

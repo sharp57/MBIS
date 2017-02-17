@@ -1,4 +1,4 @@
-package neighbor.com.mbis.Function;
+package neighbor.com.mbis.function;
 
 import java.io.BufferedInputStream;
 import java.io.File;

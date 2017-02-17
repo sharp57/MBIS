@@ -1,4 +1,4 @@
-package neighbor.com.mbis.Activity;
+package neighbor.com.mbis.activity;
 
 import android.Manifest;
 import android.app.AlertDialog;
@@ -41,30 +41,28 @@ import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.util.Calendar;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.TimeZone;
 
-import neighbor.com.mbis.Function.FileManager;
-import neighbor.com.mbis.Function.Func;
-import neighbor.com.mbis.Function.Setter;
-import neighbor.com.mbis.MapUtil.Adapter.MyArrayAdapter;
-import neighbor.com.mbis.MapUtil.BytePosition;
-import neighbor.com.mbis.MapUtil.Data;
-import neighbor.com.mbis.MapUtil.HandlerPosition;
-import neighbor.com.mbis.MapUtil.OPUtil;
-import neighbor.com.mbis.MapUtil.OP_code;
-import neighbor.com.mbis.MapUtil.Receive_OP;
-import neighbor.com.mbis.MapUtil.Thread.BusTimer;
-import neighbor.com.mbis.MapUtil.Thread.SocketReadTimeout;
-import neighbor.com.mbis.MapUtil.Value.LogicBuffer;
-import neighbor.com.mbis.MapUtil.Value.MapVal;
-import neighbor.com.mbis.MapUtil.Value.RouteBuffer;
-import neighbor.com.mbis.MapUtil.Value.StationBuffer;
-import neighbor.com.mbis.MapUtil.Value.StationSubBuffer_1;
-import neighbor.com.mbis.MapUtil.Value.StationSubBuffer_2;
-import neighbor.com.mbis.Network.NetworkIntentService;
+import neighbor.com.mbis.function.FileManager;
+import neighbor.com.mbis.function.Func;
+import neighbor.com.mbis.function.Setter;
+import neighbor.com.mbis.maputil.adapter.MyArrayAdapter;
+import neighbor.com.mbis.maputil.BytePosition;
+import neighbor.com.mbis.maputil.Data;
+import neighbor.com.mbis.maputil.HandlerPosition;
+import neighbor.com.mbis.maputil.OPUtil;
+import neighbor.com.mbis.maputil.OP_code;
+import neighbor.com.mbis.maputil.Receive_OP;
+import neighbor.com.mbis.maputil.thread.BusTimer;
+import neighbor.com.mbis.maputil.value.LogicBuffer;
+import neighbor.com.mbis.maputil.value.MapVal;
+import neighbor.com.mbis.maputil.value.RouteBuffer;
+import neighbor.com.mbis.maputil.value.StationBuffer;
+import neighbor.com.mbis.maputil.value.StationSubBuffer_1;
+import neighbor.com.mbis.maputil.value.StationSubBuffer_2;
+import neighbor.com.mbis.network.NetworkIntentService;
 import neighbor.com.mbis.R;
-import neighbor.com.mbis.Util.MbisUtil;
+import neighbor.com.mbis.util.MbisUtil;
 import neighbor.com.mbis.googlemap.AddMarker;
 
 public class MapActivity extends AppCompatActivity implements OnMapReadyCallback {

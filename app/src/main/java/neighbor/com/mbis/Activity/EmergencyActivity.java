@@ -1,4 +1,4 @@
-package neighbor.com.mbis.Activity;
+package neighbor.com.mbis.activity;
 
 import android.app.Activity;
 import android.os.Bundle;

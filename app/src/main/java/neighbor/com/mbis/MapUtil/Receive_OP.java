@@ -1,10 +1,7 @@
-package neighbor.com.mbis.MapUtil;
+package neighbor.com.mbis.maputil;
 
-import neighbor.com.mbis.Function.Func;
-import neighbor.com.mbis.MapUtil.OPUtil;
-import neighbor.com.mbis.MapUtil.Thread.FTPInfoThread;
-import neighbor.com.mbis.MapUtil.Thread.FTPThread;
-import neighbor.com.mbis.MapUtil.Value.MapVal;
+import neighbor.com.mbis.function.Func;
+import neighbor.com.mbis.maputil.value.MapVal;
 
 /**
  * Created by user on 2016-09-30.

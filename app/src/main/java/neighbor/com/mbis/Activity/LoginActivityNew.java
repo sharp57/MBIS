@@ -74,6 +74,7 @@ public class LoginActivityNew extends Activity implements View.OnClickListener{
     private Button authButton;
     private ImageView key12;
 
+    private Button key01;
     private RadioButton radioButton01, radioButton02;
 
     @Override
@@ -128,14 +129,16 @@ public class LoginActivityNew extends Activity implements View.OnClickListener{
         busNumButton = (EditText) findViewById(R.id.busNumButton);
         radioButton01 = (RadioButton) findViewById(R.id.option1);
         radioButton02 = (RadioButton) findViewById(R.id.option2);
-
+        key01 = (Button) findViewById(R.id.key01);
 
 
         noButton.setText("12341234");
         busNumButton.setText("5678");
 
         authButton.setOnClickListener(this);
+        key01.setOnClickListener(this);
         key12.setOnClickListener(this);
+
 
         radioButton01.setOnClickListener(optionOnClickListener);
         radioButton02.setOnClickListener(optionOnClickListener);
@@ -201,6 +204,28 @@ public class LoginActivityNew extends Activity implements View.OnClickListener{
                 } else {
                     Toast.makeText(getApplicationContext(), "전화번호를 다시 한 번 확인 해 주세요.", Toast.LENGTH_SHORT).show();
                 }
+                break;
+            case R.id.key01:    // test booting info
+
+                try {
+                    h = Util.setHeader(h,LoginActivityNew.this,(byte)0x02,(byte)0x11, new byte[]{0x00, 0x01}, new byte[]{0x01, 0x02}, new byte[]{0x00, 0x00, 0x00});
+                    Data.writeData = Util.makeHeader(h, headerBuf);
+
+                    // 0x11
+                    byte[] op = new byte[]{0x11};
+                    mv.setDataLength(BytePosition.BODY_BOOT_INFO_SIZE - BytePosition.HEADER_SIZE);
+                    h.setOp_code(op);
+                    Setter.setHeader();
+                    h.setDeviceID(Util.hexStringToByteArray(Util.getDeviceID(LoginActivityNew.this)));
+                    byte[] otherBusInfo = makeBodyBusBootingInfo();
+                    headerBuf = Util.makeHeader(h, headerBuf);
+
+                    Data.writeData = Func.mergyByte(headerBuf, otherBusInfo);
+
+                }catch(Exception e){
+                    e.printStackTrace();
+                }
+                sendData();
                 break;
             case R.id.key12:
                 break;
@@ -282,7 +307,7 @@ public class LoginActivityNew extends Activity implements View.OnClickListener{
                     }catch(Exception e){
                         e.printStackTrace();
                     }
-                    sendData();
+//                    sendData();
                     break;
                 //소켓 연결 실패!
                 case HandlerPosition.SOCKET_CONNECT_ERROR:
@@ -484,7 +509,7 @@ public class LoginActivityNew extends Activity implements View.OnClickListener{
             finish();
 //            startActivity(new Intent(getApplicationContext(), SelectRouteActivity.class));
             startActivity(new Intent(getApplicationContext(), SelectMenuActivity.class));
-            Toast.makeText(getApplicationContext(), "[인증 성공] from. Server : " + mv.getDeviceID(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "[인증 성공] from. Server : " + Func.byteToLong(Util.byteReverse(Func.longToByte(mv.getDeviceID(),8))), Toast.LENGTH_SHORT).show();
             finish();   // 2017.02.13
         }
     }

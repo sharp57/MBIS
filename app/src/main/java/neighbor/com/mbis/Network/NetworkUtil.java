@@ -1,4 +1,4 @@
-package neighbor.com.mbis.Network;
+package neighbor.com.mbis.network;
 
 import android.os.Environment;
 
