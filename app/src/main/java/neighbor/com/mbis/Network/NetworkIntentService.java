@@ -198,7 +198,7 @@ public class NetworkIntentService extends IntentService {
                 dos.close();
                 dis.close();
             }
-            if(socket != null){
+            if (socket != null) {
                 socket.close();
             }
             socket = null;
@@ -229,7 +229,7 @@ public class NetworkIntentService extends IntentService {
                 if (dataLength > 0) {
                     //정상적인 데이터 수신
                     Data.readData = Func.mergyByte(headerData, bodyData);
-                    if(headerData[BytePosition.HEADER_OPCODE] == 0x33) {
+                    if (headerData[BytePosition.HEADER_OPCODE] == 0x33) {
                         Data.readFTPData = Data.readData;
                         sleep(3000);
                     }
@@ -241,7 +241,7 @@ public class NetworkIntentService extends IntentService {
 //                    } else
                     if (dis.read() == -1) {
                         //만약 -1이면 서버가 끊어진거임.
-                        Util.log(tag,"read -1 / disconnected..");
+                        Util.log(tag, "read -1 / disconnected..");
                         runFlag = false;
                         mHandler.sendEmptyMessage(HandlerPosition.READ_SERVER_DISCONNECT_ERROR);
                     } else {
