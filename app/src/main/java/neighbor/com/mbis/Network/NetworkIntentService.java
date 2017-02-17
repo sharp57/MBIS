@@ -132,7 +132,7 @@ public class NetworkIntentService extends IntentService {
                 sleep(HandlerPosition.SERVER_CONNECT_TIMEOUT);
                 mHandler.sendEmptyMessage(HandlerPosition.SOCKET_CONNECT_ERROR);
             } catch (InterruptedException e1) {
-            } catch (NullPointerException e2) {
+                e1.printStackTrace();
             }
 
         }
@@ -209,20 +209,20 @@ public class NetworkIntentService extends IntentService {
     }
 
     private synchronized void readData() {
-        Util.log(tag,"readData..");
+        Util.log(tag, "readData..");
         while (runFlag) {
             try {
                 //바이트 크기는 넉넉하게 잡아서 할 것.
                 //가변적으로 못바꾸니 넉넉하게 잡고 알아서 fix 하기
                 byte[] headerData = new byte[BytePosition.HEADER_SIZE];
-                Util.log(tag,"readData while.." + socket.isConnected());
+                Util.log(tag, "readData while.." + socket.isConnected());
                 dis.read(headerData);
                 byte[] dataLengthBuf = new byte[4];
                 for (int i = 0; i < 4; i++) {
                     dataLengthBuf[i] = headerData[i + BytePosition.HEADER_DATALENGTH];
                 }
                 int dataLength = Func.byteToInteger(Util.byteReverse(dataLengthBuf), 4);
-                Util.log(tag,"read length." + dataLength);
+                Util.log(tag, "read length." + dataLength);
                 byte[] bodyData = new byte[dataLength];
                 dis.read(bodyData);
 
@@ -250,12 +250,12 @@ public class NetworkIntentService extends IntentService {
                 }
             } catch (IOException e) {
                 e.printStackTrace();
-                Util.log(tag,"read error..");
+                Util.log(tag, "read error..");
                 runFlag = false;
                 mHandler.sendEmptyMessage(HandlerPosition.READ_SERVER_DISCONNECT_ERROR);
             } catch (InterruptedException e) {
                 e.printStackTrace();
-                Util.log(tag,"read error2..");
+                Util.log(tag, "read error2..");
             }
 
         }

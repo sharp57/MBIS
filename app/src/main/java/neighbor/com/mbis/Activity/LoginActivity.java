@@ -18,6 +18,8 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import org.apache.log4j.Logger;
+
 import java.util.Calendar;
 import java.util.TimeZone;
 
@@ -68,6 +70,7 @@ public class LoginActivity extends AppCompatActivity {
     boolean socketFlag = false;
 
     public static NetworkIntentService mService;
+    private static String TAG = "LoginActivity";
 
 
     @Override
@@ -80,7 +83,7 @@ public class LoginActivity extends AppCompatActivity {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             // CALL_PHONE 권한을 Android OS 에 요청한다.
-            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.WRITE_EXTERNAL_STORAGE}, 100);
+            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 100);
         }
 
         mService = new NetworkIntentService(NetworkUtil.IP, NetworkUtil.PORT, mHandler);
@@ -88,6 +91,8 @@ public class LoginActivity extends AppCompatActivity {
         Intent intent = getIntent();
         //그냥 접속
         if (intent.getBooleanExtra("flag", true)) {
+            Logger.getLogger(TAG).debug("");
+
             mv.setDeviceID(setting.getLong("deviceID", 0));
             startService(new Intent(LoginActivity.this, mService.getClass()));
             bindService(new Intent(LoginActivity.this, mService.getClass()), mConnection, Context.BIND_AUTO_CREATE);
@@ -132,9 +137,7 @@ public class LoginActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
 
-        if (setting.getBoolean("chk_auto", false)
-                && socketFlag
-                ) {
+        if (setting.getBoolean("chk_auto", false) && socketFlag) {
             getPhone.setText(setting.getString("ID", ""));
             getBusNum.setText(setting.getString("PW", ""));
             chk_auto.setChecked(true);
@@ -182,9 +185,9 @@ public class LoginActivity extends AppCompatActivity {
                             , 0x00, 0x00, 0x00, 0x00
                     };
                     try {
-                        h = Util.setHeader(h,LoginActivity.this,(byte)0x01,(byte)0x11, new byte[]{0x00, 0x01}, new byte[]{0x01, 0x02}, new byte[]{0x00, 0x00, 0x00, 0x00});
+                        h = Util.setHeader(h, LoginActivity.this, (byte) 0x01, (byte) 0x11, new byte[]{0x00, 0x01}, new byte[]{0x01, 0x02}, new byte[]{0x00, 0x00, 0x00, 0x00});
                         Data.writeData = Util.makeHeader(h, headerBuf);
-                    }catch(Exception e){
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
                     sendData();
@@ -227,26 +230,26 @@ public class LoginActivity extends AppCompatActivity {
                 // test // 2017.02.08 // 읨의로 화면 이동
                 startActivity(new Intent(getApplicationContext(), SelectMenuActivity.class));
                 finish();
-                if(false)   // test // 실 사용시 이 한 라인만 삭제 // 2016.02.08
-                if (getPhone.length() == 8 || getPhone.length() == 7) {
-                    if (getBusNum.length() > 0 && getBusNum.length() < 5) {
+                if (false)   // test // 실 사용시 이 한 라인만 삭제 // 2016.02.08
+                    if (getPhone.length() == 8 || getPhone.length() == 7) {
+                        if (getBusNum.length() > 0 && getBusNum.length() < 5) {
 
-                        byte[] op = new byte[]{0x03};
-                        mv.setDataLength(BytePosition.BODY_USER_CERTIFICATION_SIZE - BytePosition.HEADER_SIZE);
-                        h.setOp_code(op);
-                        Setter.setHeader();
-                        byte[] otherBusInfo = makeBodyOtherBusInfo();
-                        Util.makeHeader(h, headerBuf);
+                            byte[] op = new byte[]{0x03};
+                            mv.setDataLength(BytePosition.BODY_USER_CERTIFICATION_SIZE - BytePosition.HEADER_SIZE);
+                            h.setOp_code(op);
+                            Setter.setHeader();
+                            byte[] otherBusInfo = makeBodyOtherBusInfo();
+                            Util.makeHeader(h, headerBuf);
 
-                        Data.writeData = Func.mergyByte(headerBuf, otherBusInfo);
+                            Data.writeData = Func.mergyByte(headerBuf, otherBusInfo);
 
-                        sendData();
+                            sendData();
+                        } else {
+                            Toast.makeText(getApplicationContext(), "차량번호를 다시 한 번 확인 해 주세요.", Toast.LENGTH_SHORT).show();
+                        }
                     } else {
-                        Toast.makeText(getApplicationContext(), "차량번호를 다시 한 번 확인 해 주세요.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), "전화번호를 다시 한 번 확인 해 주세요.", Toast.LENGTH_SHORT).show();
                     }
-                } else {
-                    Toast.makeText(getApplicationContext(), "전화번호를 다시 한 번 확인 해 주세요.", Toast.LENGTH_SHORT).show();
-                }
                 break;
             case R.id.cheat:
 //                sNetwork.close();
@@ -401,8 +404,8 @@ public class LoginActivity extends AppCompatActivity {
         for (int j = 0; j < Data.writeData.length; j++) {
             dd = dd + String.format("%02X ", Data.writeData[j]);
         }
-        eventFileManager.saveData("\n(" + (mv.getSendYear()-2000) + "." + mv.getSendMonth() + "." + mv.getSendDay() +
-                " - " + (mv.getSendHour()+9) + ":" + mv.getSendMin() + ":" + mv.getSendSec() +
+        eventFileManager.saveData("\n(" + (mv.getSendYear() - 2000) + "." + mv.getSendMonth() + "." + mv.getSendDay() +
+                " - " + (mv.getSendHour() + 9) + ":" + mv.getSendMin() + ":" + mv.getSendSec() +
                 ")\n[SEND:" + Data.writeData.length + "] - " + dd);
         Log.e("[sendData]", "111");
         mService.writeData();
