@@ -129,8 +129,11 @@ public class LoginActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
+        Logger.getLogger(TAG).debug("onDestroy ");
+        mService.close();
         unbindService(mConnection);
+        super.onDestroy();
+        
     }
 
     @Override
