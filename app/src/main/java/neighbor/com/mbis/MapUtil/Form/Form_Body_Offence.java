@@ -1,6 +1,6 @@
-package neighbor.com.mbis.MapUtil.Form;
+package neighbor.com.mbis.maputil.form;
 
-import neighbor.com.mbis.Function.Func;
+import neighbor.com.mbis.function.Func;
 
 /**
  * Created by user on 2016-09-12.

@@ -1,4 +1,4 @@
-package neighbor.com.mbis.Activity;
+package neighbor.com.mbis.activity;
 
 import android.Manifest;
 import android.content.ContentValues;
@@ -15,7 +15,6 @@ import android.os.Environment;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -26,7 +25,6 @@ import android.widget.Toast;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -34,13 +32,12 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.TimeZone;
 
-import neighbor.com.mbis.CSV_Util.RouteStationUtil;
-import neighbor.com.mbis.CSV_Util.RouteUtil;
-import neighbor.com.mbis.CSV_Util.StationUtil;
-import neighbor.com.mbis.Database.DBManager;
-import neighbor.com.mbis.MapUtil.Util;
-import neighbor.com.mbis.MapUtil.Value.MapVal;
-import neighbor.com.mbis.MapUtil.Value.RouteBuffer;
+import neighbor.com.mbis.csv.RouteStationUtil;
+import neighbor.com.mbis.csv.RouteUtil;
+import neighbor.com.mbis.csv.StationUtil;
+import neighbor.com.mbis.database.DBManager;
+import neighbor.com.mbis.maputil.value.MapVal;
+import neighbor.com.mbis.maputil.value.RouteBuffer;
 import neighbor.com.mbis.R;
 
 public class SelectRouteActivity extends AppCompatActivity {

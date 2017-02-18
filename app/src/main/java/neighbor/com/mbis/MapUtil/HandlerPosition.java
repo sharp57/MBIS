@@ -1,4 +1,4 @@
-package neighbor.com.mbis.MapUtil;
+package neighbor.com.mbis.maputil;
 
 /**
  * Created by user on 2016-09-21.
@@ -6,7 +6,7 @@ package neighbor.com.mbis.MapUtil;
 public class HandlerPosition {
 
     public final static int BUSTIMER_30SEC = 1000 * 30;
-    public final static int SERVER_CONNECT_TIMEOUT = 3000 / 2;
+    public final static int SERVER_CONNECT_TIMEOUT = 3000;
     public final static int SERVER_READ_TIMEOUT = 1000 * 60 * 5;
 
 

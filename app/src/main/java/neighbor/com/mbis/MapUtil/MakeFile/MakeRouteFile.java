@@ -1,4 +1,4 @@
-package neighbor.com.mbis.MapUtil.MakeFile;
+package neighbor.com.mbis.maputil.makefile;
 
 import android.os.Environment;
 
@@ -6,11 +6,11 @@ import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 
-import neighbor.com.mbis.Function.FileManager;
-import neighbor.com.mbis.Function.Func;
-import neighbor.com.mbis.MapUtil.BytePosition;
-import neighbor.com.mbis.MapUtil.Data;
-import neighbor.com.mbis.MapUtil.Value.MapVal;
+import neighbor.com.mbis.function.FileManager;
+import neighbor.com.mbis.function.Func;
+import neighbor.com.mbis.maputil.BytePosition;
+import neighbor.com.mbis.maputil.Data;
+import neighbor.com.mbis.maputil.value.MapVal;
 
 
 /**

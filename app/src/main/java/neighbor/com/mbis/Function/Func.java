@@ -1,4 +1,4 @@
-package neighbor.com.mbis.Function;
+package neighbor.com.mbis.function;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -86,7 +86,7 @@ public class Func {
     }
 
     public static int byteToInteger(byte[] bytes) {
-        ByteBuffer buffer = ByteBuffer.allocate(Integer.BYTES);
+        ByteBuffer buffer = ByteBuffer.allocate(bytes.length);
         buffer.put(bytes);
         buffer.flip();//need flip
         return buffer.getInt();

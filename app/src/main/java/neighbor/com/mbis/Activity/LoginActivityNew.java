@@ -21,35 +21,41 @@ import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.Toast;
 
+import com.google.android.gms.common.api.GoogleApiClient;
+
+import org.apache.log4j.Logger;
+
+import java.io.IOException;
 import java.util.Calendar;
 import java.util.TimeZone;
 
+import neighbor.com.mbis.R;
 import neighbor.com.mbis.function.FileManager;
 import neighbor.com.mbis.function.Func;
 import neighbor.com.mbis.function.Setter;
 import neighbor.com.mbis.maputil.BytePosition;
 import neighbor.com.mbis.maputil.Data;
-import neighbor.com.mbis.maputil.form.Form_Header;
 import neighbor.com.mbis.maputil.HandlerPosition;
+import neighbor.com.mbis.maputil.OPUtil;
+import neighbor.com.mbis.maputil.Receive_OP;
+import neighbor.com.mbis.maputil.Util;
+import neighbor.com.mbis.maputil.form.Form_Header;
 import neighbor.com.mbis.maputil.makefile.MakeRouteFile;
 import neighbor.com.mbis.maputil.makefile.MakeRouteStationFile;
 import neighbor.com.mbis.maputil.makefile.MakeStationFile;
-import neighbor.com.mbis.maputil.OPUtil;
-import neighbor.com.mbis.maputil.Receive_OP;
 import neighbor.com.mbis.maputil.thread.FTPInfoThread;
 import neighbor.com.mbis.maputil.thread.FTPThread;
-import neighbor.com.mbis.maputil.Util;
 import neighbor.com.mbis.maputil.value.MapVal;
 import neighbor.com.mbis.network.NetworkIntentService;
 import neighbor.com.mbis.network.NetworkUtil;
-import neighbor.com.mbis.R;
+import neighbor.com.mbis.network.SocketConnect;
 import neighbor.com.mbis.util.MbisUtil;
 
 /**
  * Created by 권오철 on 2017-02-08.
  */
 
-public class LoginActivityNew extends Activity implements View.OnClickListener{
+public class LoginActivityNew extends Activity implements View.OnClickListener, MessageHandler.SmartServiceHandlerInterface {
 
 
     //통신 변수들
@@ -74,7 +80,11 @@ public class LoginActivityNew extends Activity implements View.OnClickListener{
     private Button authButton;
     private ImageView key12;
 
+    private Button key01;
     private RadioButton radioButton01, radioButton02;
+    private static String TAG = LoginActivityNew.class.getSimpleName();
+    private MessageHandler handler = new MessageHandler(this);
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,16 +97,31 @@ public class LoginActivityNew extends Activity implements View.OnClickListener{
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             // CALL_PHONE 권한을 Android OS 에 요청한다.
-            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.WRITE_EXTERNAL_STORAGE}, 100);
+            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 100);
         }
 
-        if(mService != null) {
-            mService.close();   // 2017.02.13
-            mService.stopSelf();
-        }
-        mService = new NetworkIntentService(NetworkUtil.IP, NetworkUtil.PORT, mHandler);
+//        if (mService != null) {
+//            mService.close();   // 2017.02.13
+//            mService.stopSelf();
+//        }
+//        mService = new NetworkIntentService(NetworkUtil.IP, NetworkUtil.PORT, mHandler);
+//        initConnection();
 
-        initConnection();
+
+//        byte[] op = new byte[]{0x03};
+//        mv.setDataLength(BytePosition.BODY_USER_CERTIFICATION_SIZE - BytePosition.HEADER_SIZE);
+//        h.setOp_code(op);
+//
+//        Setter.setHeader();
+//        h.setDeviceID(Util.hexStringToByteArray(Util.getDeviceID(this)));
+//        byte[] otherBusInfo = makeBodyOtherBusInfo();
+//        headerBuf = Util.makeHeader(h, headerBuf);
+//
+//        Data.writeData = Func.mergyByte(headerBuf, otherBusInfo);
+
+
+
+
 
         Intent intent = getIntent();
         //그냥 접속
@@ -120,30 +145,34 @@ public class LoginActivityNew extends Activity implements View.OnClickListener{
         eventFileManager = new FileManager(packetFileName);
 
         setInit();
+
     }
-    private void setInit(){
+
+    private void setInit() {
         authButton = (Button) findViewById(R.id.authButton);
         key12 = (ImageView) findViewById(R.id.key12);
         noButton = (EditText) findViewById(R.id.noButton);
         busNumButton = (EditText) findViewById(R.id.busNumButton);
         radioButton01 = (RadioButton) findViewById(R.id.option1);
         radioButton02 = (RadioButton) findViewById(R.id.option2);
-
+        key01 = (Button) findViewById(R.id.key01);
 
 
         noButton.setText("12341234");
         busNumButton.setText("5678");
 
         authButton.setOnClickListener(this);
+        key01.setOnClickListener(this);
         key12.setOnClickListener(this);
+
 
         radioButton01.setOnClickListener(optionOnClickListener);
         radioButton02.setOnClickListener(optionOnClickListener);
         radioButton01.setChecked(true);
 
-        if( MbisUtil.getPreferences(this, "mode")){
+        if (MbisUtil.getPreferences(this, "mode")) {
             radioButton02.setChecked(true);
-        }else{
+        } else {
             radioButton01.setChecked(true);
         }
     }
@@ -152,10 +181,10 @@ public class LoginActivityNew extends Activity implements View.OnClickListener{
             = new RadioButton.OnClickListener() {
 
         public void onClick(View v) {
-            if(radioButton02.isChecked() == true){
-                MbisUtil.setPreferences(LoginActivityNew.this,"mode",true);
-            }else{
-                MbisUtil.setPreferences(LoginActivityNew.this,"mode",false);
+            if (radioButton02.isChecked() == true) {
+                MbisUtil.setPreferences(LoginActivityNew.this, "mode", true);
+            } else {
+                MbisUtil.setPreferences(LoginActivityNew.this, "mode", false);
             }
 //            Toast.makeText(
 //                    LoginActivityNew.this,
@@ -165,10 +194,11 @@ public class LoginActivityNew extends Activity implements View.OnClickListener{
 
         }
     };
+
     @Override
     public void onClick(View v) {
 
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.authButton:
 //                startActivity(new Intent(LoginActivityNew.this, SelectMenuActivity.class));
 //                if(mService.getSocket()  == null){
@@ -194,13 +224,39 @@ public class LoginActivityNew extends Activity implements View.OnClickListener{
 
                         Data.writeData = Func.mergyByte(headerBuf, otherBusInfo);
 
-                        sendData();
+//                        sendData();
+
+                        SocketConnect socketConnect = new SocketConnect();
+                        socketConnect.setSocket(NetworkUtil.IP, NetworkUtil.PORT, handler ,  Data.writeData);
+                        socketConnect.start();
                     } else {
                         Toast.makeText(getApplicationContext(), "차량번호를 다시 한 번 확인 해 주세요.", Toast.LENGTH_SHORT).show();
                     }
                 } else {
                     Toast.makeText(getApplicationContext(), "전화번호를 다시 한 번 확인 해 주세요.", Toast.LENGTH_SHORT).show();
                 }
+                break;
+            case R.id.key01:    // test booting info
+
+                try {
+                    h = Util.setHeader(h, LoginActivityNew.this, (byte) 0x02, (byte) 0x11, new byte[]{0x00, 0x01}, new byte[]{0x01, 0x02}, new byte[]{0x00, 0x00, 0x00});
+                    Data.writeData = Util.makeHeader(h, headerBuf);
+
+                    // 0x11
+                    byte[] op = new byte[]{0x11};
+                    mv.setDataLength(BytePosition.BODY_BOOT_INFO_SIZE - BytePosition.HEADER_SIZE);
+                    h.setOp_code(op);
+                    Setter.setHeader();
+                    h.setDeviceID(Util.hexStringToByteArray(Util.getDeviceID(LoginActivityNew.this)));
+                    byte[] otherBusInfo = makeBodyBusBootingInfo();
+                    headerBuf = Util.makeHeader(h, headerBuf);
+
+                    Data.writeData = Func.mergyByte(headerBuf, otherBusInfo);
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                sendData();
                 break;
             case R.id.key12:
                 break;
@@ -210,10 +266,10 @@ public class LoginActivityNew extends Activity implements View.OnClickListener{
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        unbindService(mConnection);
+//        unbindService(mConnection);
 
         // 2017.02.14
-        if(mService != null) {
+        if (mService != null) {
             mService.close();
             mService.stopSelf();
         }
@@ -236,6 +292,7 @@ public class LoginActivityNew extends Activity implements View.OnClickListener{
 //            finish();
 //            startActivity(new Intent(getApplicationContext(), SelectMenuActivity.class));
 //        }
+
     }
 
     Handler mHandler = new Handler() {
@@ -264,7 +321,7 @@ public class LoginActivityNew extends Activity implements View.OnClickListener{
                             , 0x00, 0x00, 0x00, 0x00
                     };
                     try {
-                        h = Util.setHeader(h,LoginActivityNew.this,(byte)0x02,(byte)0x11, new byte[]{0x00, 0x01}, new byte[]{0x01, 0x02}, new byte[]{0x00, 0x00, 0x00});
+                        h = Util.setHeader(h, LoginActivityNew.this, (byte) 0x02, (byte) 0x11, new byte[]{0x00, 0x01}, new byte[]{0x01, 0x02}, new byte[]{0x00, 0x00, 0x00});
                         Data.writeData = Util.makeHeader(h, headerBuf);
 
 //                        // 0x11
@@ -279,17 +336,17 @@ public class LoginActivityNew extends Activity implements View.OnClickListener{
 
                         Data.writeData = Func.mergyByte(headerBuf, otherBusInfo);
 
-                    }catch(Exception e){
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
-                    sendData();
+//                    sendData();
                     break;
                 //소켓 연결 실패!
                 case HandlerPosition.SOCKET_CONNECT_ERROR:
                     socketFlag = false;
 //                    Toast.makeText(getApplicationContext(), "SOCKET_CONNECT_ERROR", Toast.LENGTH_SHORT).show();
                     retryConnection();
-                break;
+                    break;
                 //연결 중 서버가 죽었을 때
                 case HandlerPosition.READ_SERVER_DISCONNECT_ERROR:
 //                    Toast.makeText(getApplicationContext(), "READ_SERVER_DISCONNECT_ERROR", Toast.LENGTH_SHORT).show();
@@ -338,24 +395,24 @@ public class LoginActivityNew extends Activity implements View.OnClickListener{
         String time = String.format("%02d", ((cal.get(Calendar.HOUR_OF_DAY)) + 9)) + String.format("%02d", (cal.get(Calendar.MINUTE))) + String.format("%02d", cal.get(Calendar.SECOND));
         byte[] dt = Util.byteReverse(Func.stringToByte(date + time));
         byte[] dt2 = Util.byteReverse(Func.stringToByte(date + time));
-        byte[] gpsx = Util.byteReverse(Func.longToByte(3712345678l,4));
-        byte[] gpsy = Util.byteReverse(Func.longToByte(12812345678l,4));
-        byte[] angle = Util.byteReverse(Func.integerToByte(90,2));
-        byte[] speed = Util.byteReverse(Func.integerToByte(50,2));
-        byte[] busnum = Util.byteReverse(Func.integerToByte(1,2));
-        byte[] route = Util.byteReverse(Func.integerToByte(2,2));
-        byte[] dev = Util.byteReverse(Func.integerToByte(3,4));
+        byte[] gpsx = Util.byteReverse(Func.longToByte(3712345678l, 4));
+        byte[] gpsy = Util.byteReverse(Func.longToByte(12812345678l, 4));
+        byte[] angle = Util.byteReverse(Func.integerToByte(90, 2));
+        byte[] speed = Util.byteReverse(Func.integerToByte(50, 2));
+        byte[] busnum = Util.byteReverse(Func.integerToByte(1, 2));
+        byte[] route = Util.byteReverse(Func.integerToByte(2, 2));
+        byte[] dev = Util.byteReverse(Func.integerToByte(3, 4));
 
 //        byte[] dt = Func.stringToByte(date + time);
 //        byte[] phone = Func.integerToByte(Integer.parseInt(noButton.getText().toString()), 4);
 //        byte[] bus = Func.integerToByte(Integer.parseInt(busNumButton.getText().toString()), 2);
 //        byte[] res = Func.integerToByte(mv.getReservation(), 4);
 
-        return Func.mergyByte(Func.mergyByte(Func.mergyByte(Func.mergyByte(Func.mergyByte(dt, dt2), Func.mergyByte(gpsx, gpsy)),Func.mergyByte(angle, speed)),Func.mergyByte(busnum, route)), dev) ;
+        return Func.mergyByte(Func.mergyByte(Func.mergyByte(Func.mergyByte(Func.mergyByte(dt, dt2), Func.mergyByte(gpsx, gpsy)), Func.mergyByte(angle, speed)), Func.mergyByte(busnum, route)), dev);
     }
 
 
-//    private void retryConnection() {
+    //    private void retryConnection() {
 ////        cTimer.cancel();
 //        mService.close();
 //        mService.stopSelf();
@@ -368,7 +425,7 @@ public class LoginActivityNew extends Activity implements View.OnClickListener{
 //    }
     private void retryConnection() {
 //        cTimer.cancel();
-        if(mService != null) {
+        if (mService != null) {
             mService.close();   // 2017.02.10
             mService.stopSelf();
 //            mService = new NetworkIntentService(NetworkUtil.IP, NetworkUtil.PORT, mHandler);
@@ -380,24 +437,27 @@ public class LoginActivityNew extends Activity implements View.OnClickListener{
             bindService(new Intent(LoginActivityNew.this, mService.getClass()), mConnection, Context.BIND_AUTO_CREATE);
         }
     }
+
     private void initConnection() {
 
-        if(mService != null) {
+        if (mService != null) {
 //            mService.close();   // 2017.02.10
 //            mService.stopSelf();
-
+            Logger.getLogger(TAG).debug("mService != null");
             if (isServiceRunningCheck() == true) {
                 unbindService(mConnection);
             }
-            startService(new Intent(LoginActivityNew.this, mService.getClass()));
-            bindService(new Intent(LoginActivityNew.this, mService.getClass()), mConnection, Context.BIND_AUTO_CREATE);
+            Intent intent = new Intent(LoginActivityNew.this, mService.getClass());
+            startService(intent);
+            bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
         }
     }
+
     public boolean isServiceRunningCheck() {
         ActivityManager manager = (ActivityManager) this.getSystemService(Activity.ACTIVITY_SERVICE);
         for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
             if ("neighbor.com.mbis.NetworkIntentService".equals(service.service.getClassName())) {
-                MbisUtil.log(this,"isServiceRunningCheck is true..");
+                MbisUtil.log(this, "isServiceRunningCheck is true..");
                 return true;
             }
         }
@@ -417,12 +477,20 @@ public class LoginActivityNew extends Activity implements View.OnClickListener{
         for (int j = 0; j < Data.writeData.length; j++) {
             dd = dd + String.format("%02X ", Data.writeData[j]);
         }
-        eventFileManager.saveData("\n(" + (mv.getSendYear()-2000) + "." + mv.getSendMonth() + "." + mv.getSendDay() +
-                " - " + (mv.getSendHour()+9) + ":" + mv.getSendMin() + ":" + mv.getSendSec() +
+        eventFileManager.saveData("\n(" + (mv.getSendYear() - 2000) + "." + mv.getSendMonth() + "." + mv.getSendDay() +
+                " - " + (mv.getSendHour() + 9) + ":" + mv.getSendMin() + ":" + mv.getSendSec() +
                 ")\n[SEND:" + Data.writeData.length + "] - " + dd);
         Log.e("[sendData]", "111");
         mService.writeData();
     }
+
+//    private void sendData() {
+//        String dd = "";
+//        for (int j = 0; j < Data.writeData.length; j++) {
+//            dd = dd + String.format("%02X ", Data.writeData[j]);
+//        }
+//
+//    }
 
     private synchronized void recvData(byte opCode) {
         String dd = "";
@@ -450,7 +518,7 @@ public class LoginActivityNew extends Activity implements View.OnClickListener{
                 new MakeStationFile();
             } else if (opCode == OPUtil.OP_ROUTE_STATION_DATA_INFO) {
                 new MakeRouteStationFile();
-            } else if(opCode == OPUtil.OP_ACK) {    // 2017.02.13   // 로그인 송신이 되었다고 ack가 오면 버튼 활성화
+            } else if (opCode == OPUtil.OP_ACK) {    // 2017.02.13   // 로그인 송신이 되었다고 ack가 오면 버튼 활성화
                 setAuthButtonEnable(true);
             }
 //            else if(Data.readFTPData != null) {
@@ -470,7 +538,7 @@ public class LoginActivityNew extends Activity implements View.OnClickListener{
     }
 
     // 2017.02.13 // 로그인 버튼 활성화 함수
-    private void setAuthButtonEnable(boolean value){
+    private void setAuthButtonEnable(boolean value) {
         authButton.setEnabled(value);
     }
 
@@ -484,7 +552,7 @@ public class LoginActivityNew extends Activity implements View.OnClickListener{
             finish();
 //            startActivity(new Intent(getApplicationContext(), SelectRouteActivity.class));
             startActivity(new Intent(getApplicationContext(), SelectMenuActivity.class));
-            Toast.makeText(getApplicationContext(), "[인증 성공] from. Server : " + mv.getDeviceID(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "[인증 성공] from. Server : " + Func.byteToLong(Util.byteReverse(Func.longToByte(mv.getDeviceID(), 8))), Toast.LENGTH_SHORT).show();
             finish();   // 2017.02.13
         }
     }
@@ -508,14 +576,94 @@ public class LoginActivityNew extends Activity implements View.OnClickListener{
     //서비스 커넥션 선언.
     private ServiceConnection mConnection = new ServiceConnection() {
         // Called when the connection with the service is established
+        @Override
         public void onServiceConnected(ComponentName className, IBinder service) {
             NetworkIntentService.MainServiceBinder binder = (NetworkIntentService.MainServiceBinder) service;
             mService = binder.getService(); //서비스 받아옴
         }
 
         // Called when the connection with the service disconnects unexpectedly
+        @Override
         public void onServiceDisconnected(ComponentName className) {
-//            mService = null;
+            mService = null;
         }
     };
+
+
+    @Override
+    public void handleServiceMessage(Message message) {
+
+        switch (message.what) {
+            case HandlerPosition.DATA_READ_SUCESS:
+
+                recvData(Data.readData[BytePosition.HEADER_OPCODE]);
+                break;
+
+            case HandlerPosition.TIME_CHANGE:
+                break;
+            //소켓 연결 성공!
+            case HandlerPosition.SOCKET_CONNECT_SUCCESS:
+                socketFlag = true;
+//                    Toast.makeText(getApplicationContext(), "SOCKET_CONNECT_SUCCESS", Toast.LENGTH_SHORT).show();
+                retryCountdownTimer();
+                Data.writeData
+                        = new byte[]{
+                        0x01, 0x11, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x00, 0x00, 0x00, (byte) 0x32
+                        , 0x31, 0x36, 0x31, 0x30, 0x32, 0x37, 0x31, 0x34, 0x33, 0x36, 0x30, 0x30
+                        , 0x31, 0x36, 0x31, 0x30, 0x32, 0x37, 0x31, 0x34, 0x33, 0x36, 0x30, 0x30
+                        , 0x00, 0x39, 0x36, 0x73, 0x00, (byte) 0xC1, (byte) 0xF9, 0x7F, 0x00, 0x00, 0x00, 0x00
+                        , 0x00, 0x01, 0x00, 0x01, 0x00, 0x01, 0x00, 0x01, 0x00, 0x01
+                        , 0x00, 0x00, 0x00, 0x00
+                };
+                try {
+                    h = Util.setHeader(h, LoginActivityNew.this, (byte) 0x02, (byte) 0x11, new byte[]{0x00, 0x01}, new byte[]{0x01, 0x02}, new byte[]{0x00, 0x00, 0x00});
+                    Data.writeData = Util.makeHeader(h, headerBuf);
+
+//                        // 0x11
+
+                    byte[] op = new byte[]{0x11};
+                    mv.setDataLength(BytePosition.BODY_BOOT_INFO_SIZE - BytePosition.HEADER_SIZE);
+                    h.setOp_code(op);
+                    Setter.setHeader();
+                    h.setDeviceID(Util.hexStringToByteArray(Util.getDeviceID(LoginActivityNew.this)));
+                    byte[] otherBusInfo = makeBodyBusBootingInfo();
+                    headerBuf = Util.makeHeader(h, headerBuf);
+
+                    Data.writeData = Func.mergyByte(headerBuf, otherBusInfo);
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+//                    sendData();
+                break;
+            //소켓 연결 실패!
+            case HandlerPosition.SOCKET_CONNECT_ERROR:
+                socketFlag = false;
+//                    Toast.makeText(getApplicationContext(), "SOCKET_CONNECT_ERROR", Toast.LENGTH_SHORT).show();
+                retryConnection();
+                break;
+            //연결 중 서버가 죽었을 때
+            case HandlerPosition.READ_SERVER_DISCONNECT_ERROR:
+//                    Toast.makeText(getApplicationContext(), "READ_SERVER_DISCONNECT_ERROR", Toast.LENGTH_SHORT).show();
+                retryConnection();
+                break;
+            //데이터 전송이 실패했을 때
+            case HandlerPosition.WRITE_SERVER_DISCONNECT_ERROR:
+//                    Toast.makeText(getApplicationContext(), "WRITE_SERVER_DISCONNECT_ERROR", Toast.LENGTH_SHORT).show();
+                retryConnection();
+                break;
+            //잘못된 데이터가 왔을 때
+            case HandlerPosition.READ_DATA_ERROR:
+//                    Toast.makeText(getApplicationContext(), "READ_DATA_ERROR", Toast.LENGTH_SHORT).show();
+                retryConnection();
+                retryCountdownTimer();
+                break;
+            //타임아웃!
+            case HandlerPosition.READ_TIMEOUT_ERROR:
+//                    Toast.makeText(getApplicationContext(), "READ_TIMEOUT_ERROR", Toast.LENGTH_SHORT).show();
+                retryConnection();
+                retryCountdownTimer();
+                break;
+        }
+    }
 }

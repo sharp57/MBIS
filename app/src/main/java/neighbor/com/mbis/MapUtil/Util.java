@@ -1,4 +1,4 @@
-package neighbor.com.mbis.MapUtil;
+package neighbor.com.mbis.maputil;
 
 import android.content.Context;
 import android.os.Environment;
@@ -9,10 +9,15 @@ import android.widget.Toast;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
-import neighbor.com.mbis.Activity.LoginActivity;
-import neighbor.com.mbis.MapUtil.Form.Form_Header;
+import neighbor.com.mbis.function.Func;
+import neighbor.com.mbis.maputil.form.Form_Header;
 
 /**
  * Created by 권오철 on 2017-02-06.
@@ -68,21 +73,72 @@ public class Util {
 
         return h;
     }
+//    static public byte[] makeHeader(Form_Header h, byte[] headerBuf) {
+//        headerBuf = new byte[BytePosition.HEADER_SIZE];
+//
+//        headerBuf = putHeader(headerBuf, h.getVersion(), BytePosition.HEADER_VERSION_START);
+//        headerBuf = putHeader(headerBuf, h.getOp_code(), BytePosition.HEADER_OPCODE);
+//        headerBuf = putHeader(headerBuf, h.getSr_cnt(), BytePosition.HEADER_SRCNT);
+//        headerBuf = putHeader(headerBuf, h.getDeviceID(), BytePosition.HEADER_DEVICEID);
+//        headerBuf = putHeader(headerBuf, h.getLocalCode(), BytePosition.HEADER_LOCALCODE);
+//        headerBuf = putHeader(headerBuf, h.getDataLength(), BytePosition.HEADER_DATALENGTH);
+//
+//        return headerBuf;
+//    }
     static public byte[] makeHeader(Form_Header h, byte[] headerBuf) {
         headerBuf = new byte[BytePosition.HEADER_SIZE];
 
-        putHeader(headerBuf, h.getVersion(), BytePosition.HEADER_VERSION_START);
-        putHeader(headerBuf, h.getOp_code(), BytePosition.HEADER_OPCODE);
-        putHeader(headerBuf, h.getSr_cnt(), BytePosition.HEADER_SRCNT);
-        putHeader(headerBuf, h.getDeviceID(), BytePosition.HEADER_DEVICEID);
-        putHeader(headerBuf, h.getLocalCode(), BytePosition.HEADER_LOCALCODE);
-        putHeader(headerBuf, h.getDataLength(), BytePosition.HEADER_DATALENGTH);
+
+        headerBuf = putHeader(headerBuf, h.getVersion(), BytePosition.HEADER_VERSION_START);
+        headerBuf = putHeader(headerBuf, h.getOp_code(), BytePosition.HEADER_OPCODE);
+        headerBuf = putHeader(headerBuf, byteReverse(h.getSr_cnt()), BytePosition.HEADER_SRCNT);
+        headerBuf = putHeader(headerBuf, byteReverse(h.getDeviceID()), BytePosition.HEADER_DEVICEID);
+        headerBuf = putHeader(headerBuf, byteReverse(h.getLocalCode()), BytePosition.HEADER_LOCALCODE);
+        headerBuf = putHeader(headerBuf, byteReverse(h.getDataLength()), BytePosition.HEADER_DATALENGTH);
 
         return headerBuf;
     }
 
-    static public void putHeader(byte[] headerBuf, byte[] b, int position) {
+    public static byte[] byteReverse(byte[] value){
+        byte[] bytes = new byte[value.length];
+        Byte[] byteObjects = new Byte[bytes.length];
+
+        int i=0;
+        // Associating Byte array values with bytes. (byte[] to Byte[])
+        for(byte b: value)
+            byteObjects[i++] = b;  // Autoboxing.
+
+        List<Byte> byteList = Arrays.asList(byteObjects);
+        Collections.reverse(byteList);
+
+        int j=0;
+        // Unboxing byte values. (Byte[] to byte[])
+        for(Byte b: byteObjects)
+            bytes[j++] = b.byteValue();
+
+        return bytes;
+    }
+    private static byte[] shortToByte(short x){
+        byte[] ret = new byte[2];
+        ret[1] = (byte)(x & 0xff);
+        ret[0] = (byte)((x >> 8) & 0xff);
+        return ret;
+    }
+    public static short reverse02(byte[] x) {
+        return ByteBuffer.wrap(x).order(ByteOrder.LITTLE_ENDIAN).getShort();
+    }
+    public static byte[] reverse04(int x) {
+        ByteBuffer byteBuffer = ByteBuffer.allocate(4);
+        byteBuffer.order(ByteOrder.LITTLE_ENDIAN);
+        System.out.println(Arrays.toString(byteBuffer.array()));
+        byteBuffer.putInt(x);
+        byte[] result = byteBuffer.array();
+        System.out.println(Arrays.toString(result));
+        return result;
+    }
+    static public byte[] putHeader(byte[] headerBuf, byte[] b, int position) {
         System.arraycopy(b, 0, headerBuf, position, b.length);
+        return headerBuf;
     }
     static public String getDeviceID(Context context){
         return android.provider.Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);

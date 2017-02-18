@@ -1,4 +1,4 @@
-package neighbor.com.mbis.MapUtil;
+package neighbor.com.mbis.maputil;
 
 /**
  * Created by user on 2016-09-01.
@@ -289,5 +289,7 @@ public class BytePosition {
 
 
 
+    // boot info
+    public final static int BODY_BOOT_INFO_SIZE = 62;
 
 }

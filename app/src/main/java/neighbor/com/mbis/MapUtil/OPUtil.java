@@ -1,4 +1,4 @@
-package neighbor.com.mbis.MapUtil;
+package neighbor.com.mbis.maputil;
 
 /**
  * Created by user on 2016-09-29.
@@ -28,7 +28,7 @@ public class OPUtil {
 
 
     public static boolean opCheck(byte[] op) {
-        if (op[0] == OP_ACK
+        return op[0] == OP_ACK
                 || op[0] == OP_NACK
                 || op[0] == OP_USER_CERTIFICATION
                 || op[0] == OP_USER_CERTIFICATION_AFTER_DEVICEID_SEND
@@ -44,13 +44,11 @@ public class OPUtil {
                 || op[0] == OP_STATION_DATA_INFO
                 || op[0] == OP_ROUTE_DATA_INFO
                 || op[0] == OP_FTP_INFO
-                || op[0] == OP_CONTROL_INFO
-                ) return true;
-        else return false;
+                || op[0] == OP_CONTROL_INFO;
     }
 
     public static boolean opCheck(byte op) {
-        if (op == OP_ACK
+        return op == OP_ACK
                 || op == OP_NACK
                 || op == OP_USER_CERTIFICATION
                 || op == OP_USER_CERTIFICATION_AFTER_DEVICEID_SEND
@@ -66,8 +64,6 @@ public class OPUtil {
                 || op == OP_STATION_DATA_INFO
                 || op == OP_ROUTE_DATA_INFO
                 || op == OP_FTP_INFO
-                || op == OP_CONTROL_INFO
-                ) return true;
-        else return false;
+                || op == OP_CONTROL_INFO;
     }
 }

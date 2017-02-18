@@ -1,4 +1,4 @@
-package neighbor.com.mbis.MapUtil.Value;
+package neighbor.com.mbis.maputil.value;
 
 /**
  * Created by user on 2016-09-02.
@@ -17,7 +17,7 @@ public class MapVal {
     }
 
     //헤더
-    private int version = 1, sr_cnt = 1, localCode = 2, dataLength;
+    private int version = 2, sr_cnt = 1, localCode = 2, dataLength;
     private long deviceID = 0;
 
     //기본정보

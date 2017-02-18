@@ -1,16 +1,13 @@
-package neighbor.com.mbis.MapUtil.Adapter;
+package neighbor.com.mbis.maputil.adapter;
 
 import android.content.Context;
-import android.media.Image;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.Collections;
 
 import neighbor.com.mbis.R;
 

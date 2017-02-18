@@ -1,4 +1,4 @@
-package neighbor.com.mbis.CSV_Util;
+package neighbor.com.mbis.csv;
 
 /**
  * Created by user on 2016-08-29.

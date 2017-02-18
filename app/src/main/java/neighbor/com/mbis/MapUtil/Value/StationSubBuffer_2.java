@@ -1,4 +1,4 @@
-package neighbor.com.mbis.MapUtil.Value;
+package neighbor.com.mbis.maputil.value;
 
 import java.util.ArrayList;
 
