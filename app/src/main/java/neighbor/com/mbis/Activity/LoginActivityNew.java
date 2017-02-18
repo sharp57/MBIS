@@ -21,11 +21,8 @@ import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.Toast;
 
-import com.google.android.gms.common.api.GoogleApiClient;
-
 import org.apache.log4j.Logger;
 
-import java.io.IOException;
 import java.util.Calendar;
 import java.util.TimeZone;
 
@@ -55,7 +52,7 @@ import neighbor.com.mbis.util.MbisUtil;
  * Created by 권오철 on 2017-02-08.
  */
 
-public class LoginActivityNew extends Activity implements View.OnClickListener, MessageHandler.SmartServiceHandlerInterface {
+public class LoginActivityNew extends Activity implements View.OnClickListener, neighbor.com.mbis.activity.MessageHandler.SmartServiceHandlerInterface {
 
 
     //통신 변수들
@@ -83,7 +80,7 @@ public class LoginActivityNew extends Activity implements View.OnClickListener, 
     private Button key01;
     private RadioButton radioButton01, radioButton02;
     private static String TAG = LoginActivityNew.class.getSimpleName();
-    private MessageHandler handler = new MessageHandler(this);
+    private neighbor.com.mbis.activity.MessageHandler handler = new neighbor.com.mbis.activity.MessageHandler(this);
 
 
     @Override
@@ -551,7 +548,7 @@ public class LoginActivityNew extends Activity implements View.OnClickListener, 
 //            cTimer.cancel();
             finish();
 //            startActivity(new Intent(getApplicationContext(), SelectRouteActivity.class));
-            startActivity(new Intent(getApplicationContext(), SelectMenuActivity.class));
+            startActivity(new Intent(getApplicationContext(), neighbor.com.mbis.activity.SelectMenuActivity.class));
             Toast.makeText(getApplicationContext(), "[인증 성공] from. Server : " + Func.byteToLong(Util.byteReverse(Func.longToByte(mv.getDeviceID(), 8))), Toast.LENGTH_SHORT).show();
             finish();   // 2017.02.13
         }

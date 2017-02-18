@@ -1,7 +1,7 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 'Google Apis:Google Apis:23'
+    compileSdkVersion 24
     buildToolsVersion "24.0.1"
 
     defaultConfig {
@@ -35,6 +35,5 @@ dependencies {
     compile 'log4j:log4j:1.2.17'
     compile 'com.google.android.gms:play-services-location:10.0.1'
     compile 'com.google.android.gms:play-services-maps:10.0.1'
-
 }
 apply plugin: 'com.google.gms.google-services'
