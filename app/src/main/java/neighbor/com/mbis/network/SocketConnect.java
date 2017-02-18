@@ -5,24 +5,21 @@ import android.util.Log;
 
 import org.apache.log4j.Logger;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.net.InetSocketAddress;
 import java.net.Socket;
-
 
 import neighbor.com.mbis.function.Func;
 import neighbor.com.mbis.maputil.BytePosition;
 import neighbor.com.mbis.maputil.Data;
 import neighbor.com.mbis.maputil.HandlerPosition;
 import neighbor.com.mbis.maputil.Util;
+
+import static neighbor.com.mbis.maputil.Data.readData;
 
 /**
  * Created by ts.ha on 2017-02-17.
@@ -45,11 +42,16 @@ public class SocketConnect extends Thread {
     private Data mData;
     private byte[] mWriteData;
 
-    public void setSocket(String ip, int port, Handler handler, byte[] writeData) {
-        this.mIp = ip;
-        this.mPort = port;
+    public void setSocket(Handler handler, byte[] writeData) {
+        this.mIp = NetworkUtil.IP;
+        this.mPort = NetworkUtil.PORT;
         this.mHandler = handler;
         this.mWriteData = writeData;
+        String dd = "";
+        for (int i = 0; i < writeData.length; i++) {
+            dd = dd + String.format("%02x ", writeData[i]);
+        }
+        Logger.getLogger(TAG).error("send: " + dd);
     }
 
     @Override
@@ -57,6 +59,10 @@ public class SocketConnect extends Thread {
         super.run();
         try {
             socket = new Socket(mIp, mPort);
+            socket.setKeepAlive(true);
+            socket.setReuseAddress(true);
+            socket.setSoLinger(true, 0);
+
             sAddress = new InetSocketAddress(mIp, mPort);
             Logger.getLogger(TAG).debug("run~~~~~~~~~~~~~");
             if (!socket.isConnected()) {
@@ -68,7 +74,8 @@ public class SocketConnect extends Thread {
             os = socket.getOutputStream();
             dos = new DataOutputStream(os);
             dos.write(mWriteData);
-            while (runFlag ) {
+//            while (runFlag )
+            {
                 Log.e(TAG, " Server connected !!" + socket + " / " + sAddress + " / " + socket
                         .isConnected());
                 byte[] headerData = new byte[BytePosition.HEADER_SIZE];
@@ -84,9 +91,9 @@ public class SocketConnect extends Thread {
 
                 if (dataLength > 0) {
                     //정상적인 데이터 수신
-                    Data.readData = Func.mergyByte(headerData, bodyData);
+                    readData = Func.mergyByte(headerData, bodyData);
                     if (headerData[BytePosition.HEADER_OPCODE] == 0x33) {
-                        Data.readFTPData = Data.readData;
+                        Data.readFTPData = readData;
                         sleep(3000);
                     }
                     Log.e(TAG, "network : data read success: " + String.format("%02d", headerData[BytePosition.HEADER_OPCODE]));
@@ -114,6 +121,14 @@ public class SocketConnect extends Thread {
         } catch (InterruptedException e) {
             e.printStackTrace();
 
+        } finally {
+            try {
+                dis.close();
+                dos.close();
+                socket.close();
+            }catch (Exception e){
+                e.printStackTrace();
+            }
         }
     }
 }

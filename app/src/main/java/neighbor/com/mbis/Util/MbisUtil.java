@@ -2,7 +2,11 @@ package neighbor.com.mbis.util;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Handler;
 import android.util.Log;
+
+import neighbor.com.mbis.maputil.Data;
+import neighbor.com.mbis.network.SocketConnect;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -14,6 +18,11 @@ public class MbisUtil {
     final static  String PREF = "mbis";
     final static boolean isDebug = true;
 
+    public static void sendData(Handler handler){
+        SocketConnect socketConnect = new SocketConnect();
+        socketConnect.setSocket(handler ,  Data.writeData);
+        socketConnect.start();
+    }
     // 값 불러오기
     public static boolean getPreferences(Context context, String key){
         SharedPreferences pref = context.getSharedPreferences(PREF, MODE_PRIVATE);

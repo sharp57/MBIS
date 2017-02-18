@@ -21,12 +21,14 @@ import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.Toast;
 
+import org.apache.commons.net.ftp.FTPFile;
 import org.apache.log4j.Logger;
 
 import java.util.Calendar;
 import java.util.TimeZone;
 
 import neighbor.com.mbis.R;
+import neighbor.com.mbis.function.FTPManager;
 import neighbor.com.mbis.function.FileManager;
 import neighbor.com.mbis.function.Func;
 import neighbor.com.mbis.function.Setter;
@@ -44,8 +46,6 @@ import neighbor.com.mbis.maputil.thread.FTPInfoThread;
 import neighbor.com.mbis.maputil.thread.FTPThread;
 import neighbor.com.mbis.maputil.value.MapVal;
 import neighbor.com.mbis.network.NetworkIntentService;
-import neighbor.com.mbis.network.NetworkUtil;
-import neighbor.com.mbis.network.SocketConnect;
 import neighbor.com.mbis.util.MbisUtil;
 
 /**
@@ -77,7 +77,7 @@ public class LoginActivityNew extends Activity implements View.OnClickListener, 
     private Button authButton;
     private ImageView key12;
 
-    private Button key01;
+    private Button key01, key02;
     private RadioButton radioButton01, radioButton02;
     private static String TAG = LoginActivityNew.class.getSimpleName();
     private neighbor.com.mbis.activity.MessageHandler handler = new neighbor.com.mbis.activity.MessageHandler(this);
@@ -153,6 +153,7 @@ public class LoginActivityNew extends Activity implements View.OnClickListener, 
         radioButton01 = (RadioButton) findViewById(R.id.option1);
         radioButton02 = (RadioButton) findViewById(R.id.option2);
         key01 = (Button) findViewById(R.id.key01);
+        key02 = (Button) findViewById(R.id.key02);
 
 
         noButton.setText("12341234");
@@ -160,6 +161,7 @@ public class LoginActivityNew extends Activity implements View.OnClickListener, 
 
         authButton.setOnClickListener(this);
         key01.setOnClickListener(this);
+        key02.setOnClickListener(this);
         key12.setOnClickListener(this);
 
 
@@ -223,9 +225,7 @@ public class LoginActivityNew extends Activity implements View.OnClickListener, 
 
 //                        sendData();
 
-                        SocketConnect socketConnect = new SocketConnect();
-                        socketConnect.setSocket(NetworkUtil.IP, NetworkUtil.PORT, handler ,  Data.writeData);
-                        socketConnect.start();
+                        MbisUtil.sendData(handler);
                     } else {
                         Toast.makeText(getApplicationContext(), "차량번호를 다시 한 번 확인 해 주세요.", Toast.LENGTH_SHORT).show();
                     }
@@ -254,6 +254,26 @@ public class LoginActivityNew extends Activity implements View.OnClickListener, 
                     e.printStackTrace();
                 }
                 sendData();
+                break;
+            case R.id.key02:
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            FTPManager ftpManager = new FTPManager("211.189.132.192", 30300, "", "");
+                            ftpManager.connect();
+                            boolean isLogin = ftpManager.login();
+                            Logger.getLogger(TAG).error("isLogin: " + isLogin);
+                            FTPFile[] files = ftpManager.list();
+                            for(int i = 0; i < files.length; i++){
+                                Logger.getLogger(TAG).error("files: " + files[i].getName());
+                            }
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
+                    }
+                }).start();
+
                 break;
             case R.id.key12:
                 break;
@@ -546,11 +566,11 @@ public class LoginActivityNew extends Activity implements View.OnClickListener, 
             editor.putLong("deviceID", mv.getDeviceID());
             editor.commit();
 //            cTimer.cancel();
-            finish();
+//            finish();
 //            startActivity(new Intent(getApplicationContext(), SelectRouteActivity.class));
-            startActivity(new Intent(getApplicationContext(), neighbor.com.mbis.activity.SelectMenuActivity.class));
+//            startActivity(new Intent(getApplicationContext(), neighbor.com.mbis.activity.SelectMenuActivity.class));
             Toast.makeText(getApplicationContext(), "[인증 성공] from. Server : " + Func.byteToLong(Util.byteReverse(Func.longToByte(mv.getDeviceID(), 8))), Toast.LENGTH_SHORT).show();
-            finish();   // 2017.02.13
+//            finish();   // 2017.02.13
         }
     }
 

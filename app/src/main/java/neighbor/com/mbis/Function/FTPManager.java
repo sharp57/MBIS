@@ -49,6 +49,7 @@ public class FTPManager {
     //연결
     public void connect(){
         try{
+            ftpClient.enterLocalPassiveMode(); // PassiveMode 접속
             ftpClient.connect(server, port);
             int reply = 0;
 
