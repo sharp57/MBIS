@@ -46,7 +46,10 @@ import neighbor.com.mbis.maputil.thread.FTPInfoThread;
 import neighbor.com.mbis.maputil.thread.FTPThread;
 import neighbor.com.mbis.maputil.value.MapVal;
 import neighbor.com.mbis.network.NetworkIntentService;
+import neighbor.com.mbis.network.NetworkUtil;
+import neighbor.com.mbis.network.SocketConnect;
 import neighbor.com.mbis.util.MbisUtil;
+
 
 /**
  * Created by 권오철 on 2017-02-08.
@@ -225,7 +228,23 @@ public class LoginActivityNew extends Activity implements View.OnClickListener, 
 
 //                        sendData();
 
+
                         MbisUtil.sendData(handler);
+
+                        SocketConnect socketConnect = new SocketConnect();
+                        socketConnect.setSocket( handler ,  Data.writeData);
+                        socketConnect.start();
+
+//                        SocketHandlerThread thread = new SocketHandlerThread("obd-engine");
+//                        thread.start();
+//                        if(thread.getSocket() != null){
+//                            Logger.getLogger(TAG).debug("thread.getSocket() != null");
+//                        }
+//                        SocketLooper socketLooper = new SocketLooper(LoginActivityNew.this, thread
+//                                .getLooper(), thread.getSocket());
+//                        socketLooper.setData( Data.writeData);
+
+
                     } else {
                         Toast.makeText(getApplicationContext(), "차량번호를 다시 한 번 확인 해 주세요.", Toast.LENGTH_SHORT).show();
                     }
