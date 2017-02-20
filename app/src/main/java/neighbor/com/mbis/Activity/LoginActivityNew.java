@@ -22,6 +22,7 @@ import android.widget.RadioButton;
 import android.widget.Toast;
 
 import org.apache.commons.net.ftp.FTPFile;
+
 import org.apache.log4j.Logger;
 
 import java.util.Calendar;
@@ -90,7 +91,7 @@ public class LoginActivityNew extends Activity implements View.OnClickListener, 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login_new);
-
+//tset
         setting = getSharedPreferences("setting", 0);
         editor = setting.edit();
 
@@ -99,6 +100,7 @@ public class LoginActivityNew extends Activity implements View.OnClickListener, 
             // CALL_PHONE 권한을 Android OS 에 요청한다.
             requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 100);
         }
+
 
 //        if (mService != null) {
 //            mService.close();   // 2017.02.13
@@ -118,9 +120,6 @@ public class LoginActivityNew extends Activity implements View.OnClickListener, 
 //        headerBuf = Util.makeHeader(h, headerBuf);
 //
 //        Data.writeData = Func.mergyByte(headerBuf, otherBusInfo);
-
-
-
 
 
         Intent intent = getIntent();
@@ -143,7 +142,7 @@ public class LoginActivityNew extends Activity implements View.OnClickListener, 
         String packetFileName = String.format("%02d", cal.get(Calendar.YEAR) - 2000) + String.format("%02d", (cal.get(Calendar.MONTH) + 1)) + String.format("%02d", cal.get(Calendar.DATE)) + " packet";
 
         eventFileManager = new FileManager(packetFileName);
-
+        Logger.getLogger(TAG).debug("onCreate");
         setInit();
 
     }
@@ -226,13 +225,14 @@ public class LoginActivityNew extends Activity implements View.OnClickListener, 
 
                         Data.writeData = Func.mergyByte(headerBuf, otherBusInfo);
 
+
 //                        sendData();
 
 
                         MbisUtil.sendData(handler);
 
                         SocketConnect socketConnect = new SocketConnect();
-                        socketConnect.setSocket( handler ,  Data.writeData);
+                        socketConnect.setSocket(handler, Data.writeData);
                         socketConnect.start();
 
 //                        SocketHandlerThread thread = new SocketHandlerThread("obd-engine");
@@ -284,10 +284,10 @@ public class LoginActivityNew extends Activity implements View.OnClickListener, 
                             boolean isLogin = ftpManager.login();
                             Logger.getLogger(TAG).error("isLogin: " + isLogin);
                             FTPFile[] files = ftpManager.list();
-                            for(int i = 0; i < files.length; i++){
+                            for (int i = 0; i < files.length; i++) {
                                 Logger.getLogger(TAG).error("files: " + files[i].getName());
                             }
-                        }catch (Exception e){
+                        } catch (Exception e) {
                             e.printStackTrace();
                         }
                     }
@@ -587,9 +587,11 @@ public class LoginActivityNew extends Activity implements View.OnClickListener, 
 //            cTimer.cancel();
 //            finish();
 //            startActivity(new Intent(getApplicationContext(), SelectRouteActivity.class));
+
 //            startActivity(new Intent(getApplicationContext(), neighbor.com.mbis.activity.SelectMenuActivity.class));
             Toast.makeText(getApplicationContext(), "[인증 성공] from. Server : " + Func.byteToLong(Util.byteReverse(Func.longToByte(mv.getDeviceID(), 8))), Toast.LENGTH_SHORT).show();
 //            finish();   // 2017.02.13
+
         }
     }
 
