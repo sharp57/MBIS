@@ -171,7 +171,7 @@ public class LoginActivityNew extends Activity implements View.OnClickListener, 
         radioButton02.setOnClickListener(optionOnClickListener);
         radioButton01.setChecked(true);
 
-        if (MbisUtil.getPreferences(this, "mode")) {
+        if (MbisUtil.getPreferencesBoolean(this, "mode")) {
             radioButton02.setChecked(true);
         } else {
             radioButton01.setChecked(true);
@@ -183,9 +183,9 @@ public class LoginActivityNew extends Activity implements View.OnClickListener, 
 
         public void onClick(View v) {
             if (radioButton02.isChecked() == true) {
-                MbisUtil.setPreferences(LoginActivityNew.this, "mode", true);
+                MbisUtil.setPreferencesBoolean(LoginActivityNew.this, "mode", true);
             } else {
-                MbisUtil.setPreferences(LoginActivityNew.this, "mode", false);
+                MbisUtil.setPreferencesBoolean(LoginActivityNew.this, "mode", false);
             }
 //            Toast.makeText(
 //                    LoginActivityNew.this,

@@ -11,6 +11,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import neighbor.com.mbis.network.NetworkUtil;
+
 public class FTPManager {
     private String server = "";
     private int port = 0;
@@ -100,6 +102,12 @@ public class FTPManager {
         return null;
     }
 
+    public void checkMkDir(){
+        String dirPath = NetworkUtil.FILE_PATH + NetworkUtil.FILE_PATH_2;
+        File file = new File(dirPath);
+        if( !file.exists() )  // 원하는 경로에 폴더가 있는지 확인
+            file.mkdirs();
+    }
     //파일전송을 받는다
     public File get(String savePath, String recv2FTP){
 

@@ -5,6 +5,8 @@
       <module fileurl="file://$PROJECT_DIR$/MBIS.iml" filepath="$PROJECT_DIR$/MBIS.iml" />
       <module fileurl="file://$PROJECT_DIR$/MBIS2.iml" filepath="$PROJECT_DIR$/MBIS2.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/project.iml" filepath="$PROJECT_DIR$/project.iml" />
     </modules>
   </component>
 </project>

@@ -78,7 +78,7 @@ public class SelectRouteActivityNew extends Activity implements View.OnClickList
     public void onClick(View v) {
         switch(v.getId()){
             case R.id.testButton:
-                if(MbisUtil.getPreferences(this,"mode") == false){
+                if(MbisUtil.getPreferencesBoolean(this,"mode") == false){
                     startActivity(new Intent(SelectRouteActivityNew.this,RunActivity.class));
                 }else{
                     startActivity(new Intent(SelectRouteActivityNew.this,MapActivity.class));

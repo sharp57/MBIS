@@ -15,4 +15,11 @@ public class NetworkUtil {
 //    public final static String IP = "197.168.100.20"; // 이거는 내 컴퓨터
     public final static int PORT = 33000; // port number
     public final static File FILE_PATH = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+
+
+    public final static String FTP_IP = "211.189.132.192";
+    public final static int FTP_PORT = 30300;
+    public final static String FTP_ID = "mbis";
+    public final static String FTP_PW = "mbis";
+    public final static String FILE_PATH_2 = "/MBIS/";
 }
