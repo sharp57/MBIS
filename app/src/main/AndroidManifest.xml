@@ -59,6 +59,7 @@
         <activity
             android:name=".activity.LoginActivityNew"
             android:screenOrientation="landscape"
+            android:windowSoftInputMode="stateAlwaysHidden"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".activity.SelectRouteActivityNew"

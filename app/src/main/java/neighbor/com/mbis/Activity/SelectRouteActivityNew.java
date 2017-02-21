@@ -58,14 +58,14 @@ public class SelectRouteActivityNew extends Activity implements View.OnClickList
 
 
         db = DBManager.getInstance(this);
-        isHasVisited(this);
+//        isHasVisited(this);
 
 
         setTodayLong();
-        checkData();
+//        checkData();
 
         // 2017.02.06 db test
-        Util.sqliteExport(this);
+//        Util.sqliteExport(this);
 
     }
     private void setInit(){

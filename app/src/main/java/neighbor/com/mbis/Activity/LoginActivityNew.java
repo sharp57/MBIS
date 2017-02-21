@@ -14,7 +14,9 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -81,11 +83,13 @@ public class LoginActivityNew extends Activity implements View.OnClickListener, 
     private Button authButton;
     private ImageView key12;
 
-    private Button key01, key02;
+    private Button key01, key02, key03, key04, key05, key06, key07, key08, key09, key10, key11;
     private RadioButton radioButton01, radioButton02;
     private static String TAG = LoginActivityNew.class.getSimpleName();
     private neighbor.com.mbis.activity.MessageHandler handler = new neighbor.com.mbis.activity.MessageHandler(this);
-
+    private final int FOCUS_NO_BUTTON = 1;
+    private final int FOCUS_BUS_NUM_BUTTON = 2;
+    private int inputBoxFocus = FOCUS_NO_BUTTON;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -156,16 +160,78 @@ public class LoginActivityNew extends Activity implements View.OnClickListener, 
         radioButton02 = (RadioButton) findViewById(R.id.option2);
         key01 = (Button) findViewById(R.id.key01);
         key02 = (Button) findViewById(R.id.key02);
+        key03 = (Button) findViewById(R.id.key03);
+        key04 = (Button) findViewById(R.id.key04);
+        key05 = (Button) findViewById(R.id.key05);
+        key06 = (Button) findViewById(R.id.key06);
+        key07 = (Button) findViewById(R.id.key07);
+        key08 = (Button) findViewById(R.id.key08);
+        key09 = (Button) findViewById(R.id.key09);
+        key10 = (Button) findViewById(R.id.key10);
+        key11 = (Button) findViewById(R.id.key11);
 
 
-        noButton.setText("12341234");
-        busNumButton.setText("5678");
+//        noButton.setText("12341230");
+//        busNumButton.setText("5678");
 
         authButton.setOnClickListener(this);
+        noButton.setOnClickListener(this);
+        busNumButton.setOnClickListener(this);
         key01.setOnClickListener(this);
         key02.setOnClickListener(this);
+        key03.setOnClickListener(this);
+        key04.setOnClickListener(this);
+        key05.setOnClickListener(this);
+        key06.setOnClickListener(this);
+        key07.setOnClickListener(this);
+        key08.setOnClickListener(this);
+        key09.setOnClickListener(this);
+        key10.setOnClickListener(this);
+        key11.setOnClickListener(this);
         key12.setOnClickListener(this);
 
+        noButton.setInputType(0);
+        busNumButton.setInputType(0);
+
+        noButton.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()){
+                    case MotionEvent.ACTION_DOWN:
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                inputBoxFocus = FOCUS_NO_BUTTON;
+                                noButton.setTextIsSelectable(true);
+                                noButton.setSelection(noButton.length());
+                                Logger.getLogger(TAG).error("noButton focus:");
+                            }
+                        },0);
+                        break;
+                }
+                return false;
+            }
+        });
+        busNumButton.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()){
+                    case MotionEvent.ACTION_DOWN:
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                inputBoxFocus = FOCUS_BUS_NUM_BUTTON;
+                                busNumButton.setTextIsSelectable(true);
+                                busNumButton.setSelection(busNumButton.length());
+                                Logger.getLogger(TAG).error("busNumButton focus:");
+                            }
+                        },0);
+
+                        break;
+                }
+                return false;
+            }
+        });
 
         radioButton01.setOnClickListener(optionOnClickListener);
         radioButton02.setOnClickListener(optionOnClickListener);
@@ -231,9 +297,9 @@ public class LoginActivityNew extends Activity implements View.OnClickListener, 
 
                         MbisUtil.sendData(handler);
 
-                        SocketConnect socketConnect = new SocketConnect();
-                        socketConnect.setSocket(handler, Data.writeData);
-                        socketConnect.start();
+//                        SocketConnect socketConnect = new SocketConnect();
+//                        socketConnect.setSocket(handler, Data.writeData);
+//                        socketConnect.start();
 
 //                        SocketHandlerThread thread = new SocketHandlerThread("obd-engine");
 //                        thread.start();
@@ -252,53 +318,94 @@ public class LoginActivityNew extends Activity implements View.OnClickListener, 
                     Toast.makeText(getApplicationContext(), "전화번호를 다시 한 번 확인 해 주세요.", Toast.LENGTH_SHORT).show();
                 }
                 break;
-            case R.id.key01:    // test booting info
-
-                try {
-                    h = Util.setHeader(h, LoginActivityNew.this, (byte) 0x02, (byte) 0x11, new byte[]{0x00, 0x01}, new byte[]{0x01, 0x02}, new byte[]{0x00, 0x00, 0x00});
-                    Data.writeData = Util.makeHeader(h, headerBuf);
-
-                    // 0x11
-                    byte[] op = new byte[]{0x11};
-                    mv.setDataLength(BytePosition.BODY_BOOT_INFO_SIZE - BytePosition.HEADER_SIZE);
-                    h.setOp_code(op);
-                    Setter.setHeader();
-                    h.setDeviceID(Util.hexStringToByteArray(Util.getDeviceID(LoginActivityNew.this)));
-                    byte[] otherBusInfo = makeBodyBusBootingInfo();
-                    headerBuf = Util.makeHeader(h, headerBuf);
-
-                    Data.writeData = Func.mergyByte(headerBuf, otherBusInfo);
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                sendData();
-                break;
-            case R.id.key02:
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            FTPManager ftpManager = new FTPManager("211.189.132.192", 30300, "", "");
-                            ftpManager.connect();
-                            boolean isLogin = ftpManager.login();
-                            Logger.getLogger(TAG).error("isLogin: " + isLogin);
-                            FTPFile[] files = ftpManager.list();
-                            for (int i = 0; i < files.length; i++) {
-                                Logger.getLogger(TAG).error("files: " + files[i].getName());
-                            }
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }).start();
-
-                break;
+//            case R.id.key01:    // test booting info
+//
+//                try {
+//                    h = Util.setHeader(h, LoginActivityNew.this, (byte) 0x02, (byte) 0x11, new byte[]{0x00, 0x01}, new byte[]{0x01, 0x02}, new byte[]{0x00, 0x00, 0x00});
+//                    Data.writeData = Util.makeHeader(h, headerBuf);
+//
+//                    // 0x11
+//                    byte[] op = new byte[]{0x11};
+//                    mv.setDataLength(BytePosition.BODY_BOOT_INFO_SIZE - BytePosition.HEADER_SIZE);
+//                    h.setOp_code(op);
+//                    Setter.setHeader();
+//                    h.setDeviceID(Util.hexStringToByteArray(Util.getDeviceID(LoginActivityNew.this)));
+//                    byte[] otherBusInfo = makeBodyBusBootingInfo();
+//                    headerBuf = Util.makeHeader(h, headerBuf);
+//
+//                    Data.writeData = Func.mergyByte(headerBuf, otherBusInfo);
+//                    MbisUtil.sendData(handler);
+//
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+////                sendData();
+//                break;
+//            case R.id.key02:
+//                new Thread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        try {
+//                            FTPManager ftpManager = new FTPManager("211.189.132.192", 30300, "", "");
+//                            ftpManager.connect();
+//                            boolean isLogin = ftpManager.login();
+//                            Logger.getLogger(TAG).error("isLogin: " + isLogin);
+//                            FTPFile[] files = ftpManager.list();
+//                            for (int i = 0; i < files.length; i++) {
+//                                Logger.getLogger(TAG).error("files: " + files[i].getName());
+//                            }
+//                        } catch (Exception e) {
+//                            e.printStackTrace();
+//                        }
+//                    }
+//                }).start();
+//
+//                break;
+            case R.id.key01:    setInputKey("1");   break;
+            case R.id.key02:    setInputKey("2");   break;
+            case R.id.key03:    setInputKey("3");   break;
+            case R.id.key04:    setInputKey("4");   break;
+            case R.id.key05:    setInputKey("5");   break;
+            case R.id.key06:    setInputKey("6");   break;
+            case R.id.key07:    setInputKey("7");   break;
+            case R.id.key08:    setInputKey("8");   break;
+            case R.id.key09:    setInputKey("9");   break;
+            case R.id.key10:    setInputKey("0");   break;
+            case R.id.key11:    setInputKey("-");   break;
             case R.id.key12:
+                setInputDel();
+                break;
+            case R.id.noButton:
+
+                break;
+            case R.id.busNumButton:
+
                 break;
         }
     }
 
+    private void setInputKey(String key){
+
+        Logger.getLogger(TAG).error("setInputKey focus: " + inputBoxFocus);
+        if(inputBoxFocus == FOCUS_NO_BUTTON) {
+            noButton.setText(noButton.getText().toString() + key);
+            noButton.setSelection(noButton.getText().toString().length());
+        }else{
+            busNumButton.setText(busNumButton.getText().toString() + key);
+            busNumButton.setSelection(busNumButton.getText().toString().length());
+        }
+    }
+    private void setInputDel(){
+        if(inputBoxFocus == FOCUS_NO_BUTTON) {
+            if(noButton.length() > 0){
+                noButton.setText(noButton.getText().toString().substring(0, noButton.getText().toString().length() - 1));
+            }
+        }else{
+            if(busNumButton.length() > 0){
+                busNumButton.setText(busNumButton.getText().toString().substring(0, busNumButton.getText().toString().length() - 1));
+            }
+        }
+    }
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -517,7 +624,7 @@ public class LoginActivityNew extends Activity implements View.OnClickListener, 
                 " - " + (mv.getSendHour() + 9) + ":" + mv.getSendMin() + ":" + mv.getSendSec() +
                 ")\n[SEND:" + Data.writeData.length + "] - " + dd);
         Log.e("[sendData]", "111");
-        mService.writeData();
+//        mService.writeData();
     }
 
 //    private void sendData() {
@@ -588,9 +695,9 @@ public class LoginActivityNew extends Activity implements View.OnClickListener, 
 //            finish();
 //            startActivity(new Intent(getApplicationContext(), SelectRouteActivity.class));
 
-//            startActivity(new Intent(getApplicationContext(), neighbor.com.mbis.activity.SelectMenuActivity.class));
+            startActivity(new Intent(getApplicationContext(), neighbor.com.mbis.activity.SelectMenuActivity.class));
             Toast.makeText(getApplicationContext(), "[인증 성공] from. Server : " + Func.byteToLong(Util.byteReverse(Func.longToByte(mv.getDeviceID(), 8))), Toast.LENGTH_SHORT).show();
-//            finish();   // 2017.02.13
+            finish();   // 2017.02.13
 
         }
     }

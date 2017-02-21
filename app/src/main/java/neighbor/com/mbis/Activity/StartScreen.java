@@ -1,15 +1,34 @@
 package neighbor.com.mbis.activity;
 
+import android.Manifest;
+import android.app.AlertDialog;
 import android.content.ContentValues;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.location.GpsStatus;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
+import android.provider.Settings;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.Toast;
+
+import com.google.android.gms.maps.LocationSource;
 
 import org.apache.commons.net.ftp.FTPFile;
 import org.apache.log4j.Logger;
@@ -20,6 +39,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.TimeZone;
 
 import neighbor.com.mbis.R;
 import neighbor.com.mbis.csv.RouteStationUtil;
@@ -27,17 +48,36 @@ import neighbor.com.mbis.csv.RouteUtil;
 import neighbor.com.mbis.csv.StationUtil;
 import neighbor.com.mbis.database.DBManager;
 import neighbor.com.mbis.function.FTPManager;
+import neighbor.com.mbis.function.FileManager;
+import neighbor.com.mbis.function.Func;
+import neighbor.com.mbis.function.Setter;
+import neighbor.com.mbis.maputil.BytePosition;
+import neighbor.com.mbis.maputil.Data;
+import neighbor.com.mbis.maputil.HandlerPosition;
+import neighbor.com.mbis.maputil.LocationWrapper;
+import neighbor.com.mbis.maputil.Receive_OP;
 import neighbor.com.mbis.maputil.Util;
+import neighbor.com.mbis.maputil.form.Form_Header;
+import neighbor.com.mbis.maputil.value.MapVal;
 import neighbor.com.mbis.network.NetworkUtil;
 import neighbor.com.mbis.util.MbisUtil;
 
-public class StartScreen extends AppCompatActivity {
+public class StartScreen extends AppCompatActivity implements neighbor.com.mbis.activity.MessageHandler.SmartServiceHandlerInterface , LocationSource.OnLocationChangedListener {
 
     final String TAG = getClass().toString();
     SharedPreferences pref;
     private static final String MY_DB = "my_db";
     private static String HasVisited = "hasVisited";
     private DBManager db;
+    private boolean isStart = true;
+    MapVal mv = MapVal.getInstance();
+    Form_Header h = Form_Header.getInstance();
+    static byte[] headerBuf = null;
+    private neighbor.com.mbis.activity.MessageHandler handler = new neighbor.com.mbis.activity.MessageHandler(this);
+    private ProgressBar pb;
+    public final int MY_PERMISSIONS_REQUEST = 100;
+    private LocationWrapper locationWrapper;
+    FileManager eventFileManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,7 +101,198 @@ public class StartScreen extends AppCompatActivity {
 //        };
 //        h.sendEmptyMessageDelayed(0, 2000);
        /* h.sendEmptyMessageDelayed(0, 2500);*/
-        setFTPInit();
+//        setFTPInit();
+
+
+        TimeZone jst = TimeZone.getTimeZone("JST");
+        Calendar cal = Calendar.getInstance(jst);
+        String packetFileName = String.format("%02d", cal.get(Calendar.YEAR) - 2000) + String.format("%02d", (cal.get(Calendar.MONTH) + 1)) + String.format("%02d", cal.get(Calendar.DATE)) + " packet";
+        eventFileManager = new FileManager(packetFileName);
+
+        pb = (ProgressBar) findViewById(R.id.progressbar);
+        checkGpsService();
+
+        //setFTPInit();;
+    }
+
+    private boolean checkGpsService() {
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (ContextCompat.checkSelfPermission(this,
+                    Manifest.permission.ACCESS_FINE_LOCATION)
+                    != PackageManager.PERMISSION_GRANTED
+                    && ContextCompat.checkSelfPermission(this,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    != PackageManager.PERMISSION_GRANTED) {
+                Logger.getLogger(TAG).error("checkGpsService: " + true);
+                // CALL_PHONE 권한을 Android OS 에 요청한다.
+                requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.WRITE_EXTERNAL_STORAGE}, MY_PERMISSIONS_REQUEST);
+            }else{
+                Logger.getLogger(TAG).error("checkGpsService: " + false);
+                setLog();
+
+            }
+        }
+
+        String gps = Settings.Secure.getString(getContentResolver(),
+                Settings.Secure.LOCATION_PROVIDERS_ALLOWED);
+
+        Log.d(gps, "check GPS Page");
+
+        if (!(gps.matches(".*gps.*") && gps.matches(".*network.*"))) {
+
+            // GPS OFF 일때 Dialog 표시
+            AlertDialog.Builder gsDialog = new AlertDialog.Builder(this);
+            gsDialog.setTitle("GPS 설정");
+            gsDialog.setMessage("무선 네트워크 사용, GPS 위성 사용을 모두 체크하셔야 정확한 위치 서비스가 가능합니다.\n" +
+                    "GPS 기능을 설정하시겠습니까?");
+            gsDialog.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    // GPS설정 화면으로 이동
+                    Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                    intent.addCategory(Intent.CATEGORY_DEFAULT);
+                    startActivity(intent);
+                }
+            })
+                    .setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            Toast.makeText(getApplicationContext(), "GPS를 켜야 사용 가능합니다.", Toast.LENGTH_SHORT);
+                            return;
+                        }
+                    }).create().show();
+            return false;
+
+        } else {
+            return true;
+        }
+    }
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSIONS_REQUEST: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    setLog();
+                    // permission was granted, yay! Do the
+                    // contacts-related task you need to do.
+
+                } else {
+
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                }
+                return;
+            }
+
+            // other 'case' lines to check for other
+            // permissions this app might request
+        }
+    }
+    private void setInitBooting(Location location){
+        // 0x11
+        try{
+            byte[] op = new byte[]{0x11};
+            mv.setDataLength(BytePosition.BODY_BOOT_INFO_SIZE - BytePosition.HEADER_SIZE);
+            h.setOp_code(op);
+            Setter.setHeader();
+            h.setDeviceID(Util.hexStringToByteArray(Util.getDeviceID(StartScreen.this)));
+            byte[] otherBusInfo = makeBodyBusBootingInfo(location);
+            headerBuf = Util.makeHeader(h, headerBuf);
+
+            Data.writeData = Func.mergyByte(headerBuf, otherBusInfo);
+            MbisUtil.sendData(handler);
+
+            // 0x11 respsonse 일때 아래 함수 호출하기로.. 지금은 테스트
+            setFTPInit();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    private byte[] makeBodyBusBootingInfo(Location location) {
+
+        Logger.getLogger(TAG).error("location: " + location.getLatitude() + " / " + location.getLongitude());
+
+        long lat = (long)(location.getLatitude() * 1000000);
+        long lon = (long)(location.getLongitude() * 1000000);
+
+
+        TimeZone jst = TimeZone.getTimeZone("JST");
+        Calendar cal = Calendar.getInstance(jst);
+
+        String date = String.format("%02d", cal.get(Calendar.YEAR) - 2000) + String.format("%02d", (cal.get(Calendar.MONTH) + 1)) + String.format("%02d", cal.get(Calendar.DATE));
+        String time = String.format("%02d", ((cal.get(Calendar.HOUR_OF_DAY)) + 9)) + String.format("%02d", (cal.get(Calendar.MINUTE))) + String.format("%02d", cal.get(Calendar.SECOND));
+        byte[] dt = Util.byteReverse(Func.stringToByte(date + time));
+        byte[] dt2 = Util.byteReverse(Func.stringToByte(date + time));
+        byte[] gpsx = Util.byteReverse(Func.longToByte(lat, 4));
+        byte[] gpsy = Util.byteReverse(Func.longToByte(lon, 4));
+        byte[] angle = Util.byteReverse(Func.integerToByte(90, 2));
+        byte[] speed = Util.byteReverse(Func.integerToByte(50, 2));
+        byte[] busnum = Util.byteReverse(Func.integerToByte(1, 2));
+        byte[] route = Util.byteReverse(Func.integerToByte(2, 2));
+        byte[] dev = Util.byteReverse(Func.integerToByte(3, 4));
+
+        return Func.mergyByte(Func.mergyByte(Func.mergyByte(Func.mergyByte(Func.mergyByte(dt, dt2), Func.mergyByte(gpsx, gpsy)), Func.mergyByte(angle, speed)), Func.mergyByte(busnum, route)), dev);
+    }
+
+
+    public void setLog() {
+
+
+        locationWrapper = new LocationWrapper(this);
+        locationWrapper.setAccuracyFilterEnabled(true, 100);
+        locationWrapper.registerOnLocationChangedListener(this);
+        locationWrapper.requestUpdates();
+
+        // Acquire a reference to the system Location Manager
+        LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+        final GpsStatus gpsStatus = locationManager.getGpsStatus(null);
+
+        // GPS 프로바이더 사용가능여부
+        boolean isGPSEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        // 네트워크 프로바이더 사용가능여부
+        boolean isNetworkEnabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+
+        Log.d("Main", "isGPSEnabled=" + isGPSEnabled);
+        Log.d("Main", "isNetworkEnabled=" + isNetworkEnabled);
+
+        LocationListener locationListener = new LocationListener() {
+            public void onLocationChanged(Location location) {
+
+                Logger.getLogger(TAG).error("onLocationChanged: ");
+                if(isStart == true){
+                    isStart = false;
+                    setInitBooting(location);
+                }
+            }
+
+
+            public void onStatusChanged(String provider, int status, Bundle extras) {
+                //위치공급자의 상태가 바뀔 때 호출
+                //켬 -> 끔 or 끔 -> 켬
+                Toast.makeText(getApplicationContext(), "GPS 상태 변환", Toast.LENGTH_SHORT).show();
+            }
+
+            public void onProviderEnabled(String provider) {
+                //위치 공급자가 사용 가능해 질 때 호출
+                //즉 GPS를 켜면 호출됨
+//                Toast.makeText(getApplicationContext(), "GPS on", Toast.LENGTH_SHORT).show();
+            }
+
+            public void onProviderDisabled(String provider) {
+                //위치 공급자가 사용 불가능해질(disabled) 때 호출
+                //GPS 꺼지면 여기서 예외처리 해주면 됨
+//                Toast.makeText(getApplicationContext(), "GPS off", Toast.LENGTH_SHORT).show();
+            }
+        };
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, locationListener);
+        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 0, locationListener);
+        locationManager.requestLocationUpdates(LocationManager.PASSIVE_PROVIDER, 1000, 0, locationListener);
     }
 
     private void setFTPInit(){
@@ -77,18 +308,49 @@ public class StartScreen extends AppCompatActivity {
                     boolean isLogin = ftpManager.login();
                     Logger.getLogger(TAG).error("isLogin: " + isLogin);
                     FTPFile[] files = ftpManager.list();
-                    for(int i = 0; i < files.length; i++){
-                        Logger.getLogger(TAG).error("files: " + files[i].getName());
-                        ftpManager.get(NetworkUtil.FILE_PATH + NetworkUtil.FILE_PATH_2 + files[i].getName(), files[i].getName());
-                    }
-
 
                     db = DBManager.getInstance(StartScreen.this);
-                    checkData();
-                    startActivity(new Intent(StartScreen.this, LoginActivityNew.class));
-                    finish();
-                    Util.sqliteExport(StartScreen.this);
 
+                    for(int i = 0; i < files.length; i++){
+                        Logger.getLogger(TAG).error("files: " + files[i].getName());
+                        String[] fileName = files[i].getName().split("_");
+                        fileName[1] = fileName[1].replace(".csv", "");
+
+                        if(fileName[0].equals("route")) {
+                            Logger.getLogger(TAG).error("fileName route");
+                            if (MbisUtil.getPreferencesInt(StartScreen.this, MbisUtil.version_route) < Integer.parseInt(fileName[1])) {
+                                ftpManager.get(NetworkUtil.FILE_PATH + NetworkUtil.FILE_PATH_2 + files[i].getName(), files[i].getName());
+                                Logger.getLogger(TAG).error("fileName route down");
+                                checkData(files[i].getName());
+                            }
+                        }else if(fileName[0].equals("routestop")) {
+                            if (MbisUtil.getPreferencesInt(StartScreen.this, MbisUtil.version_routestop) < Integer.parseInt(fileName[1])) {
+                                ftpManager.get(NetworkUtil.FILE_PATH + NetworkUtil.FILE_PATH_2 + files[i].getName(), files[i].getName());
+                                checkData(files[i].getName());
+                            }
+                        }else if(fileName[0].equals("node")) {
+                            if (MbisUtil.getPreferencesInt(StartScreen.this, MbisUtil.version_node) < Integer.parseInt(fileName[1])) {
+                                ftpManager.get(NetworkUtil.FILE_PATH + NetworkUtil.FILE_PATH_2 + files[i].getName(), files[i].getName());
+                                checkData(files[i].getName());
+                            }
+                        }
+                    }
+//                    for(int i = 0; i < files.length; i++){
+//                        Logger.getLogger(TAG).error("files: " + files[i].getName());
+//                        ftpManager.get(NetworkUtil.FILE_PATH + NetworkUtil.FILE_PATH_2 + files[i].getName(), files[i].getName());
+//                    }
+
+
+//                    checkData();
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Util.sqliteExport(StartScreen.this);
+                            pb.setVisibility(View.GONE);
+                            startActivity(new Intent(StartScreen.this, LoginActivityNew.class));
+                            finish();
+                        }
+                    });
                 }catch (Exception e){
                     e.printStackTrace();
                 }
@@ -98,20 +360,27 @@ public class StartScreen extends AppCompatActivity {
     }
 
 
-    private void checkData() {
+    private void checkData(String fileName) {
         ArrayList<File> csvFiles = new ArrayList<File>();
 
-        File f = new File(String.valueOf(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)) + "/data");
+//        File f = new File(String.valueOf(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)) + "/data");
+        File f = new File(String.valueOf(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)) + NetworkUtil.FILE_PATH_2);
         if (!f.exists()) {
             return;
         }
+
+        Logger.getLogger(TAG).error("fileName route checkData");
         File[] allFiles = f.listFiles();
 
         if(allFiles != null) {
             for (File file : allFiles) {
-                if (file.getName().endsWith(".csv")) {
-                    csvFiles.add(file);
-                    overwriteDB(file);
+                String[] f_name = file.getName().split("_");
+                String[] f_name2 = fileName.split("_");
+                Logger.getLogger(TAG).error("fileName route f_name[0] : " + f_name[0] + " / " + f_name2[0]);
+                if(f_name[0].equals(f_name2[0])){
+//                    csvFiles.add(file);
+                    Logger.getLogger(TAG).error("fileName route overwriteDB");
+                 //   overwriteDB(file);
                 }
             }
         }
@@ -129,25 +398,27 @@ public class StartScreen extends AppCompatActivity {
 
             //db 삭제하기 전에 백업하기.
             backupDB();
-            if(MbisUtil.getPreferencesInt(this, MbisUtil.version) < Integer.parseInt(fileName[1])) {
-                if(fileName[0].equals("route")) {
-                    db.deleteRoute(null, null);
-                    write_R(in);
-                } else if(fileName[0].equals("node")) {
-                    db.deleteStation(null, null);
-                    write_S(in);
-                } else if(fileName[0].equals("routestop")) {
-                    db.deleteRouteStation(null, null);
-                    write_RS(in);
-                }
 
-                file.delete();
-                recreate();
-                MbisUtil.setPreferencesInt(this, MbisUtil.version, Integer.parseInt(fileName[1]));
-                Util.sqliteExport(this);
-
-                startActivity(new Intent(StartScreen.this, LoginActivityNew.class));
+            if(fileName[0].equals("route")) {
+                Logger.getLogger(TAG).error("insert route");
+                db.deleteRoute(null, null);
+                write_R(in);
+                MbisUtil.setPreferencesInt(this, MbisUtil.version_route, Integer.parseInt(fileName[1]));
+            } else if(fileName[0].equals("node")) {
+                db.deleteStation(null, null);
+                write_S(in);
+                MbisUtil.setPreferencesInt(this, MbisUtil.version_node, Integer.parseInt(fileName[1]));
+            } else if(fileName[0].equals("routestop")) {
+                db.deleteRouteStation(null, null);
+                write_RS(in);
+                MbisUtil.setPreferencesInt(this, MbisUtil.version_routestop, Integer.parseInt(fileName[1]));
             }
+
+            file.delete();
+            recreate();
+            Util.sqliteExport(this);
+
+            startActivity(new Intent(StartScreen.this, LoginActivityNew.class));
 
         } catch (IOException e) {
             Toast.makeText(this, "Fail ToT", Toast.LENGTH_SHORT).show();
@@ -207,7 +478,7 @@ public class StartScreen extends AppCompatActivity {
 
         //Read each line
         try {
-            db.beginTransaction();
+            db.beginTransaction();in.readLine();
             while ((line = in.readLine()) != null) {
 
                 //Split to separate the name from the capital
@@ -321,5 +592,35 @@ public class StartScreen extends AppCompatActivity {
         // Inserting Row
         db.insertRouteStation(values);
 
+    }
+
+    @Override
+    public void handleServiceMessage(Message message) {
+
+        switch (message.what) {
+            case HandlerPosition.DATA_READ_SUCESS:
+                recvData(Data.readData[BytePosition.HEADER_OPCODE]);
+                break;
+        }
+    }
+
+    private synchronized void recvData(byte opCode) {
+        MbisUtil.reveData();
+        new Receive_OP(opCode);
+        Logger.getLogger(TAG).error("reveData: ftp: ip: " + mv.getFtpIP()); // 2017.02.20 //  test
+
+        // 여기서 ftp 정보로 다운받으면 된다.
+
+    }
+    @Override
+    public void onLocationChanged(Location location) {
+
+//        Logger.getLogger(TAG).error("onLocationChanged: ");
+//        if(isStart == true){
+//            isStart = false;
+//            locationWrapper.cancelUpdates();
+//
+//            setInitBooting(location);
+//        }
     }
 }

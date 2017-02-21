@@ -1,5 +1,7 @@
 package neighbor.com.mbis.function;
 
+import android.location.Location;
+
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -113,6 +115,15 @@ public class Func {
 
     // 두 지점 구하는 알고리즘 적용
     public static double getDistance(double P1_latitude, double P1_longitude, double P2_latitude, double P2_longitude) {
+        Location locationBf = new Location("");
+        Location locationAf = new Location("");
+        locationAf.setLatitude(P1_latitude);
+        locationBf.setLongitude(P1_longitude);
+        locationAf.setLatitude(P2_latitude);
+        locationBf.setLongitude(P2_longitude);
+        locationAf.distanceTo(locationAf);
+        /////////////////////////////////////////
+
         if ((P1_latitude == P2_latitude) && (P1_longitude == P2_longitude)) {
             return 0;
         }

@@ -5,7 +5,12 @@ import android.content.SharedPreferences;
 import android.os.Handler;
 import android.util.Log;
 
+import java.util.Calendar;
+import java.util.TimeZone;
+
+import neighbor.com.mbis.function.FileManager;
 import neighbor.com.mbis.maputil.Data;
+import neighbor.com.mbis.maputil.value.MapVal;
 import neighbor.com.mbis.network.SocketConnect;
 
 import static android.content.Context.MODE_PRIVATE;
@@ -17,10 +22,42 @@ import static android.content.Context.MODE_PRIVATE;
 public class MbisUtil {
     final static  String PREF = "mbis";
     public final static String isAppFinish = "isAppFinish";
-    public final static String version = "version";
+    public final static String version_route = "version_route";
+    public final static String version_node = "version_node";
+    public final static String version_routestop = "version_routestop";
     final static boolean isDebug = true;
+    static FileManager eventFileManager;
+    static MapVal mv = MapVal.getInstance();
 
+    public static void reveData(){
+
+        TimeZone jst = TimeZone.getTimeZone("JST");
+        Calendar cal = Calendar.getInstance(jst);
+        String packetFileName = String.format("%02d", cal.get(Calendar.YEAR) - 2000) + String.format("%02d", (cal.get(Calendar.MONTH) + 1)) + String.format("%02d", cal.get(Calendar.DATE)) + " packet";
+        eventFileManager = new FileManager(packetFileName);
+        String dd = "";
+        for (int i = 0; i < Data.readData.length; i++) {
+            dd = dd + String.format("%02x ", Data.readData[i]);
+//            readText.append(String.format("%02x ", Data.readData[i]));
+        }
+        eventFileManager.saveData("\n(" + cal.get(Calendar.YEAR) + ":" + (cal.get(Calendar.MONTH) + 1) + ":" + cal.get(Calendar.DATE) +
+                " - " + cal.get(Calendar.HOUR) + ":" + cal.get(Calendar.MINUTE) + ":" + cal.get(Calendar.SECOND) +
+                ")\n[RECV:" + Data.readData.length + "] - " + dd);
+    }
     public static void sendData(Handler handler){
+
+        TimeZone jst = TimeZone.getTimeZone("JST");
+        Calendar cal = Calendar.getInstance(jst);
+        String packetFileName = String.format("%02d", cal.get(Calendar.YEAR) - 2000) + String.format("%02d", (cal.get(Calendar.MONTH) + 1)) + String.format("%02d", cal.get(Calendar.DATE)) + " packet";
+        eventFileManager = new FileManager(packetFileName);
+        String dd = "";
+        for (int j = 0; j < Data.writeData.length; j++) {
+            dd = dd + String.format("%02X ", Data.writeData[j]);
+        }
+        eventFileManager.saveData("\n(" + (mv.getSendYear() - 2000) + "." + mv.getSendMonth() + "." + mv.getSendDay() +
+                " - " + (mv.getSendHour() + 9) + ":" + mv.getSendMin() + ":" + mv.getSendSec() +
+                ")\n[SEND:" + Data.writeData.length + "] - " + dd);
+
         SocketConnect socketConnect = new SocketConnect();
         socketConnect.setSocket(handler ,  Data.writeData);
         socketConnect.start();

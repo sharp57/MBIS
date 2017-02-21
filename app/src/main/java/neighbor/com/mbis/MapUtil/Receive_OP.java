@@ -170,6 +170,14 @@ public class Receive_OP {
 
     private void addUtilFTPInfo() {
 
+        byte[] yy = new byte[2];
+        byte[] mm = new byte[2];
+        byte[] dd = new byte[2];
+        byte[] hh = new byte[2];
+        byte[] min = new byte[2];
+        byte[] ss = new byte[2];
+
+
         byte[] deviceId = new byte[8];
         byte[] ftpIp = new byte[16];
         byte[] ftpPort = new byte[2];
@@ -181,27 +189,40 @@ public class Receive_OP {
         byte[] routeFileName = new byte[20];
         byte[] routeStationFileName = new byte[20];
 
-        System.arraycopy(Data.readFTPData, BytePosition.BODY_FTP_DEVICEID, deviceId, 0, deviceId.length);
+//        System.arraycopy(Data.readFTPData, BytePosition.BODY_FTP_DEVICEID, deviceId, 0, deviceId.length);
+        System.arraycopy(Data.readFTPData, BytePosition.BODY_FTP_IP, yy, 0, yy.length);
+        System.arraycopy(Data.readFTPData, BytePosition.BODY_FTP_IP, mm, 0, mm.length);
+        System.arraycopy(Data.readFTPData, BytePosition.BODY_FTP_IP, dd, 0, dd.length);
+        System.arraycopy(Data.readFTPData, BytePosition.BODY_FTP_IP, hh, 0, hh.length);
+        System.arraycopy(Data.readFTPData, BytePosition.BODY_FTP_IP, min, 0, min.length);
+        System.arraycopy(Data.readFTPData, BytePosition.BODY_FTP_IP, ss, 0, ss.length);
+
         System.arraycopy(Data.readFTPData, BytePosition.BODY_FTP_IP, ftpIp, 0, ftpIp.length);
         System.arraycopy(Data.readFTPData, BytePosition.BODY_FTP_PORT, ftpPort, 0, ftpPort.length);
         System.arraycopy(Data.readFTPData, BytePosition.BODY_FTP_ID, ftpId, 0, ftpId.length);
         System.arraycopy(Data.readFTPData, BytePosition.BODY_FTP_PW, ftpPw, 0, ftpPw.length);
         System.arraycopy(Data.readFTPData, BytePosition.BODY_FTP_MODE, ftpMode, 0, ftpMode.length);
         System.arraycopy(Data.readFTPData, BytePosition.BODY_FTP_PATH_DATA, pathData, 0, pathData.length);
-        System.arraycopy(Data.readFTPData, BytePosition.BODY_FTP_STATION_FILE_NAME, stationFileName, 0, stationFileName.length);
-        System.arraycopy(Data.readFTPData, BytePosition.BODY_FTP_ROUTE_FILE_NAME, routeFileName, 0, routeFileName.length);
-        System.arraycopy(Data.readFTPData, BytePosition.BODY_FTP_ROUTESTATION_FILE_NAME, routeStationFileName, 0, routeStationFileName.length);
+//        System.arraycopy(Data.readFTPData, BytePosition.BODY_FTP_STATION_FILE_NAME, stationFileName, 0, stationFileName.length);
+//        System.arraycopy(Data.readFTPData, BytePosition.BODY_FTP_ROUTE_FILE_NAME, routeFileName, 0, routeFileName.length);
+//        System.arraycopy(Data.readFTPData, BytePosition.BODY_FTP_ROUTESTATION_FILE_NAME, routeStationFileName, 0, routeStationFileName.length);
 
-        mv.setFtpDeviceID(Func.byteToLong(deviceId));
-        mv.setFtpIP(new String(ftpIp).trim());
-        mv.setFtpPort(Func.byteToInteger(ftpPort, 2));
-        mv.setFtpID(new String(ftpId).trim());
-        mv.setFtpPW(new String(ftpPw).trim());
-        mv.setFtpMode(Func.byteToInteger(ftpMode, 1));
-        mv.setPathData(new String(pathData).trim());
-        mv.setStationFileName(new String(stationFileName).trim());
-        mv.setRouteFileName(new String(routeFileName).trim());
-        mv.setRouteStationFileName(new String(routeStationFileName).trim());
+        mv.setSendYear(Func.byteToInteger(Util.byteReverse(yy)));
+        mv.setSendMonth(Func.byteToInteger(Util.byteReverse(mm)));
+        mv.setSendDay(Func.byteToInteger(Util.byteReverse(dd)));
+        mv.setSendHour(Func.byteToInteger(Util.byteReverse(hh)));
+        mv.setSendMin(Func.byteToInteger(Util.byteReverse(min)));
+        mv.setSendSec(Func.byteToInteger(Util.byteReverse(ss)));
+//        mv.setFtpDeviceID(Func.byteToLong(deviceId));
+        mv.setFtpIP(new String(Util.byteReverse(ftpIp)).trim());
+        mv.setFtpPort(Func.byteToInteger(Util.byteReverse(ftpPort), 2));
+        mv.setFtpID(new String(Util.byteReverse(ftpId)).trim());
+        mv.setFtpPW(new String(Util.byteReverse(ftpPw)).trim());
+        mv.setFtpMode(Func.byteToInteger(Util.byteReverse(ftpMode), 1));
+        mv.setPathData(new String(Util.byteReverse(pathData)).trim());
+//        mv.setStationFileName(new String(stationFileName).trim());
+//        mv.setRouteFileName(new String(routeFileName).trim());
+//        mv.setRouteStationFileName(new String(routeStationFileName).trim());
 
     }
 

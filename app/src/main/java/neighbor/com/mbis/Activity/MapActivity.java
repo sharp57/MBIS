@@ -32,6 +32,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.LocationSource;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
@@ -46,6 +47,7 @@ import java.util.TimeZone;
 import neighbor.com.mbis.function.FileManager;
 import neighbor.com.mbis.function.Func;
 import neighbor.com.mbis.function.Setter;
+import neighbor.com.mbis.maputil.LocationWrapper;
 import neighbor.com.mbis.maputil.adapter.MyArrayAdapter;
 import neighbor.com.mbis.maputil.BytePosition;
 import neighbor.com.mbis.maputil.Data;
@@ -65,7 +67,7 @@ import neighbor.com.mbis.R;
 import neighbor.com.mbis.util.MbisUtil;
 import neighbor.com.mbis.googlemap.AddMarker;
 
-public class MapActivity extends AppCompatActivity implements OnMapReadyCallback {
+public class MapActivity extends AppCompatActivity implements OnMapReadyCallback, LocationSource.OnLocationChangedListener {
     private GoogleMap gmap;
     private MapView mapView;
     AddMarker mAddMarker;
@@ -117,6 +119,11 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         setContentView(R.layout.activity_map);
         NetworkIntentService.mHandler = mHandler;
 
+        LocationWrapper locationWrapper = new LocationWrapper(this);
+        locationWrapper.setAccuracyFilterEnabled(true, 100);
+        locationWrapper.registerOnLocationChangedListener(this);
+        locationWrapper.requestUpdates();
+
         TimeZone jst = TimeZone.getTimeZone("JST");
         Calendar cal = Calendar.getInstance(jst);
 
@@ -140,6 +147,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         setLog();
         onClickEmergencyButton();
     }
+
 
     private boolean checkGpsService() {
 
@@ -1134,4 +1142,9 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 //            mService = null;
         }
     };
+
+    @Override
+    public void onLocationChanged(Location location) {
+
+    }
 }
