@@ -24,9 +24,13 @@ import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.Toast;
 
+import org.apache.commons.net.chargen.CharGenTCPClient;
 import org.apache.log4j.Logger;
 
+import java.sql.Connection;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.TimeZone;
 
 import neighbor.com.mbis.R;
@@ -87,6 +91,7 @@ public class LoginActivityNew extends Activity implements View.OnClickListener, 
     private final int FOCUS_BUS_NUM_BUTTON = 2;
     private int inputBoxFocus = FOCUS_NO_BUTTON;
     private InputMethodManager imm;
+
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -430,24 +435,90 @@ public class LoginActivityNew extends Activity implements View.OnClickListener, 
 
         Logger.getLogger(TAG).error("setInputKey focus: " + inputBoxFocus);
         if (inputBoxFocus == FOCUS_NO_BUTTON) {
-            noButton.setText(noButton.getText().toString() + key);
-            noButton.setSelection(noButton.getText().toString().length());
+            Logger.getLogger(TAG).debug("getSelectionStart : " + noButton.getSelectionStart());
+
+            String tempString = noButton.getText().toString();
+            StringBuffer stringBuffer = new StringBuffer(tempString);
+            if (noButton.getSelectionStart() != noButton.getText().toString().length()) {
+                Logger.getLogger(TAG).debug("삽입");
+                int selectionStart = noButton.getSelectionStart();
+                stringBuffer.insert(selectionStart, key);
+                noButton.setText(stringBuffer.toString());
+                noButton.setSelection(selectionStart + 1);
+            } else {
+                Logger.getLogger(TAG).debug("일반 추가");
+                noButton.setText(stringBuffer.append(key).toString());
+                noButton.setSelection(stringBuffer.toString().length());
+            }
+
         } else {
-            busNumButton.setText(busNumButton.getText().toString() + key);
-            busNumButton.setSelection(busNumButton.getText().toString().length());
+            Logger.getLogger(TAG).debug("getSelectionStart : " + busNumButton.getSelectionStart());
+            Logger.getLogger(TAG).debug("length : " + busNumButton.getText().toString().length());
+            String tempString = busNumButton.getText().toString();
+            StringBuffer stringBuffer = new StringBuffer(tempString);
+            if (busNumButton.getSelectionStart() != busNumButton.getText().toString().length()) {
+                Logger.getLogger(TAG).debug("삽입");
+                int selectionStart = busNumButton.getSelectionStart();
+                stringBuffer.insert(selectionStart, key);
+                busNumButton.setText(stringBuffer.toString());
+                busNumButton.setSelection(selectionStart + 1);
+            } else {
+                Logger.getLogger(TAG).debug("일반 추가");
+                busNumButton.setText(stringBuffer.append(key).toString());
+                busNumButton.setSelection(stringBuffer.toString().length());
+            }
         }
     }
 
     private void setInputDel() {
         if (inputBoxFocus == FOCUS_NO_BUTTON) {
-            if (noButton.length() > 0) {
-                noButton.setText(noButton.getText().toString().substring(0, noButton.getText().toString().length() - 1));
+            int selectionStart = noButton.getSelectionStart();
+            if (selectionStart == noButton.getText().toString().length()) {
+                Logger.getLogger(TAG).debug("일반 삭제");
+                if (noButton.getText().toString().length() != 0) {
+                    noButton.setText(noButton.getText().toString().substring(0, noButton.getText().toString().length() - 1));
+                    noButton.setSelection(noButton.getText().length());
+                }
+            } else {
+                char[] numCharArray = noButton.getText().toString().toCharArray();
+                ArrayList<Character> sample = new ArrayList<>();
+                for (char aNumCharArray : numCharArray) {
+                    sample.add(aNumCharArray);
+                }
+                if (selectionStart > 0) {
+                    sample.remove(selectionStart - 1);
+                    String tempString = getStringRepresentation(sample);
+                    noButton.setText(tempString);
+                    noButton.setSelection(selectionStart - 1);
+                }
             }
         } else {
-            if (busNumButton.length() > 0) {
+            int selectionStart = busNumButton.getSelectionStart();
+            if (selectionStart == busNumButton.getText().toString().length()) {
                 busNumButton.setText(busNumButton.getText().toString().substring(0, busNumButton.getText().toString().length() - 1));
+                busNumButton.setSelection(busNumButton.getText().length());
+            } else {
+                char[] numCharArray = busNumButton.getText().toString().toCharArray();
+                ArrayList<Character> sample = new ArrayList<>();
+                for (char aNumCharArray : numCharArray) {
+                    sample.add(aNumCharArray);
+                }
+                if (selectionStart > 0) {
+                    sample.remove(selectionStart - 1);
+                    String tempString = getStringRepresentation(sample);
+                    busNumButton.setText(tempString);
+                    busNumButton.setSelection(selectionStart - 1);
+                }
             }
         }
+    }
+
+    private String getStringRepresentation(ArrayList<Character> list) {
+        StringBuilder builder = new StringBuilder(list.size());
+        for (Character ch : list) {
+            builder.append(ch);
+        }
+        return builder.toString();
     }
 
     @Override
