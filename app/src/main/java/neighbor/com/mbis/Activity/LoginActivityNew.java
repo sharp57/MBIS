@@ -13,11 +13,10 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
-import android.support.annotation.RequiresApi;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.WindowManager;
+import android.view.View.OnTouchListener;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -25,15 +24,12 @@ import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.Toast;
 
-import org.apache.commons.net.ftp.FTPFile;
-
 import org.apache.log4j.Logger;
 
 import java.util.Calendar;
 import java.util.TimeZone;
 
 import neighbor.com.mbis.R;
-import neighbor.com.mbis.function.FTPManager;
 import neighbor.com.mbis.function.FileManager;
 import neighbor.com.mbis.function.Func;
 import neighbor.com.mbis.function.Setter;
@@ -51,8 +47,6 @@ import neighbor.com.mbis.maputil.thread.FTPInfoThread;
 import neighbor.com.mbis.maputil.thread.FTPThread;
 import neighbor.com.mbis.maputil.value.MapVal;
 import neighbor.com.mbis.network.NetworkIntentService;
-import neighbor.com.mbis.network.NetworkUtil;
-import neighbor.com.mbis.network.SocketConnect;
 import neighbor.com.mbis.util.MbisUtil;
 
 
@@ -60,7 +54,7 @@ import neighbor.com.mbis.util.MbisUtil;
  * Created by 권오철 on 2017-02-08.
  */
 
-public class LoginActivityNew extends Activity implements View.OnClickListener, neighbor.com.mbis.activity.MessageHandler.SmartServiceHandlerInterface {
+public class LoginActivityNew extends Activity implements View.OnClickListener, MessageHandler.SmartServiceHandlerInterface {
 
 
     //통신 변수들
@@ -88,11 +82,15 @@ public class LoginActivityNew extends Activity implements View.OnClickListener, 
     private Button key01, key02, key03, key04, key05, key06, key07, key08, key09, key10, key11;
     private RadioButton radioButton01, radioButton02;
     private static String TAG = LoginActivityNew.class.getSimpleName();
-    private neighbor.com.mbis.activity.MessageHandler handler = new neighbor.com.mbis.activity.MessageHandler(this);
+    private MessageHandler handler = new MessageHandler(this);
     private final int FOCUS_NO_BUTTON = 1;
     private final int FOCUS_BUS_NUM_BUTTON = 2;
     private int inputBoxFocus = FOCUS_NO_BUTTON;
     private InputMethodManager imm;
+    /**
+     * ATTENTION: This was auto-generated to implement the App Indexing API.
+     * See https://g.co/AppIndexing/AndroidStudio for more information.
+     */
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -151,10 +149,12 @@ public class LoginActivityNew extends Activity implements View.OnClickListener, 
         eventFileManager = new FileManager(packetFileName);
         Logger.getLogger(TAG).debug("onCreate");
         setInit();
-        imm = (InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);
+        imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.CUPCAKE)
+
     private void setInit() {
         authButton = (Button) findViewById(R.id.authButton);
         key12 = (ImageView) findViewById(R.id.key12);
@@ -205,52 +205,49 @@ public class LoginActivityNew extends Activity implements View.OnClickListener, 
 //        }
 
 
-
-
-
 //        getWindow().setSoftInputMode(
 //                WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN
 //        );
-//        noButton.setOnTouchListener(new View.OnTouchListener() {
-//            @Override
-//            public boolean onTouch(View v, MotionEvent event) {
-//                switch (event.getAction()) {
-//                    case MotionEvent.ACTION_DOWN:
-//                        new Handler().postDelayed(new Runnable() {
-//                            @RequiresApi(api = Build.VERSION_CODES.HONEYCOMB)
-//                            @Override
-//                            public void run() {
-//                                inputBoxFocus = FOCUS_NO_BUTTON;
-//                                noButton.setTextIsSelectable(true);
-//                                noButton.setSelection(noButton.length());
-//                                Logger.getLogger(TAG).error("noButton focus:");
-//                            }
-//                        }, 0);
-//                        break;
-//                }
-//                return false;
-//            }
-//        });
-//        busNumButton.setOnTouchListener(new View.OnTouchListener() {
-//            @Override
-//            public boolean onTouch(View v, MotionEvent event) {
-//                switch (event.getAction()) {
-//                    case MotionEvent.ACTION_DOWN:
-//                        new Handler().postDelayed(new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                inputBoxFocus = FOCUS_BUS_NUM_BUTTON;
-//                                busNumButton.setTextIsSelectable(true);
-//                                busNumButton.setSelection(busNumButton.length());
-//                                Logger.getLogger(TAG).error("busNumButton focus:");
-//                            }
-//                        }, 0);
-//
-//                        break;
-//                }
-//                return false;
-//            }
-//        });
+        noButton.setOnTouchListener(new OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        new Handler().postDelayed(new Runnable() {
+
+                            @Override
+                            public void run() {
+                                inputBoxFocus = FOCUS_NO_BUTTON;
+                                noButton.setTextIsSelectable(true);
+                                noButton.setSelection(noButton.length());
+                                Logger.getLogger(TAG).error("noButton focus:");
+                            }
+                        }, 0);
+                        break;
+                }
+                return false;
+            }
+        });
+        busNumButton.setOnTouchListener(new OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                inputBoxFocus = FOCUS_BUS_NUM_BUTTON;
+                                busNumButton.setTextIsSelectable(true);
+                                busNumButton.setSelection(busNumButton.length());
+                                Logger.getLogger(TAG).error("busNumButton focus:");
+                            }
+                        }, 0);
+
+                        break;
+                }
+                return false;
+            }
+        });
 
         radioButton01.setOnClickListener(optionOnClickListener);
         radioButton02.setOnClickListener(optionOnClickListener);
@@ -285,7 +282,7 @@ public class LoginActivityNew extends Activity implements View.OnClickListener, 
     @Override
     public void onClick(View v) {
         imm.hideSoftInputFromWindow(noButton.getWindowToken(), 0);
-
+        imm.hideSoftInputFromWindow(busNumButton.getWindowToken(), 0);
 
 
         switch (v.getId()) {
@@ -467,7 +464,8 @@ public class LoginActivityNew extends Activity implements View.OnClickListener, 
 
     @Override
     protected void onStart() {
-        super.onStart();
+        super.onStart();// ATTENTION: This was auto-generated to implement the App Indexing API.
+// See https://g.co/AppIndexing/AndroidStudio for more information.
 
         if (setting.getBoolean("chk_auto", false)
                 && socketFlag
@@ -742,7 +740,7 @@ public class LoginActivityNew extends Activity implements View.OnClickListener, 
 //            finish();
 //            startActivity(new Intent(getApplicationContext(), SelectRouteActivity.class));
 
-            startActivity(new Intent(getApplicationContext(), neighbor.com.mbis.activity.SelectMenuActivity.class));
+            startActivity(new Intent(getApplicationContext(), SelectMenuActivity.class));
             Toast.makeText(getApplicationContext(), "[인증 성공] from. Server : " + Func.byteToLong(Util.byteReverse(Func.longToByte(mv.getDeviceID(), 8))), Toast.LENGTH_SHORT).show();
             finish();   // 2017.02.13
 
@@ -858,4 +856,6 @@ public class LoginActivityNew extends Activity implements View.OnClickListener, 
                 break;
         }
     }
+
+
 }

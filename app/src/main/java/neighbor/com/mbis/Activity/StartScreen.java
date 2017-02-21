@@ -242,7 +242,7 @@ public class StartScreen extends AppCompatActivity implements neighbor.com.mbis.
 
 
         locationWrapper = new LocationWrapper(this);
-        locationWrapper.setAccuracyFilterEnabled(true, 100);
+        locationWrapper.setAccuracyFilterEnabled(true, 1000);
         locationWrapper.registerOnLocationChangedListener(this);
         locationWrapper.requestUpdates();
 
@@ -291,9 +291,9 @@ public class StartScreen extends AppCompatActivity implements neighbor.com.mbis.
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, locationListener);
-        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 0, locationListener);
-        locationManager.requestLocationUpdates(LocationManager.PASSIVE_PROVIDER, 1000, 0, locationListener);
+//        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, locationListener);
+//        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 0, locationListener);
+//        locationManager.requestLocationUpdates(LocationManager.PASSIVE_PROVIDER, 1000, 0, locationListener);
     }
 
     private void setFTPInit(){
@@ -420,6 +420,7 @@ public class StartScreen extends AppCompatActivity implements neighbor.com.mbis.
             Util.sqliteExport(this);
 
             startActivity(new Intent(StartScreen.this, LoginActivityNew.class));
+            finish();
 
         } catch (IOException e) {
             Toast.makeText(this, "Fail ToT", Toast.LENGTH_SHORT).show();
@@ -619,9 +620,9 @@ public class StartScreen extends AppCompatActivity implements neighbor.com.mbis.
 //        Logger.getLogger(TAG).error("onLocationChanged: ");
 //        if(isStart == true){
 //            isStart = false;
-//            locationWrapper.cancelUpdates();
+            locationWrapper.cancelUpdates();
 //
-//            setInitBooting(location);
+            setInitBooting(location);
 //        }
     }
 }
