@@ -35,13 +35,13 @@ public class FTPManager {
     }
 
     //로그인
-    public boolean login(){
-        try{
-            if(ftpClient.isConnected() == true){
+    public boolean login() {
+        try {
+            if (ftpClient.isConnected() == true) {
                 return ftpClient.login(id, password);
             }
 
-        }catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -49,15 +49,15 @@ public class FTPManager {
     }
 
     //연결
-    public void connect(){
-        try{
+    public void connect() {
+        try {
             ftpClient.enterLocalPassiveMode(); // PassiveMode 접속
             ftpClient.connect(server, port);
             int reply = 0;
 
             //연결 시도후, 성공했는지 응답코드 확인
             reply = ftpClient.getReplyCode();
-            if(FTPReply.isPositiveCompletion(reply) == false){
+            if (FTPReply.isPositiveCompletion(reply) == false) {
                 ftpClient.disconnect();
                 System.out.println("서버로부터 연결을 거부당했습니다.");
 
@@ -66,11 +66,11 @@ public class FTPManager {
             ftpClient.enterLocalPassiveMode();//이코드가 없어서 로컬로 돌렸을때 파일 디렉토리를 못받아왔다 넣어주자 2시간 소모했다....
 //			ftpClient.enterLocalActiveMode();
 
-        }catch(Exception e){
-            if(ftpClient.isConnected() == true){
-                try{
+        } catch (Exception e) {
+            if (ftpClient.isConnected() == true) {
+                try {
                     ftpClient.disconnect();
-                }catch(IOException f){
+                } catch (IOException f) {
 
                 }
             }
@@ -80,72 +80,73 @@ public class FTPManager {
 
 
     //서버로부터 로그아웃
-    public boolean logout(){
-        try{
+    public boolean logout() {
+        try {
             return ftpClient.logout();
-        }catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return false;
     }
 
     //ftp의 ls 명령 , 모든파일 리스트를 가져온다
-    public FTPFile[] list(){
+    public FTPFile[] list() {
         FTPFile[] files = null;
-        try{
+        try {
             files = ftpClient.listFiles();
             return files;
-        }catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
         return null;
     }
 
-    public void checkMkDir(){
+    public void checkMkDir() {
         String dirPath = NetworkUtil.FILE_PATH + NetworkUtil.FILE_PATH_2;
         File file = new File(dirPath);
-        if( !file.exists() )  // 원하는 경로에 폴더가 있는지 확인
+        if (!file.exists())  // 원하는 경로에 폴더가 있는지 확인
             file.mkdirs();
     }
+
     //파일전송을 받는다
-    public File get(String savePath, String recv2FTP){
+    public File get(String savePath, String recv2FTP) {
 
         OutputStream output = null;
-        try{
+        try {
             File local = new File(savePath);
             output = new FileOutputStream(local);
-        }catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         File file = new File(savePath);
-        try{
+        try {
             ftpClient.setFileType(FTP.BINARY_FILE_TYPE); //이 코드는 반드시 서버와 커넥션이후에 써야된다
             boolean flag = ftpClient.retrieveFile(recv2FTP, output);
             output.flush();
             output.close();
 
-            if(flag == true){
+            if (flag == true) {
                 return file;
             }
-        }catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
     }
 
     //파일 업로드
-    public boolean upload(File file){
+    public boolean upload(File file) {
         boolean resultCode = false;
-        try{
+        try {
             ftpClient.setFileType(FTP.BINARY_FILE_TYPE); //이 코드는 반드시 서버와 커넥션이후에 써야된다
             FileInputStream fis = new FileInputStream(file);
             boolean isSuccess = ftpClient.storeFile(file.getName(), fis);
-            if(isSuccess == true){
+            if (isSuccess == true) {
                 resultCode = true;
             }
             fis.close();
-        }catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -153,19 +154,19 @@ public class FTPManager {
     }
 
     //서버 디렉토리 이동
-    public void cd(String path){
-        try{
+    public void cd(String path) {
+        try {
             ftpClient.changeWorkingDirectory(path);
-        }catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     //서버로 부터 연결을 닫는다
-    public void disconnect(){
-        try{
+    public void disconnect() {
+        try {
             ftpClient.disconnect();
-        }catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
