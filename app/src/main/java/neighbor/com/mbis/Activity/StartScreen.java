@@ -207,6 +207,7 @@ public class StartScreen extends AppCompatActivity implements neighbor.com.mbis.
             // 0x11 respsonse 일때 아래 함수 호출하기로.. 지금은 테스트
 //            setFTPInit();
             startActivity(new Intent(StartScreen.this, LoginActivityNew.class));
+            finish();
         } catch (Exception e) {
             e.printStackTrace();
         }
