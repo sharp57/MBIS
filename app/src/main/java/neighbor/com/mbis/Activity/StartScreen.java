@@ -205,7 +205,8 @@ public class StartScreen extends AppCompatActivity implements neighbor.com.mbis.
             MbisUtil.sendData(handler);
 
             // 0x11 respsonse 일때 아래 함수 호출하기로.. 지금은 테스트
-            setFTPInit();
+//            setFTPInit();
+            startActivity(new Intent(StartScreen.this, LoginActivityNew.class));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -380,7 +381,7 @@ public class StartScreen extends AppCompatActivity implements neighbor.com.mbis.
                 if(f_name[0].equals(f_name2[0])){
 //                    csvFiles.add(file);
                     Logger.getLogger(TAG).error("fileName route overwriteDB");
-                 //   overwriteDB(file);
+                    overwriteDB(file);
                 }
             }
         }
