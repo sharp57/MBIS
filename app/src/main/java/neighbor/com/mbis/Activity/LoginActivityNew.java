@@ -13,9 +13,11 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.support.annotation.RequiresApi;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -90,6 +92,7 @@ public class LoginActivityNew extends Activity implements View.OnClickListener, 
     private final int FOCUS_NO_BUTTON = 1;
     private final int FOCUS_BUS_NUM_BUTTON = 2;
     private int inputBoxFocus = FOCUS_NO_BUTTON;
+    private InputMethodManager imm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -148,9 +151,10 @@ public class LoginActivityNew extends Activity implements View.OnClickListener, 
         eventFileManager = new FileManager(packetFileName);
         Logger.getLogger(TAG).debug("onCreate");
         setInit();
-
+        imm = (InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.CUPCAKE)
     private void setInit() {
         authButton = (Button) findViewById(R.id.authButton);
         key12 = (ImageView) findViewById(R.id.key12);
@@ -189,53 +193,69 @@ public class LoginActivityNew extends Activity implements View.OnClickListener, 
         key10.setOnClickListener(this);
         key11.setOnClickListener(this);
         key12.setOnClickListener(this);
+//
+//        noButton.setInputType(0);
+//        busNumButton.setInputType(0);
 
-        noButton.setInputType(0);
-        busNumButton.setInputType(0);
+        // 키보드 hidden
+//        View view = this.getCurrentFocus();
+//        if (view != null) {
+//            InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+//            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+//        }
 
-        noButton.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()){
-                    case MotionEvent.ACTION_DOWN:
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                inputBoxFocus = FOCUS_NO_BUTTON;
-                                noButton.setTextIsSelectable(true);
-                                noButton.setSelection(noButton.length());
-                                Logger.getLogger(TAG).error("noButton focus:");
-                            }
-                        },0);
-                        break;
-                }
-                return false;
-            }
-        });
-        busNumButton.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()){
-                    case MotionEvent.ACTION_DOWN:
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                inputBoxFocus = FOCUS_BUS_NUM_BUTTON;
-                                busNumButton.setTextIsSelectable(true);
-                                busNumButton.setSelection(busNumButton.length());
-                                Logger.getLogger(TAG).error("busNumButton focus:");
-                            }
-                        },0);
 
-                        break;
-                }
-                return false;
-            }
-        });
+
+
+
+//        getWindow().setSoftInputMode(
+//                WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN
+//        );
+//        noButton.setOnTouchListener(new View.OnTouchListener() {
+//            @Override
+//            public boolean onTouch(View v, MotionEvent event) {
+//                switch (event.getAction()) {
+//                    case MotionEvent.ACTION_DOWN:
+//                        new Handler().postDelayed(new Runnable() {
+//                            @RequiresApi(api = Build.VERSION_CODES.HONEYCOMB)
+//                            @Override
+//                            public void run() {
+//                                inputBoxFocus = FOCUS_NO_BUTTON;
+//                                noButton.setTextIsSelectable(true);
+//                                noButton.setSelection(noButton.length());
+//                                Logger.getLogger(TAG).error("noButton focus:");
+//                            }
+//                        }, 0);
+//                        break;
+//                }
+//                return false;
+//            }
+//        });
+//        busNumButton.setOnTouchListener(new View.OnTouchListener() {
+//            @Override
+//            public boolean onTouch(View v, MotionEvent event) {
+//                switch (event.getAction()) {
+//                    case MotionEvent.ACTION_DOWN:
+//                        new Handler().postDelayed(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                inputBoxFocus = FOCUS_BUS_NUM_BUTTON;
+//                                busNumButton.setTextIsSelectable(true);
+//                                busNumButton.setSelection(busNumButton.length());
+//                                Logger.getLogger(TAG).error("busNumButton focus:");
+//                            }
+//                        }, 0);
+//
+//                        break;
+//                }
+//                return false;
+//            }
+//        });
 
         radioButton01.setOnClickListener(optionOnClickListener);
         radioButton02.setOnClickListener(optionOnClickListener);
         radioButton01.setChecked(true);
+
 
         if (MbisUtil.getPreferencesBoolean(this, "mode")) {
             radioButton02.setChecked(true);
@@ -264,6 +284,9 @@ public class LoginActivityNew extends Activity implements View.OnClickListener, 
 
     @Override
     public void onClick(View v) {
+        imm.hideSoftInputFromWindow(noButton.getWindowToken(), 0);
+
+
 
         switch (v.getId()) {
             case R.id.authButton:
@@ -361,17 +384,39 @@ public class LoginActivityNew extends Activity implements View.OnClickListener, 
 //                }).start();
 //
 //                break;
-            case R.id.key01:    setInputKey("1");   break;
-            case R.id.key02:    setInputKey("2");   break;
-            case R.id.key03:    setInputKey("3");   break;
-            case R.id.key04:    setInputKey("4");   break;
-            case R.id.key05:    setInputKey("5");   break;
-            case R.id.key06:    setInputKey("6");   break;
-            case R.id.key07:    setInputKey("7");   break;
-            case R.id.key08:    setInputKey("8");   break;
-            case R.id.key09:    setInputKey("9");   break;
-            case R.id.key10:    setInputKey("0");   break;
-            case R.id.key11:    setInputKey("-");   break;
+            case R.id.key01:
+                setInputKey("1");
+                break;
+            case R.id.key02:
+                setInputKey("2");
+                break;
+            case R.id.key03:
+                setInputKey("3");
+                break;
+            case R.id.key04:
+                setInputKey("4");
+                break;
+            case R.id.key05:
+                setInputKey("5");
+                break;
+            case R.id.key06:
+                setInputKey("6");
+                break;
+            case R.id.key07:
+                setInputKey("7");
+                break;
+            case R.id.key08:
+                setInputKey("8");
+                break;
+            case R.id.key09:
+                setInputKey("9");
+                break;
+            case R.id.key10:
+                setInputKey("0");
+                break;
+            case R.id.key11:
+                setInputKey("-");
+                break;
             case R.id.key12:
                 setInputDel();
                 break;
@@ -384,28 +429,30 @@ public class LoginActivityNew extends Activity implements View.OnClickListener, 
         }
     }
 
-    private void setInputKey(String key){
+    private void setInputKey(String key) {
 
         Logger.getLogger(TAG).error("setInputKey focus: " + inputBoxFocus);
-        if(inputBoxFocus == FOCUS_NO_BUTTON) {
+        if (inputBoxFocus == FOCUS_NO_BUTTON) {
             noButton.setText(noButton.getText().toString() + key);
             noButton.setSelection(noButton.getText().toString().length());
-        }else{
+        } else {
             busNumButton.setText(busNumButton.getText().toString() + key);
             busNumButton.setSelection(busNumButton.getText().toString().length());
         }
     }
-    private void setInputDel(){
-        if(inputBoxFocus == FOCUS_NO_BUTTON) {
-            if(noButton.length() > 0){
+
+    private void setInputDel() {
+        if (inputBoxFocus == FOCUS_NO_BUTTON) {
+            if (noButton.length() > 0) {
                 noButton.setText(noButton.getText().toString().substring(0, noButton.getText().toString().length() - 1));
             }
-        }else{
-            if(busNumButton.length() > 0){
+        } else {
+            if (busNumButton.length() > 0) {
                 busNumButton.setText(busNumButton.getText().toString().substring(0, busNumButton.getText().toString().length() - 1));
             }
         }
     }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
