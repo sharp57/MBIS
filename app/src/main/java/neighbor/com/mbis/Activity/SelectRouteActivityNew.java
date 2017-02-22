@@ -15,6 +15,8 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.support.v7.app.AlertDialog;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -48,6 +50,7 @@ public class SelectRouteActivityNew extends Activity implements View.OnClickList
     private static final String MY_DB="my_db";
     private static String HasVisited = "hasVisited";
     private long todayLong;
+    private AutoCompleteTextView busNumber;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,7 +60,6 @@ public class SelectRouteActivityNew extends Activity implements View.OnClickList
         setInit();
 
 
-        db = DBManager.getInstance(this);
 //        isHasVisited(this);
 
 
@@ -70,8 +72,15 @@ public class SelectRouteActivityNew extends Activity implements View.OnClickList
     }
     private void setInit(){
         testButton = (Button) findViewById(R.id.testButton);
+        busNumber = (AutoCompleteTextView ) findViewById(R.id.busNumber);
 
         testButton.setOnClickListener(this);
+
+        db = DBManager.getInstance(this);
+//        busNumber.setAdapter(new ArrayAdapter<String>(this,
+//                android.R.layout.simple_dropdown_item_1line, items));
+
+
     }
 
     @Override

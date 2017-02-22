@@ -639,7 +639,7 @@ public class StartScreen extends AppCompatActivity implements neighbor.com.mbis.
 
     private synchronized void recvData(byte opCode) {
         MbisUtil.reveData();
-        new Receive_OP(opCode);
+        new Receive_OP(opCode); // 여기서 ftp 정보 MapVal class 에 저장한다
         Logger.getLogger(TAG).error("reveData: ftp: ip: " + mv.getFtpIP()); // 2017.02.20 //  test
 
         // 여기서 ftp 정보로 다운받으면 된다.
