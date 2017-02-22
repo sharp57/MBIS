@@ -19,10 +19,12 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.os.StrictMode;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
@@ -204,10 +206,11 @@ public class StartScreen extends AppCompatActivity implements neighbor.com.mbis.
             Data.writeData = Func.mergyByte(headerBuf, otherBusInfo);
             MbisUtil.sendData(handler);
 
+
             // 0x11 respsonse 일때 아래 함수 호출하기로.. 지금은 테스트
-//            setFTPInit();
-            startActivity(new Intent(StartScreen.this, LoginActivityNew.class));
-            finish();
+            setFTPInit();
+//            startActivity(new Intent(StartScreen.this, LoginActivityNew.class));
+//            finish();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -229,13 +232,12 @@ public class StartScreen extends AppCompatActivity implements neighbor.com.mbis.
         byte[] dt2 = Util.byteReverse(Func.stringToByte(date + time));
         byte[] gpsx = Util.byteReverse(Func.longToByte(lat, 4));
         byte[] gpsy = Util.byteReverse(Func.longToByte(lon, 4));
-        byte[] angle = Util.byteReverse(Func.integerToByte(90, 2));
-        byte[] speed = Util.byteReverse(Func.integerToByte(50, 2));
-        byte[] busnum = Util.byteReverse(Func.integerToByte(1, 2));
-        byte[] route = Util.byteReverse(Func.integerToByte(2, 2));
+        byte[] route = Util.byteReverse(Func.integerToByte(MbisUtil.getPreferencesInt(StartScreen.this,MbisUtil.version_route), 2));
+        byte[] routestop = Util.byteReverse(Func.integerToByte(MbisUtil.getPreferencesInt(StartScreen.this,MbisUtil.version_routestop), 2));
+        byte[] node = Util.byteReverse(Func.integerToByte(MbisUtil.getPreferencesInt(StartScreen.this,MbisUtil.version_node), 2));
         byte[] dev = Util.byteReverse(Func.integerToByte(3, 4));
 
-        return Func.mergyByte(Func.mergyByte(Func.mergyByte(Func.mergyByte(Func.mergyByte(dt, dt2), Func.mergyByte(gpsx, gpsy)), Func.mergyByte(angle, speed)), Func.mergyByte(busnum, route)), dev);
+        return Func.mergyByte(Func.mergyByte(Func.mergyByte(Func.mergyByte(dt, dt2), Func.mergyByte(gpsx, gpsy)), Func.mergyByte(route, routestop)), Func.mergyByte(node, dev));
     }
 
 
@@ -298,7 +300,6 @@ public class StartScreen extends AppCompatActivity implements neighbor.com.mbis.
     }
 
     private void setFTPInit(){
-
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -319,18 +320,20 @@ public class StartScreen extends AppCompatActivity implements neighbor.com.mbis.
                         fileName[1] = fileName[1].replace(".csv", "");
 
                         if(fileName[0].equals("route")) {
-                            Logger.getLogger(TAG).error("fileName route");
+                            Logger.getLogger(TAG).error("fileName route: " + MbisUtil.getPreferencesInt(StartScreen.this, MbisUtil.version_route) + " vs " + Integer.parseInt(fileName[1]) + " / " + files[i].getName());
                             if (MbisUtil.getPreferencesInt(StartScreen.this, MbisUtil.version_route) < Integer.parseInt(fileName[1])) {
                                 ftpManager.get(NetworkUtil.FILE_PATH + NetworkUtil.FILE_PATH_2 + files[i].getName(), files[i].getName());
                                 Logger.getLogger(TAG).error("fileName route down");
                                 checkData(files[i].getName());
                             }
                         }else if(fileName[0].equals("routestop")) {
+                            Logger.getLogger(TAG).error("fileName routestop: " + MbisUtil.getPreferencesInt(StartScreen.this, MbisUtil.version_routestop) + " vs " + Integer.parseInt(fileName[1]) + " / " + files[i].getName());
                             if (MbisUtil.getPreferencesInt(StartScreen.this, MbisUtil.version_routestop) < Integer.parseInt(fileName[1])) {
                                 ftpManager.get(NetworkUtil.FILE_PATH + NetworkUtil.FILE_PATH_2 + files[i].getName(), files[i].getName());
                                 checkData(files[i].getName());
                             }
                         }else if(fileName[0].equals("node")) {
+                            Logger.getLogger(TAG).error("fileName node: " + MbisUtil.getPreferencesInt(StartScreen.this, MbisUtil.version_node) + " vs " + Integer.parseInt(fileName[1]) + " / " + files[i].getName());
                             if (MbisUtil.getPreferencesInt(StartScreen.this, MbisUtil.version_node) < Integer.parseInt(fileName[1])) {
                                 ftpManager.get(NetworkUtil.FILE_PATH + NetworkUtil.FILE_PATH_2 + files[i].getName(), files[i].getName());
                                 checkData(files[i].getName());
@@ -397,34 +400,55 @@ public class StartScreen extends AppCompatActivity implements neighbor.com.mbis.
 
             String[] fileName = file.getName().split("_");
 
+            String version = fileName[1].replace(".csv", "");
 
             //db 삭제하기 전에 백업하기.
             backupDB();
 
             if(fileName[0].equals("route")) {
                 Logger.getLogger(TAG).error("insert route");
-                db.deleteRoute(null, null);
+                try {
+                    db.deleteRoute(null, null);
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
                 write_R(in);
-                MbisUtil.setPreferencesInt(this, MbisUtil.version_route, Integer.parseInt(fileName[1]));
+                MbisUtil.setPreferencesInt(this, MbisUtil.version_route, Integer.parseInt(version));
             } else if(fileName[0].equals("node")) {
-                db.deleteStation(null, null);
+                Logger.getLogger(TAG).error("insert node");
+                try{
+                    db.deleteStation(null, null);
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
                 write_S(in);
-                MbisUtil.setPreferencesInt(this, MbisUtil.version_node, Integer.parseInt(fileName[1]));
+                MbisUtil.setPreferencesInt(this, MbisUtil.version_node, Integer.parseInt(version));
             } else if(fileName[0].equals("routestop")) {
-                db.deleteRouteStation(null, null);
+                Logger.getLogger(TAG).error("insert routestop");
+                try {
+                    db.deleteRouteStation(null, null);
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
                 write_RS(in);
-                MbisUtil.setPreferencesInt(this, MbisUtil.version_routestop, Integer.parseInt(fileName[1]));
+                MbisUtil.setPreferencesInt(this, MbisUtil.version_routestop, Integer.parseInt(version));
             }
 
-            file.delete();
-            recreate();
-            Util.sqliteExport(this);
+//            file.delete();    // 이 주석 풀면 다운로드후 scv 파일 삭제
 
-            startActivity(new Intent(StartScreen.this, LoginActivityNew.class));
+//            recreate();
+//            runOnUiThread(new Runnable() {
+//                @Override
+//                public void run() {
+//                    Util.sqliteExport(StartScreen.this);
+//                }
+//            });
+//            startActivity(new Intent(StartScreen.this, LoginActivityNew.class));
+//            finish();
+
+        } catch (Exception e) {
+//            Toast.makeText(this, "Fail ToT", Toast.LENGTH_SHORT).show();
             finish();
-
-        } catch (IOException e) {
-            Toast.makeText(this, "Fail ToT", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -468,9 +492,11 @@ public class StartScreen extends AppCompatActivity implements neighbor.com.mbis.
                 addRouteUtil(r);
             }
             db.dbTransactionSuccessful();
-            Toast.makeText(this, "R ok", Toast.LENGTH_SHORT).show();
-        } catch (IOException e) {
+//            Toast.makeText(this, "R ok", Toast.LENGTH_SHORT).show();
+        } catch (Exception e) {
             e.printStackTrace();
+            Logger.getLogger(TAG).error("데이터 다운로드 오류로 앱을 종료합니다");
+            finish();
         } finally {
             db.dbEndTransaction();
         }
@@ -481,7 +507,7 @@ public class StartScreen extends AppCompatActivity implements neighbor.com.mbis.
 
         //Read each line
         try {
-            db.beginTransaction();in.readLine();
+            db.beginTransaction();
             while ((line = in.readLine()) != null) {
 
                 //Split to separate the name from the capital
@@ -501,9 +527,11 @@ public class StartScreen extends AppCompatActivity implements neighbor.com.mbis.
                 addStationUtil(s);
             }
             db.dbTransactionSuccessful();
-            Toast.makeText(this, "S ok", Toast.LENGTH_SHORT).show();
-        } catch (IOException e) {
+//            Toast.makeText(this, "S ok", Toast.LENGTH_SHORT).show();
+        } catch (Exception e) {
             e.printStackTrace();
+            Logger.getLogger(TAG).error("데이터 다운로드 오류로 앱을 종료합니다");
+            finish();
         } finally {
             db.dbEndTransaction();
         }
@@ -533,9 +561,11 @@ public class StartScreen extends AppCompatActivity implements neighbor.com.mbis.
                 addRouteStationUtil(rs);
             }
             db.dbTransactionSuccessful();
-            Toast.makeText(this, "RS ok", Toast.LENGTH_SHORT).show();
-        } catch (IOException e) {
+//            Toast.makeText(this, "RS ok"    , Toast.LENGTH_SHORT).show();
+        } catch (Exception e) {
             e.printStackTrace();
+            Logger.getLogger(TAG).error("데이터 다운로드 오류로 앱을 종료합니다");
+            finish();
         } finally {
             db.dbEndTransaction();
         }

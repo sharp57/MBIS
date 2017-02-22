@@ -198,9 +198,9 @@ public class LoginActivityNew extends Activity implements View.OnClickListener, 
         key10.setOnClickListener(this);
         key11.setOnClickListener(this);
         key12.setOnClickListener(this);
-//
-//        noButton.setInputType(0);
-//        busNumButton.setInputType(0);
+
+        noButton.setInputType(0);
+        busNumButton.setInputType(0);
 
         // 키보드 hidden
 //        View view = this.getCurrentFocus();
