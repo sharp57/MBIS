@@ -184,28 +184,12 @@ public class SelectRouteActivityNew extends Activity implements View.OnClickList
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 //                String[] splits = arrStr[position].toString().split("\\(");
-                String[] splits = ((TextView)view).getText().toString().split("\\(");
-                Logger.getLogger(TAG).error("선택노선: " + splits[0]);
+//                String[] splits = ((TextView)view).getText().toString().split("\\(");
+//                Logger.getLogger(TAG).error("선택노선: " + splits[0]);
                 busNumber.setText(tempBusNumber);
                 selectedBusNumber.setText(((TextView)view).getText().toString());
             }
         });
-        TextWatcher textWatcher = new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-            }
-        };
-        busNumber.addTextChangedListener(textWatcher);
     }
 
     @Override
