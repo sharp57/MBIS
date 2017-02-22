@@ -321,21 +321,6 @@ public class LoginActivityNew extends Activity implements View.OnClickListener, 
 
 
                         MbisUtil.sendData(handler);
-
-//                        SocketConnect socketConnect = new SocketConnect();
-//                        socketConnect.setSocket(handler, Data.writeData);
-//                        socketConnect.start();
-
-//                        SocketHandlerThread thread = new SocketHandlerThread("obd-engine");
-//                        thread.start();
-//                        if(thread.getSocket() != null){
-//                            Logger.getLogger(TAG).debug("thread.getSocket() != null");
-//                        }
-//                        SocketLooper socketLooper = new SocketLooper(LoginActivityNew.this, thread
-//                                .getLooper(), thread.getSocket());
-//                        socketLooper.setData( Data.writeData);
-
-
                     } else {
                         Toast.makeText(getApplicationContext(), "차량번호를 다시 한 번 확인 해 주세요.", Toast.LENGTH_SHORT).show();
                     }
@@ -343,49 +328,6 @@ public class LoginActivityNew extends Activity implements View.OnClickListener, 
                     Toast.makeText(getApplicationContext(), "전화번호를 다시 한 번 확인 해 주세요.", Toast.LENGTH_SHORT).show();
                 }
                 break;
-//            case R.id.key01:    // test booting info
-//
-//                try {
-//                    h = Util.setHeader(h, LoginActivityNew.this, (byte) 0x02, (byte) 0x11, new byte[]{0x00, 0x01}, new byte[]{0x01, 0x02}, new byte[]{0x00, 0x00, 0x00});
-//                    Data.writeData = Util.makeHeader(h, headerBuf);
-//
-//                    // 0x11
-//                    byte[] op = new byte[]{0x11};
-//                    mv.setDataLength(BytePosition.BODY_BOOT_INFO_SIZE - BytePosition.HEADER_SIZE);
-//                    h.setOp_code(op);
-//                    Setter.setHeader();
-//                    h.setDeviceID(Util.hexStringToByteArray(Util.getDeviceID(LoginActivityNew.this)));
-//                    byte[] otherBusInfo = makeBodyBusBootingInfo();
-//                    headerBuf = Util.makeHeader(h, headerBuf);
-//
-//                    Data.writeData = Func.mergyByte(headerBuf, otherBusInfo);
-//                    MbisUtil.sendData(handler);
-//
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-////                sendData();
-//                break;
-//            case R.id.key02:
-//                new Thread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        try {
-//                            FTPManager ftpManager = new FTPManager("211.189.132.192", 30300, "", "");
-//                            ftpManager.connect();
-//                            boolean isLogin = ftpManager.login();
-//                            Logger.getLogger(TAG).error("isLogin: " + isLogin);
-//                            FTPFile[] files = ftpManager.list();
-//                            for (int i = 0; i < files.length; i++) {
-//                                Logger.getLogger(TAG).error("files: " + files[i].getName());
-//                            }
-//                        } catch (Exception e) {
-//                            e.printStackTrace();
-//                        }
-//                    }
-//                }).start();
-//
-//                break;
             case R.id.key01:
                 setInputKey("1");
                 break;
@@ -536,101 +478,12 @@ public class LoginActivityNew extends Activity implements View.OnClickListener, 
     @Override
     protected void onStart() {
         super.onStart();// ATTENTION: This was auto-generated to implement the App Indexing API.
-// See https://g.co/AppIndexing/AndroidStudio for more information.
-
-        if (setting.getBoolean("chk_auto", false)
-                && socketFlag
-                ) {
+        if (setting.getBoolean("chk_auto", false) && socketFlag) {
             noButton.setText(setting.getString("ID", ""));
             busNumButton.setText(setting.getString("PW", ""));
-
         }
-
-
-//        if (mv.getDeviceID() != 0) {
-//            finish();
-//            startActivity(new Intent(getApplicationContext(), SelectMenuActivity.class));
-//        }
-
     }
 
-    Handler mHandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case HandlerPosition.DATA_READ_SUCESS:
-
-                    recvData(Data.readData[BytePosition.HEADER_OPCODE]);
-                    break;
-
-                case HandlerPosition.TIME_CHANGE:
-                    break;
-                //소켓 연결 성공!
-                case HandlerPosition.SOCKET_CONNECT_SUCCESS:
-                    socketFlag = true;
-//                    Toast.makeText(getApplicationContext(), "SOCKET_CONNECT_SUCCESS", Toast.LENGTH_SHORT).show();
-                    retryCountdownTimer();
-                    Data.writeData
-                            = new byte[]{
-                            0x01, 0x11, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x00, 0x00, 0x00, (byte) 0x32
-                            , 0x31, 0x36, 0x31, 0x30, 0x32, 0x37, 0x31, 0x34, 0x33, 0x36, 0x30, 0x30
-                            , 0x31, 0x36, 0x31, 0x30, 0x32, 0x37, 0x31, 0x34, 0x33, 0x36, 0x30, 0x30
-                            , 0x00, 0x39, 0x36, 0x73, 0x00, (byte) 0xC1, (byte) 0xF9, 0x7F, 0x00, 0x00, 0x00, 0x00
-                            , 0x00, 0x01, 0x00, 0x01, 0x00, 0x01, 0x00, 0x01, 0x00, 0x01
-                            , 0x00, 0x00, 0x00, 0x00
-                    };
-                    try {
-                        h = Util.setHeader(h, LoginActivityNew.this, (byte) 0x02, (byte) 0x11, new byte[]{0x00, 0x01}, new byte[]{0x01, 0x02}, new byte[]{0x00, 0x00, 0x00});
-                        Data.writeData = Util.makeHeader(h, headerBuf);
-
-//                        // 0x11
-
-                        byte[] op = new byte[]{0x11};
-                        mv.setDataLength(BytePosition.BODY_BOOT_INFO_SIZE - BytePosition.HEADER_SIZE);
-                        h.setOp_code(op);
-                        Setter.setHeader();
-                        h.setDeviceID(Util.hexStringToByteArray(Util.getDeviceID(LoginActivityNew.this)));
-                        byte[] otherBusInfo = makeBodyBusBootingInfo();
-                        headerBuf = Util.makeHeader(h, headerBuf);
-
-                        Data.writeData = Func.mergyByte(headerBuf, otherBusInfo);
-
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-//                    sendData();
-                    break;
-                //소켓 연결 실패!
-                case HandlerPosition.SOCKET_CONNECT_ERROR:
-                    socketFlag = false;
-//                    Toast.makeText(getApplicationContext(), "SOCKET_CONNECT_ERROR", Toast.LENGTH_SHORT).show();
-                    retryConnection();
-                    break;
-                //연결 중 서버가 죽었을 때
-                case HandlerPosition.READ_SERVER_DISCONNECT_ERROR:
-//                    Toast.makeText(getApplicationContext(), "READ_SERVER_DISCONNECT_ERROR", Toast.LENGTH_SHORT).show();
-                    retryConnection();
-                    break;
-                //데이터 전송이 실패했을 때
-                case HandlerPosition.WRITE_SERVER_DISCONNECT_ERROR:
-//                    Toast.makeText(getApplicationContext(), "WRITE_SERVER_DISCONNECT_ERROR", Toast.LENGTH_SHORT).show();
-                    retryConnection();
-                    break;
-                //잘못된 데이터가 왔을 때
-                case HandlerPosition.READ_DATA_ERROR:
-//                    Toast.makeText(getApplicationContext(), "READ_DATA_ERROR", Toast.LENGTH_SHORT).show();
-                    retryConnection();
-                    retryCountdownTimer();
-                    break;
-                //타임아웃!
-                case HandlerPosition.READ_TIMEOUT_ERROR:
-//                    Toast.makeText(getApplicationContext(), "READ_TIMEOUT_ERROR", Toast.LENGTH_SHORT).show();
-                    retryConnection();
-                    retryCountdownTimer();
-                    break;
-            }
-        }
-    };
 
     private byte[] makeBodyOtherBusInfo() {
         TimeZone jst = TimeZone.getTimeZone("JST");
