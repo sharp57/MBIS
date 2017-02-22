@@ -1,16 +1,20 @@
-package neighbor.com.mbis.views.activity;
+package neighbor.com.mbis.activity;
 
 import android.Manifest;
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.ActivityManager;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.os.Message;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
@@ -21,34 +25,34 @@ import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.Toast;
 
+import org.apache.commons.net.chargen.CharGenTCPClient;
 import org.apache.log4j.Logger;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.TimeZone;
 
 import neighbor.com.mbis.R;
-import neighbor.com.mbis.common.SettingsStore;
-import neighbor.com.mbis.common.SocketHanderMessageDfe;
-import neighbor.com.mbis.managers.FileManager;
-import neighbor.com.mbis.util.Func;
-import neighbor.com.mbis.util.Setter;
-import neighbor.com.mbis.network.BytePosition;
-import neighbor.com.mbis.views.maputil.Data;
-import neighbor.com.mbis.views.maputil.OPUtil;
-import neighbor.com.mbis.views.maputil.Util;
-import neighbor.com.mbis.models.form.Form_Header;
-import neighbor.com.mbis.models.value.MapVal;
-import neighbor.com.mbis.network.RecvDataUtil;
+import neighbor.com.mbis.function.FileManager;
+import neighbor.com.mbis.function.Func;
+import neighbor.com.mbis.function.Setter;
+import neighbor.com.mbis.maputil.BytePosition;
+import neighbor.com.mbis.maputil.Data;
+import neighbor.com.mbis.maputil.HandlerPosition;
+import neighbor.com.mbis.maputil.OPUtil;
+import neighbor.com.mbis.maputil.Receive_OP;
+import neighbor.com.mbis.maputil.Util;
+import neighbor.com.mbis.maputil.form.Form_Header;
+import neighbor.com.mbis.maputil.makefile.MakeRouteFile;
+import neighbor.com.mbis.maputil.makefile.MakeRouteStationFile;
+import neighbor.com.mbis.maputil.makefile.MakeStationFile;
+import neighbor.com.mbis.maputil.thread.FTPInfoThread;
+import neighbor.com.mbis.maputil.thread.FTPThread;
+import neighbor.com.mbis.maputil.value.MapVal;
 import neighbor.com.mbis.network.NetworkIntentService;
 import neighbor.com.mbis.util.MbisUtil;
-
-import static java.lang.String.format;
-import static neighbor.com.mbis.common.SocketHanderMessageDfe.ERROR_LOGIN;
-import static neighbor.com.mbis.common.SocketHanderMessageDfe.SUCCESS_LOGIN;
 
 
 /**
@@ -57,7 +61,7 @@ import static neighbor.com.mbis.common.SocketHanderMessageDfe.SUCCESS_LOGIN;
 
 public class LoginActivityNew extends Activity implements View.OnClickListener, MessageHandler.SmartServiceHandlerInterface {
 
-    private static String CALENDAR_FOMAT = "yymmdd";
+
     //통신 변수들
 
     final String tag = getClass().toString();
@@ -126,7 +130,7 @@ public class LoginActivityNew extends Activity implements View.OnClickListener, 
 //        byte[] otherBusInfo = makeBodyOtherBusInfo();
 //        headerBuf = Util.makeHeader(h, headerBuf);
 //
-//        Data.writeData = Func.mergeByte(headerBuf, otherBusInfo);
+//        Data.writeData = Func.mergyByte(headerBuf, otherBusInfo);
 
 
         Intent intent = getIntent();
@@ -146,7 +150,7 @@ public class LoginActivityNew extends Activity implements View.OnClickListener, 
 
         TimeZone jst = TimeZone.getTimeZone("JST");
         Calendar cal = Calendar.getInstance(jst);
-        String packetFileName = format("%02d", cal.get(Calendar.YEAR) - 2000) + format("%02d", (cal.get(Calendar.MONTH) + 1)) + format("%02d", cal.get(Calendar.DATE)) + " packet";
+        String packetFileName = String.format("%02d", cal.get(Calendar.YEAR) - 2000) + String.format("%02d", (cal.get(Calendar.MONTH) + 1)) + String.format("%02d", cal.get(Calendar.DATE)) + " packet";
 
         eventFileManager = new FileManager(packetFileName);
         Logger.getLogger(TAG).debug("onCreate");
@@ -183,6 +187,8 @@ public class LoginActivityNew extends Activity implements View.OnClickListener, 
         authButton.setOnClickListener(this);
         noButton.setOnClickListener(this);
         busNumButton.setOnClickListener(this);
+        noButton.setLongClickable(false);
+        busNumButton.setLongClickable(false);
         key01.setOnClickListener(this);
         key02.setOnClickListener(this);
         key03.setOnClickListener(this);
@@ -196,20 +202,6 @@ public class LoginActivityNew extends Activity implements View.OnClickListener, 
         key11.setOnClickListener(this);
         key12.setOnClickListener(this);
 
-        noButton.setInputType(0);
-        busNumButton.setInputType(0);
-
-        // 키보드 hidden
-//        View view = this.getCurrentFocus();
-//        if (view != null) {
-//            InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-//            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-//        }
-
-
-//        getWindow().setSoftInputMode(
-//                WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN
-//        );
         noButton.setOnTouchListener(new OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -235,6 +227,7 @@ public class LoginActivityNew extends Activity implements View.OnClickListener, 
             public boolean onTouch(View v, MotionEvent event) {
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
+                    case MotionEvent.ACTION_UP:
                         new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {
@@ -242,6 +235,8 @@ public class LoginActivityNew extends Activity implements View.OnClickListener, 
                                 busNumButton.setTextIsSelectable(true);
                                 busNumButton.setSelection(busNumButton.length());
                                 Logger.getLogger(TAG).error("busNumButton focus:");
+                                imm.hideSoftInputFromWindow(noButton.getWindowToken(), 0);
+                                imm.hideSoftInputFromWindow(busNumButton.getWindowToken(), 0);
                             }
                         }, 0);
 
@@ -457,9 +452,6 @@ public class LoginActivityNew extends Activity implements View.OnClickListener, 
     private byte[] makeBodyOtherBusInfo() {
         TimeZone jst = TimeZone.getTimeZone("JST");
         Calendar cal = Calendar.getInstance(jst);
-//        Date date = new Date();
-//        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(CALENDAR_FOMAT);
-//        String calendarDate = simpleDateFormat.format(date);
 
         String calendarDate = format("%s%s%s",
                 format("%02d", cal.get(Calendar.YEAR) - 2000),
@@ -473,15 +465,15 @@ public class LoginActivityNew extends Activity implements View.OnClickListener, 
         byte[] bus = Util.byteReverse(Func.integerToByte(Integer.parseInt(busNumButton.getText().toString()), 2));
         byte[] res = Util.byteReverse(Func.integerToByte(mv.getReservation(), 4));
 
-        return Func.mergeByte(Func.mergeByte(dt, phone), Func.mergeByte(bus, res));
+        return Func.mergyByte(Func.mergyByte(dt, phone), Func.mergyByte(bus, res));
     }
 
     private byte[] makeBodyBusBootingInfo() {
         TimeZone jst = TimeZone.getTimeZone("JST");
         Calendar cal = Calendar.getInstance(jst);
 
-        String date = format("%02d", cal.get(Calendar.YEAR) - 2000) + format("%02d", (cal.get(Calendar.MONTH) + 1)) + format("%02d", cal.get(Calendar.DATE));
-        String time = format("%02d", ((cal.get(Calendar.HOUR_OF_DAY)) + 9)) + format("%02d", (cal.get(Calendar.MINUTE))) + format("%02d", cal.get(Calendar.SECOND));
+        String date = String.format("%02d", cal.get(Calendar.YEAR) - 2000) + String.format("%02d", (cal.get(Calendar.MONTH) + 1)) + String.format("%02d", cal.get(Calendar.DATE));
+        String time = String.format("%02d", ((cal.get(Calendar.HOUR_OF_DAY)) + 9)) + String.format("%02d", (cal.get(Calendar.MINUTE))) + String.format("%02d", cal.get(Calendar.SECOND));
         byte[] dt = Util.byteReverse(Func.stringToByte(date + time));
         byte[] dt2 = Util.byteReverse(Func.stringToByte(date + time));
         byte[] gpsx = Util.byteReverse(Func.longToByte(3712345678l, 4));
@@ -497,7 +489,7 @@ public class LoginActivityNew extends Activity implements View.OnClickListener, 
 //        byte[] bus = Func.integerToByte(Integer.parseInt(busNumButton.getText().toString()), 2);
 //        byte[] res = Func.integerToByte(mv.getReservation(), 4);
 
-        return Func.mergeByte(Func.mergeByte(Func.mergeByte(Func.mergeByte(Func.mergeByte(dt, dt2), Func.mergeByte(gpsx, gpsy)), Func.mergeByte(angle, speed)), Func.mergeByte(busnum, route)), dev);
+        return Func.mergyByte(Func.mergyByte(Func.mergyByte(Func.mergyByte(Func.mergyByte(dt, dt2), Func.mergyByte(gpsx, gpsy)), Func.mergyByte(angle, speed)), Func.mergyByte(busnum, route)), dev);
     }
 
 
@@ -550,7 +542,7 @@ public class LoginActivityNew extends Activity implements View.OnClickListener, 
     private void sendData() {
         String dd = "";
         for (int j = 0; j < Data.writeData.length; j++) {
-            dd = dd + format("%02X ", Data.writeData[j]);
+            dd = dd + String.format("%02X ", Data.writeData[j]);
         }
         eventFileManager.saveData("\n(" + (mv.getSendYear() - 2000) + "." + mv.getSendMonth() + "." + mv.getSendDay() +
                 " - " + (mv.getSendHour() + 9) + ":" + mv.getSendMin() + ":" + mv.getSendSec() +
@@ -568,14 +560,49 @@ public class LoginActivityNew extends Activity implements View.OnClickListener, 
 
     public void userCertificationSuccess() {
         if (mv.getDeviceID() != 0) {
+//            sNetwork.close();
 
             SettingsStore settingsStore = SettingsStore.getInstance();
             settingsStore.putDeviceId(mv.getDeviceID());
             startActivity(new Intent(getApplicationContext(), SelectMenuActivity.class));
             Toast.makeText(getApplicationContext(), "[인증 성공] from. Server : " + Func.byteToLong(Util.byteReverse(Func.longToByte(mv.getDeviceID(), 8))), Toast.LENGTH_SHORT).show();
             finish();   // 2017.02.13
+
         }
     }
+
+
+//    public void onCheckBoxClick(View v) {
+//        if (chk_auto.isChecked()) {
+//            String ID = noButton.getText().toString();
+//            String PW = busNumButton.getText().toString();
+//
+//            editor.putString("ID", ID);
+//            editor.putString("PW", PW);
+//            editor.putBoolean("chk_auto", true);
+//            editor.commit();
+//        } else {
+//            editor.clear();
+//            editor.commit();
+//        }
+//    }
+
+    //서비스 커넥션 선언.
+    private ServiceConnection mConnection = new ServiceConnection() {
+        // Called when the connection with the service is established
+        @Override
+        public void onServiceConnected(ComponentName className, IBinder service) {
+            NetworkIntentService.MainServiceBinder binder = (NetworkIntentService.MainServiceBinder) service;
+            mService = binder.getService(); //서비스 받아옴
+        }
+
+        // Called when the connection with the service disconnects unexpectedly
+        @Override
+        public void onServiceDisconnected(ComponentName className) {
+            mService = null;
+        }
+    };
+
 
     @Override
     public void handleServiceMessage(Message message) {
