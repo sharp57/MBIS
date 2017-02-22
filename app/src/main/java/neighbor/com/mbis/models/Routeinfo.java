@@ -4,7 +4,7 @@ package neighbor.com.mbis.models;
  * Created by 권오철 on 2017-02-22.
  */
 
-public class Routeinfo {
+public class RouteInfo {
 
     private String category;
     private String busNum;

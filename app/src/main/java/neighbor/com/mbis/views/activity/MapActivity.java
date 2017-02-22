@@ -110,7 +110,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     BusTimer busTimer;
 
 
-    private NetworkIntentService mService = LoginActivityNew.mService;
+//    private NetworkIntentService mService = neighbor.com.mbis.activity.LoginActivityNew.mService;
 
     //이벤트 발생할 때 데이터 전송하려면 이벤트 발생하는곳에 사용 : sendData(byte[]배열);
     @Override
@@ -258,10 +258,10 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 //        cTimer.cancel();
 
         // 2017.02.10
-        if(mService != null){
-            mService.close();   // 2017.02.10
-            mService.stopSelf();
-        }
+//        if(mService != null){
+//            mService.close();   // 2017.02.10
+//            mService.stopSelf();
+//        }
 //        sNetwork.close();
 
 //        sBuf.clearAll();
@@ -308,7 +308,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         eventFileManager.saveData("\n(" + mv.getSendYear() + "." + mv.getSendMonth() + "." + mv.getSendDay() +
                 " - " + mv.getSendHour() + ":" + mv.getSendMin() + ":" + mv.getSendSec() +
                 ")\n[SEND:" + Data.writeData.length + "] - " + dd);
-        mService.writeData();
+//        mService.writeData();
 
 //        NetworkService.socket.writeData(Data.writeData);
 //        mService.sendData();
@@ -971,11 +971,11 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     private void retryConnection() {
 
 //        cTimer.cancel();
-        mService.close();
-        mService.stopSelf();
-        mService.setHandler(mHandler);
-        startService(new Intent(MapActivity.this, mService.getClass()));
-        bindService(new Intent(MapActivity.this,  mService.getClass()), mConnection, Context.BIND_AUTO_CREATE);
+//        mService.close();
+//        mService.stopSelf();
+//        mService.setHandler(mHandler);
+//        startService(new Intent(MapActivity.this, mService.getClass()));
+//        bindService(new Intent(MapActivity.this,  mService.getClass()), mConnection, Context.BIND_AUTO_CREATE);
 //        sNetwork.close();
 //        sNetwork = new SocketNetwork(NetworkUtil.IP, NetworkUtil.PORT, mHandler);
 //        sNetwork.start();
@@ -1109,10 +1109,10 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 //                        sNetwork.close();
 
                         // 2017.02.10
-                        MbisUtil.log(MapActivity.this, "mService: " + mService);
-                        if(mService != null){
-                            mService.stopSelf();
-                        }
+//                        MbisUtil.log(MapActivity.this, "mService: " + mService);
+//                        if(mService != null){
+//                            mService.stopSelf();
+//                        }
 //                        stopService(new Intent(MapActivity.this, mService.getClass()));
 
                         //Exit from activity.
@@ -1134,7 +1134,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         // Called when the connection with the service is established
         public void onServiceConnected(ComponentName className, IBinder service) {
             NetworkIntentService.MainServiceBinder binder = (NetworkIntentService.MainServiceBinder) service;
-            mService = binder.getService(); //서비스 받아옴
+//            mService = binder.getService(); //서비스 받아옴
         }
 
         // Called when the connection with the service disconnects unexpectedly

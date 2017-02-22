@@ -1,4 +1,4 @@
-package neighbor.com.mbis.adapter;
+package neighbor.com.mbis.views.adapter;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -11,7 +11,8 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import neighbor.com.mbis.R;
-import neighbor.com.mbis.data.RouteInfo;
+import neighbor.com.mbis.models.RouteInfo;
+
 /**
  * Created by 권오철 on 2017-02-22.
  */

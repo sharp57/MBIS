@@ -1,4 +1,4 @@
-package neighbor.com.mbis.activity;
+package neighbor.com.mbis.views.activity;
 
 import android.Manifest;
 import android.app.Activity;
@@ -13,14 +13,18 @@ import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.support.v7.app.AlertDialog;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -34,18 +38,18 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
 import java.util.TimeZone;
 
-import neighbor.com.mbis.adapter.RouteAdapter;
-import neighbor.com.mbis.csv.RouteStationUtil;
-import neighbor.com.mbis.csv.RouteUtil;
-import neighbor.com.mbis.csv.StationUtil;
-import neighbor.com.mbis.data.RouteInfo;
-import neighbor.com.mbis.database.DBManager;
-import neighbor.com.mbis.maputil.Util;
 import neighbor.com.mbis.R;
+import neighbor.com.mbis.managers.DBManager;
+import neighbor.com.mbis.models.RouteInfo;
 import neighbor.com.mbis.util.MbisUtil;
+import neighbor.com.mbis.util.csv.RouteStationUtil;
+import neighbor.com.mbis.util.csv.RouteUtil;
+import neighbor.com.mbis.util.csv.StationUtil;
+import neighbor.com.mbis.views.activity.MapActivity;
+import neighbor.com.mbis.views.activity.RunActivity;
+import neighbor.com.mbis.views.adapter.RouteAdapter;
 
 /**
  * Created by 권오철 on 2017-02-09.
@@ -160,7 +164,8 @@ public class SelectRouteActivityNew extends Activity implements View.OnClickList
         }
         Logger.getLogger(TAG).error("listRoute.size: " + listRoute.size());
 
-        RouteAdapter adapter = new RouteAdapter(this, R.layout.row_route_info,listRoute);
+        RouteAdapter adapter = new RouteAdapter(this, R.layout
+                .row_route_info,listRoute);
         busNumber.setAdapter(adapter);
 
 

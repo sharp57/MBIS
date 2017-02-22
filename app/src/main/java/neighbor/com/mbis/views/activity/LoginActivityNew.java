@@ -1,10 +1,10 @@
-package neighbor.com.mbis.activity;
+package neighbor.com.mbis.views.activity;
 
 import android.Manifest;
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
@@ -14,7 +14,6 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.util.Log;
-import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
@@ -25,34 +24,37 @@ import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.Toast;
 
-import org.apache.commons.net.chargen.CharGenTCPClient;
 import org.apache.log4j.Logger;
 
-import java.sql.Connection;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.TimeZone;
 
 import neighbor.com.mbis.R;
-import neighbor.com.mbis.function.FileManager;
-import neighbor.com.mbis.function.Func;
-import neighbor.com.mbis.function.Setter;
-import neighbor.com.mbis.maputil.BytePosition;
-import neighbor.com.mbis.maputil.Data;
-import neighbor.com.mbis.maputil.HandlerPosition;
-import neighbor.com.mbis.maputil.OPUtil;
-import neighbor.com.mbis.maputil.Receive_OP;
-import neighbor.com.mbis.maputil.Util;
-import neighbor.com.mbis.maputil.form.Form_Header;
-import neighbor.com.mbis.maputil.makefile.MakeRouteFile;
-import neighbor.com.mbis.maputil.makefile.MakeRouteStationFile;
-import neighbor.com.mbis.maputil.makefile.MakeStationFile;
-import neighbor.com.mbis.maputil.thread.FTPInfoThread;
-import neighbor.com.mbis.maputil.thread.FTPThread;
-import neighbor.com.mbis.maputil.value.MapVal;
+import neighbor.com.mbis.common.SettingsStore;
+import neighbor.com.mbis.common.SocketHanderMessageDfe;
+import neighbor.com.mbis.managers.FileManager;
+import neighbor.com.mbis.models.form.Form_Header;
+import neighbor.com.mbis.models.value.MapVal;
+import neighbor.com.mbis.network.BytePosition;
+import neighbor.com.mbis.network.RecvDataUtil;
+import neighbor.com.mbis.util.Func;
+import neighbor.com.mbis.util.Setter;
+
 import neighbor.com.mbis.network.NetworkIntentService;
 import neighbor.com.mbis.util.MbisUtil;
+import neighbor.com.mbis.views.activity.MessageHandler;
+import neighbor.com.mbis.views.activity.SelectMenuActivity;
+import neighbor.com.mbis.views.maputil.Data;
+import neighbor.com.mbis.views.maputil.OPUtil;
+import neighbor.com.mbis.views.maputil.Util;
+
+import static java.lang.String.format;
+import static neighbor.com.mbis.common.SocketHanderMessageDfe.ERROR_LOGIN;
+import static neighbor.com.mbis.common.SocketHanderMessageDfe.SUCCESS_LOGIN;
 
 
 /**
@@ -150,7 +152,7 @@ public class LoginActivityNew extends Activity implements View.OnClickListener, 
 
         TimeZone jst = TimeZone.getTimeZone("JST");
         Calendar cal = Calendar.getInstance(jst);
-        String packetFileName = String.format("%02d", cal.get(Calendar.YEAR) - 2000) + String.format("%02d", (cal.get(Calendar.MONTH) + 1)) + String.format("%02d", cal.get(Calendar.DATE)) + " packet";
+        String packetFileName = format("%02d", cal.get(Calendar.YEAR) - 2000) + format("%02d", (cal.get(Calendar.MONTH) + 1)) + format("%02d", cal.get(Calendar.DATE)) + " packet";
 
         eventFileManager = new FileManager(packetFileName);
         Logger.getLogger(TAG).debug("onCreate");
@@ -294,7 +296,7 @@ public class LoginActivityNew extends Activity implements View.OnClickListener, 
                         headerBuf = Util.makeHeader(h, headerBuf);
                         Data.writeData = Func.mergeByte(headerBuf, otherBusInfo);
                         MbisUtil.sendData(handler, SUCCESS_LOGIN,
-                                SocketHanderMessageDfe.ERROR_LOGIN);
+                                ERROR_LOGIN);
 
                     } else {
                         Toast.makeText(getApplicationContext(), "차량번호를 다시 한 번 확인 해 주세요.", Toast.LENGTH_SHORT).show();
@@ -465,15 +467,15 @@ public class LoginActivityNew extends Activity implements View.OnClickListener, 
         byte[] bus = Util.byteReverse(Func.integerToByte(Integer.parseInt(busNumButton.getText().toString()), 2));
         byte[] res = Util.byteReverse(Func.integerToByte(mv.getReservation(), 4));
 
-        return Func.mergyByte(Func.mergyByte(dt, phone), Func.mergyByte(bus, res));
+        return Func.mergeByte(Func.mergeByte(dt, phone), Func.mergeByte(bus, res));
     }
 
     private byte[] makeBodyBusBootingInfo() {
         TimeZone jst = TimeZone.getTimeZone("JST");
         Calendar cal = Calendar.getInstance(jst);
 
-        String date = String.format("%02d", cal.get(Calendar.YEAR) - 2000) + String.format("%02d", (cal.get(Calendar.MONTH) + 1)) + String.format("%02d", cal.get(Calendar.DATE));
-        String time = String.format("%02d", ((cal.get(Calendar.HOUR_OF_DAY)) + 9)) + String.format("%02d", (cal.get(Calendar.MINUTE))) + String.format("%02d", cal.get(Calendar.SECOND));
+        String date = format("%02d", cal.get(Calendar.YEAR) - 2000) + format("%02d", (cal.get(Calendar.MONTH) + 1)) + format("%02d", cal.get(Calendar.DATE));
+        String time = format("%02d", ((cal.get(Calendar.HOUR_OF_DAY)) + 9)) + format("%02d", (cal.get(Calendar.MINUTE))) + format("%02d", cal.get(Calendar.SECOND));
         byte[] dt = Util.byteReverse(Func.stringToByte(date + time));
         byte[] dt2 = Util.byteReverse(Func.stringToByte(date + time));
         byte[] gpsx = Util.byteReverse(Func.longToByte(3712345678l, 4));
@@ -489,7 +491,7 @@ public class LoginActivityNew extends Activity implements View.OnClickListener, 
 //        byte[] bus = Func.integerToByte(Integer.parseInt(busNumButton.getText().toString()), 2);
 //        byte[] res = Func.integerToByte(mv.getReservation(), 4);
 
-        return Func.mergyByte(Func.mergyByte(Func.mergyByte(Func.mergyByte(Func.mergyByte(dt, dt2), Func.mergyByte(gpsx, gpsy)), Func.mergyByte(angle, speed)), Func.mergyByte(busnum, route)), dev);
+        return Func.mergeByte(Func.mergeByte(Func.mergeByte(Func.mergeByte(Func.mergeByte(dt, dt2), Func.mergeByte(gpsx, gpsy)), Func.mergeByte(angle, speed)), Func.mergeByte(busnum, route)), dev);
     }
 
 
@@ -542,7 +544,7 @@ public class LoginActivityNew extends Activity implements View.OnClickListener, 
     private void sendData() {
         String dd = "";
         for (int j = 0; j < Data.writeData.length; j++) {
-            dd = dd + String.format("%02X ", Data.writeData[j]);
+            dd = dd + format("%02X ", Data.writeData[j]);
         }
         eventFileManager.saveData("\n(" + (mv.getSendYear() - 2000) + "." + mv.getSendMonth() + "." + mv.getSendDay() +
                 " - " + (mv.getSendHour() + 9) + ":" + mv.getSendMin() + ":" + mv.getSendSec() +
