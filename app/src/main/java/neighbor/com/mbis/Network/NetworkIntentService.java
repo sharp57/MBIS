@@ -18,11 +18,11 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
 
-import neighbor.com.mbis.function.Func;
-import neighbor.com.mbis.maputil.BytePosition;
-import neighbor.com.mbis.maputil.Data;
-import neighbor.com.mbis.maputil.HandlerPosition;
-import neighbor.com.mbis.maputil.Util;
+import neighbor.com.mbis.util.Func;
+import neighbor.com.mbis.views.maputil.Data;
+import neighbor.com.mbis.views.maputil.HandlerPosition;
+import neighbor.com.mbis.views.maputil.Util;
+import neighbor.com.mbis.common.ConnectInfo;
 
 import static java.lang.Thread.sleep;
 
@@ -56,8 +56,8 @@ public class NetworkIntentService extends IntentService {
     public NetworkIntentService() {
         super("NetworkIntentService");
         runFlag = true;
-        this.IP = NetworkUtil.IP;
-        this.PORT = NetworkUtil.PORT;
+        this.IP = ConnectInfo.IP;
+        this.PORT = ConnectInfo.PORT;
 
         socket = new Socket();
         sAddress = new InetSocketAddress(this.IP, this.PORT);
@@ -235,7 +235,7 @@ public class NetworkIntentService extends IntentService {
 
             if (dataLength > 0) {
                 //정상적인 데이터 수신
-                Data.readData = Func.mergyByte(headerData, bodyData);
+                Data.readData = Func.mergeByte(headerData, bodyData);
                 if (headerData[BytePosition.HEADER_OPCODE] == 0x33) {
                     Data.readFTPData = Data.readData;
                     sleep(3000);
