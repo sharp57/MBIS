@@ -9,12 +9,32 @@
         android:gravity="center_vertical">
         <TextView
             android:id="@+id/number"
-            android:layout_width="100dp"
+            android:layout_width="80dp"
             android:layout_height="match_parent"
-            android:layout_weight="1"
+            android:layout_weight="0"
             android:gravity="center_vertical"
             android:paddingLeft="4dp"
             android:text="5001"
+            android:textSize="16dp"
+            android:textColor="#555555"/>
+        <TextView
+            android:id="@+id/direction"
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0"
+            android:gravity="center_vertical"
+            android:paddingLeft="4dp"
+            android:text="상행"
+            android:textSize="13dp"
+            android:textColor="#6d6d6d"/>
+        <TextView
+            android:id="@+id/desc"
+            android:layout_width="170dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0"
+            android:gravity="center_vertical"
+            android:paddingLeft="4dp"
+            android:text="울산시청 - 울산역방면"
             android:textSize="16dp"
             android:textColor="#555555"/>
     </LinearLayout>

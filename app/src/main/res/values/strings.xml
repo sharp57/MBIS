@@ -29,6 +29,10 @@
     <string name="select_emergency_menu03">긴급공사</string>
     <string name="select_emergency_menu04">긴급상황</string>
     <string name="select_emergency_menu05">도로사고</string>
+    <string name="input_route">노선입력</string>
+    <string name="selected_route">선택: </string>
+    <string name="select_route">노선을 선택하세요</string>
+
 
 
 </resources>

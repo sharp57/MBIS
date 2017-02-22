@@ -34,48 +34,48 @@ public class DBManager {
 
     private static final int DATABASE_VERSION = 1;
 
-    private static final String DATABASE_NAME = "MBIS.db";
-    private static final String TABLE_NAMER = "Route";
-    private static final String TABLE_NAMES = "Station";
-    private static final String TABLE_NAMERS = "RouteStation";
-    private static final String TABLE_NAMERC = "Config";
+    public static final String DATABASE_NAME = "MBIS.db";
+    public static final String TABLE_NAMER = "Route";
+    public static final String TABLE_NAMES = "Station";
+    public static final String TABLE_NAMERS = "RouteStation";
+    public static final String TABLE_NAMERC = "Config";
 
-    private static final String route_id = "route_id";
-    private static final String route_name = "route_name";
-    private static final String route_form = "route_form";
-    private static final String route_type = "route_type";
-    private static final String route_first_start_time = "route_first_start_time";
-    private static final String route_last_start_time = "route_last_start_time";
-    private static final String route_average_interval = "route_average_interval";
-    private static final String route_average_time = "route_average_time";
-    private static final String route_length = "route_length";
-    private static final String route_station_num = "route_station_num";
-    private static final String route_start_station = "route_start_station";
-    private static final String route_important_station1 = "route_important_station1";
-    private static final String route_important_station2 = "route_important_station2";
-    private static final String route_last_station = "route_last_station";
-
-
-    private static final String station_id = "station_id";
-    private static final String station_name = "station_name";
-    private static final String station_type = "station_type";
-    private static final String station_angle = "station_angle";
-    private static final String station_x = "station_x";
-    private static final String station_y = "station_y";
-    private static final String station_arrive_distance = "station_arrive_distance";
-    private static final String station_start_distance = "station_start_distance";
+    public static final String route_id = "route_id";
+    public static final String route_name = "route_name";
+    public static final String route_form = "route_form";
+    public static final String route_type = "route_type";
+    public static final String route_first_start_time = "route_first_start_time";
+    public static final String route_last_start_time = "route_last_start_time";
+    public static final String route_average_interval = "route_average_interval";
+    public static final String route_average_time = "route_average_time";
+    public static final String route_length = "route_length";
+    public static final String route_station_num = "route_station_num";
+    public static final String route_start_station = "route_start_station";
+    public static final String route_important_station1 = "route_important_station1";
+    public static final String route_important_station2 = "route_important_station2";
+    public static final String route_last_station = "route_last_station";
 
 
-    private static final String station_order = "station_order";
-    private static final String station_distance = "station_distance";
-    private static final String station_time = "station_time";
+    public static final String station_id = "station_id";
+    public static final String station_name = "station_name";
+    public static final String station_type = "station_type";
+    public static final String station_angle = "station_angle";
+    public static final String station_x = "station_x";
+    public static final String station_y = "station_y";
+    public static final String station_arrive_distance = "station_arrive_distance";
+    public static final String station_start_distance = "station_start_distance";
 
 
-    private static final String apply_date = "apply_date";
-    private static final String apply_time = "apply_time";
-    private static final String apply_file_name = "apply_file_name";
-    private static final String apply_table_type = "apply_table_type";
-    private static final String updatable = "updatable";
+    public static final String station_order = "station_order";
+    public static final String station_distance = "station_distance";
+    public static final String station_time = "station_time";
+
+
+    public static final String apply_date = "apply_date";
+    public static final String apply_time = "apply_time";
+    public static final String apply_file_name = "apply_file_name";
+    public static final String apply_table_type = "apply_table_type";
+    public static final String updatable = "updatable";
 
     // Opener of DB and Table
     private class OpenHelper extends SQLiteOpenHelper {

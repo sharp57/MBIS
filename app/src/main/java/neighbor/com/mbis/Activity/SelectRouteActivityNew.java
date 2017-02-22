@@ -13,12 +13,24 @@ import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.support.v7.app.AlertDialog;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.RadioButton;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import org.apache.log4j.Logger;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -28,11 +40,14 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 import java.util.TimeZone;
 
+import neighbor.com.mbis.adapter.RouteAdapter;
 import neighbor.com.mbis.csv.RouteStationUtil;
 import neighbor.com.mbis.csv.RouteUtil;
 import neighbor.com.mbis.csv.StationUtil;
+import neighbor.com.mbis.data.RouteInfo;
 import neighbor.com.mbis.database.DBManager;
 import neighbor.com.mbis.maputil.Util;
 import neighbor.com.mbis.R;
@@ -44,6 +59,7 @@ import neighbor.com.mbis.util.MbisUtil;
 
 public class SelectRouteActivityNew extends Activity implements View.OnClickListener{
 
+    private final String TAG = getClass().toString();
     private Button testButton;
     private DBManager db;
     private SharedPreferences pref;
@@ -51,6 +67,16 @@ public class SelectRouteActivityNew extends Activity implements View.OnClickList
     private static String HasVisited = "hasVisited";
     private long todayLong;
     private AutoCompleteTextView busNumber;
+    private ImageView key12;
+    private final int FOCUS_NO_BUTTON = 1;
+    private int inputBoxFocus = FOCUS_NO_BUTTON;
+
+    private Button key01, key02, key03, key04, key05, key06, key07, key08, key09, key10, key11;
+    private InputMethodManager imm;
+    private ArrayList<RouteInfo> listRoute;
+    private TextView selectedBusNumber;
+    private String tempBusNumber = "";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,20 +97,121 @@ public class SelectRouteActivityNew extends Activity implements View.OnClickList
 
     }
     private void setInit(){
+        imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
         testButton = (Button) findViewById(R.id.testButton);
         busNumber = (AutoCompleteTextView ) findViewById(R.id.busNumber);
+        selectedBusNumber = (TextView) findViewById(R.id.selectedBusNumber);
 
+        key12 = (ImageView) findViewById(R.id.key12);
+        key01 = (Button) findViewById(R.id.key01);
+        key02 = (Button) findViewById(R.id.key02);
+        key03 = (Button) findViewById(R.id.key03);
+        key04 = (Button) findViewById(R.id.key04);
+        key05 = (Button) findViewById(R.id.key05);
+        key06 = (Button) findViewById(R.id.key06);
+        key07 = (Button) findViewById(R.id.key07);
+        key08 = (Button) findViewById(R.id.key08);
+        key09 = (Button) findViewById(R.id.key09);
+        key10 = (Button) findViewById(R.id.key10);
+        key11 = (Button) findViewById(R.id.key11);
+
+        busNumber.setOnClickListener(this);
+        key01.setOnClickListener(this);
+        key02.setOnClickListener(this);
+        key03.setOnClickListener(this);
+        key04.setOnClickListener(this);
+        key05.setOnClickListener(this);
+        key06.setOnClickListener(this);
+        key07.setOnClickListener(this);
+        key08.setOnClickListener(this);
+        key09.setOnClickListener(this);
+        key10.setOnClickListener(this);
+        key11.setOnClickListener(this);
+        key12.setOnClickListener(this);
+
+        busNumber.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                    case MotionEvent.ACTION_UP:
+                        new Handler().postDelayed(new Runnable() {
+
+                            @Override
+                            public void run() {
+                                inputBoxFocus = FOCUS_NO_BUTTON;
+                                busNumber.setTextIsSelectable(true);
+//                                noButton.setSelection(noButton.length());
+                                Logger.getLogger (TAG).error("noButton focus:");
+                                imm.hideSoftInputFromWindow(busNumber.getWindowToken(), 0);
+                            }
+                        }, 0);
+                        break;
+                }
+                return false;
+            }
+        });
         testButton.setOnClickListener(this);
 
+        listRoute = new ArrayList<RouteInfo>();
         db = DBManager.getInstance(this);
-//        busNumber.setAdapter(new ArrayAdapter<String>(this,
-//                android.R.layout.simple_dropdown_item_1line, items));
+        Cursor cursor = db.queryRoute(new String[]{DBManager.route_name, DBManager.route_form, DBManager.route_start_station, DBManager.route_last_station},null, null, null, null, null);
+        while(cursor.moveToNext()){
+            RouteInfo route = new RouteInfo();
+            route.setBusNum(cursor.getString(0));
+            route.setDirection(cursor.getString(1));
+            route.setStart_station(cursor.getString(2));
+            route.setLast_station(cursor.getString(3));
+            listRoute.add(route);
+        }
+        Logger.getLogger(TAG).error("listRoute.size: " + listRoute.size());
+
+        RouteAdapter adapter = new RouteAdapter(this, R.layout.row_route_info,listRoute);
+        busNumber.setAdapter(adapter);
 
 
+        final String[] arrStr = new String[listRoute.size()];
+
+        for(int i = 0; i < listRoute.size() ; i++){
+            arrStr[i] = listRoute.get(i).getBusNum();// + " " + /*listRoute.get(i).getDirection() + " " +*/ listRoute.get(i).getStart_station() + " - " + listRoute.get(i).getLast_station();
+            Logger.getLogger(TAG).error("arrStr: [" + i + "] " + arrStr[i]
+            );
+        }
+        busNumber.setAdapter(new ArrayAdapter<String>(this,
+                android.R.layout.simple_dropdown_item_1line, arrStr));
+
+        busNumber.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//                String[] splits = arrStr[position].toString().split("\\(");
+                String[] splits = ((TextView)view).getText().toString().split("\\(");
+                Logger.getLogger(TAG).error("선택노선: " + splits[0]);
+                busNumber.setText(tempBusNumber);
+                selectedBusNumber.setText(((TextView)view).getText().toString());
+            }
+        });
+        TextWatcher textWatcher = new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+        };
+        busNumber.addTextChangedListener(textWatcher);
     }
 
     @Override
     public void onClick(View v) {
+        imm.hideSoftInputFromWindow(busNumber.getWindowToken(), 0);
+
         switch(v.getId()){
             case R.id.testButton:
                 if(MbisUtil.getPreferencesBoolean(this,"mode") == false){
@@ -94,7 +221,101 @@ public class SelectRouteActivityNew extends Activity implements View.OnClickList
                 }
                 finish();
                 break;
+            case R.id.key01:
+                setInputKey("1");
+                break;
+            case R.id.key02:
+                setInputKey("2");
+                break;
+            case R.id.key03:
+                setInputKey("3");
+                break;
+            case R.id.key04:
+                setInputKey("4");
+                break;
+            case R.id.key05:
+                setInputKey("5");
+                break;
+            case R.id.key06:
+                setInputKey("6");
+                break;
+            case R.id.key07:
+                setInputKey("7");
+                break;
+            case R.id.key08:
+                setInputKey("8");
+                break;
+            case R.id.key09:
+                setInputKey("9");
+                break;
+            case R.id.key10:
+                setInputKey("0");
+                break;
+            case R.id.key11:
+                setInputKey("-");
+                break;
+            case R.id.key12:
+                setInputDel();
+                break;
         }
+    }
+
+    private void setInputKey(String key) {
+
+        Logger.getLogger(TAG).error("setInputKey focus: " + inputBoxFocus);
+        if (inputBoxFocus == FOCUS_NO_BUTTON) {
+            Logger.getLogger(TAG).debug("getSelectionStart : " + busNumber.getSelectionStart());
+
+            String tempString = busNumber.getText().toString();
+            StringBuffer stringBuffer = new StringBuffer(tempString);
+            if (busNumber.getSelectionStart() != busNumber.getText().toString().length()) {
+                Logger.getLogger(TAG).debug("삽입");
+                int selectionStart = busNumber.getSelectionStart();
+                stringBuffer.insert(selectionStart, key);
+                busNumber.setText(stringBuffer.toString());
+                busNumber.setSelection(selectionStart + 1);
+            } else {
+                Logger.getLogger(TAG).debug("일반 추가");
+                busNumber.setText(stringBuffer.append(key).toString());
+                busNumber.setSelection(stringBuffer.toString().length());
+            }
+
+            tempBusNumber = busNumber.getText().toString();
+        }
+    }
+
+    private void setInputDel() {
+        if (inputBoxFocus == FOCUS_NO_BUTTON) {
+            int selectionStart = busNumber.getSelectionStart();
+            if (selectionStart == busNumber.getText().toString().length()) {
+                Logger.getLogger(TAG).debug("일반 삭제");
+                if (busNumber.getText().toString().length() != 0) {
+                    busNumber.setText(busNumber.getText().toString().substring(0, busNumber.getText().toString().length() - 1));
+                    busNumber.setSelection(busNumber.getText().length());
+                }
+            } else {
+                char[] numCharArray = busNumber.getText().toString().toCharArray();
+                ArrayList<Character> sample = new ArrayList<>();
+                for (char aNumCharArray : numCharArray) {
+                    sample.add(aNumCharArray);
+                }
+                if (selectionStart > 0) {
+                    sample.remove(selectionStart - 1);
+                    String tempString = getStringRepresentation(sample);
+                    busNumber.setText(tempString);
+                    busNumber.setSelection(selectionStart - 1);
+                }
+            }
+            tempBusNumber = busNumber.getText().toString();
+        }
+    }
+
+    private String getStringRepresentation(ArrayList<Character> list) {
+        StringBuilder builder = new StringBuilder(list.size());
+        for (Character ch : list) {
+            builder.append(ch);
+        }
+        return builder.toString();
     }
     public void isHasVisited(ContextWrapper cw){
         pref = cw.getSharedPreferences(MY_DB, Context.MODE_PRIVATE);

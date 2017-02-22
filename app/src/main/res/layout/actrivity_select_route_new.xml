@@ -68,19 +68,45 @@
                 android:layout_height="match_parent"
                 android:layout_alignParentLeft="true"
                 android:orientation="vertical">
+                <LinearLayout
+                    android:layout_width="238dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:orientation="horizontal">
+                    <TextView
+                        android:id="@+id/selectedBusNumberLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="45dp"
+                        android:gravity="center_vertical"
+                        android:textColor="#777777"
+                        android:textSize="18dp"
+                        android:text="@string/selected_route"/>
+                    <TextView
+                        android:id="@+id/selectedBusNumber"
+                        android:layout_width="match_parent"
+                        android:layout_height="45dp"
+                        android:layout_marginLeft="2dp"
+                        android:gravity="center_vertical"
+                        android:textColor="#000000"
+                        android:textSize="18dp"
+                        android:text=""/>
+                 </LinearLayout>
                 <AutoCompleteTextView
                     android:id="@+id/busNumber"
                     android:layout_width="match_parent"
                     android:layout_height="45dp"
                     android:gravity="center_vertical"
-                    android:hint="@string/login_form01"
+                    android:hint="@string/input_route"
                     android:textColorHint="#555555"
+                    android:completionHint="@string/select_route"
+                    android:completionThreshold="1"
                     android:background="@drawable/bg_form"/>
                 <Button
                     android:id="@+id/testButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="선택"/>
+                    android:text="선택"
+                    android:visibility="gone"/>
             </LinearLayout>
 
             <!--번호키-->
