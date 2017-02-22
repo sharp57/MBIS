@@ -1,4 +1,4 @@
-package neighbor.com.mbis.views.maputil;
+package neighbor.com.mbis.network;
 
 import neighbor.com.mbis.models.form.Form_Body_ArriveStation;
 import neighbor.com.mbis.models.form.Form_Body_BusLocation;
@@ -9,7 +9,7 @@ import neighbor.com.mbis.models.form.Form_Body_StartDrive;
 import neighbor.com.mbis.models.form.Form_Body_StartStation;
 import neighbor.com.mbis.models.form.Form_Body_Default;
 import neighbor.com.mbis.models.form.Form_Header;
-import neighbor.com.mbis.network.BytePosition;
+import neighbor.com.mbis.views.maputil.Data;
 
 /**
  * Created by user on 2016-09-01.

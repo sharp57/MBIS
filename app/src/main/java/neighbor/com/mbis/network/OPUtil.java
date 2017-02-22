@@ -1,4 +1,4 @@
-package neighbor.com.mbis.views.maputil;
+package neighbor.com.mbis.network;
 
 /**
  * Created by user on 2016-09-29.

@@ -1,8 +1,9 @@
-package neighbor.com.mbis.views.maputil;
+package neighbor.com.mbis.network;
 
 import neighbor.com.mbis.util.Func;
 import neighbor.com.mbis.models.value.MapVal;
-import neighbor.com.mbis.network.BytePosition;
+import neighbor.com.mbis.views.maputil.Data;
+import neighbor.com.mbis.views.maputil.Util;
 
 /**
  * Created by user on 2016-09-30.
