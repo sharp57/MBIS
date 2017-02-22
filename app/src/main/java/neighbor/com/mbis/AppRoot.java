@@ -9,6 +9,7 @@ import com.google.firebase.crash.FirebaseCrash;
 
 import org.apache.log4j.Logger;
 
+import neighbor.com.mbis.common.SettingsStore;
 import neighbor.com.mbis.util.LogUtils;
 
 /**
@@ -28,7 +29,7 @@ public class AppRoot extends Application {
         // Configure log
         LogUtils.configLog(this);
         // init settings preferences
-//        SettingsStore.init(this);
+        SettingsStore.init(this);
     }
 
     /**

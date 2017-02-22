@@ -8,9 +8,9 @@ import android.util.Log;
 import java.util.Calendar;
 import java.util.TimeZone;
 
-import neighbor.com.mbis.function.FileManager;
-import neighbor.com.mbis.maputil.Data;
-import neighbor.com.mbis.maputil.value.MapVal;
+import neighbor.com.mbis.managers.FileManager;
+import neighbor.com.mbis.views.maputil.Data;
+import neighbor.com.mbis.models.value.MapVal;
 import neighbor.com.mbis.network.SocketConnect;
 
 import static android.content.Context.MODE_PRIVATE;
@@ -20,7 +20,7 @@ import static android.content.Context.MODE_PRIVATE;
  */
 
 public class MbisUtil {
-    final static  String PREF = "mbis";
+    final static String PREF = "mbis";
     public final static String isAppFinish = "isAppFinish";
     public final static String version_route = "version_route";
     public final static String version_node = "version_node";
@@ -29,7 +29,7 @@ public class MbisUtil {
     static FileManager eventFileManager;
     static MapVal mv = MapVal.getInstance();
 
-    public static void reveData(){
+    public static void reveData() {
 
         TimeZone jst = TimeZone.getTimeZone("JST");
         Calendar cal = Calendar.getInstance(jst);
@@ -44,7 +44,8 @@ public class MbisUtil {
                 " - " + cal.get(Calendar.HOUR) + ":" + cal.get(Calendar.MINUTE) + ":" + cal.get(Calendar.SECOND) +
                 ")\n[RECV:" + Data.readData.length + "] - " + dd);
     }
-    public static void sendData(Handler handler){
+
+    public static void sendData(Handler handler, int successCode, int failCode) {
 
         TimeZone jst = TimeZone.getTimeZone("JST");
         Calendar cal = Calendar.getInstance(jst);
@@ -59,29 +60,32 @@ public class MbisUtil {
                 ")\n[SEND:" + Data.writeData.length + "] - " + dd);
 
         SocketConnect socketConnect = new SocketConnect();
-        socketConnect.setSocket(handler ,  Data.writeData);
+        socketConnect.setSocket(handler, Data.writeData, successCode, failCode);
         socketConnect.start();
     }
+
     // 값 불러오기
-    public static boolean getPreferencesBoolean(Context context, String key){
+    public static boolean getPreferencesBoolean(Context context, String key) {
         SharedPreferences pref = context.getSharedPreferences(PREF, MODE_PRIVATE);
         return pref.getBoolean(key, false);
     }
+
     // 값 불러오기
-    public static int getPreferencesInt(Context context, String key){
+    public static int getPreferencesInt(Context context, String key) {
         SharedPreferences pref = context.getSharedPreferences(PREF, MODE_PRIVATE);
         return pref.getInt(key, 0);
     }
 
     // 값 저장하기
-    public static void setPreferencesBoolean(Context context, String key, boolean value){
+    public static void setPreferencesBoolean(Context context, String key, boolean value) {
         SharedPreferences pref = context.getSharedPreferences(PREF, MODE_PRIVATE);
         SharedPreferences.Editor editor = pref.edit();
         editor.putBoolean(key, value);
         editor.commit();
     }
+
     // 값 저장하기
-    public static void setPreferencesInt(Context context, String key, int value){
+    public static void setPreferencesInt(Context context, String key, int value) {
         SharedPreferences pref = context.getSharedPreferences(PREF, MODE_PRIVATE);
         SharedPreferences.Editor editor = pref.edit();
         editor.putInt(key, value);
@@ -89,7 +93,7 @@ public class MbisUtil {
     }
 
 
-    public static void log(Context context, String debug){
-        if(isDebug) Log.e(context.getClass().toString(),debug);
+    public static void log(Context context, String debug) {
+        if (isDebug) Log.e(context.getClass().toString(), debug);
     }
 }

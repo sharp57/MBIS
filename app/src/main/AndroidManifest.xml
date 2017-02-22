@@ -21,7 +21,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".activity.StartScreen"
+            android:name=".views.activity.StartScreen"
             android:screenOrientation="landscape"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -31,42 +31,42 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activity.LoginActivity"
+            android:name=".views.activity.LoginActivity"
             android:label="@string/title_activity_login"
             android:screenOrientation="landscape"></activity>
         <activity
-            android:name=".activity.SelectRouteActivity"
+            android:name=".views.activity.SelectRouteActivity"
             android:label="@string/title_activity_select_route"
             android:screenOrientation="landscape"></activity>
         <activity
-            android:name=".activity.RouteStationActivity"
+            android:name=".views.activity.RouteStationActivity"
             android:screenOrientation="landscape"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".activity.MapActivity"
+            android:name=".views.activity.MapActivity"
             android:screenOrientation="landscape"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".activity.SelectMenuActivity"
-            android:screenOrientation="landscape"
-            android:theme="@style/AppTheme.NoActionBar" />
-
-        <activity
-            android:name=".activity.RunActivity"
+            android:name=".views.activity.SelectMenuActivity"
             android:screenOrientation="landscape"
             android:theme="@style/AppTheme.NoActionBar" />
 
         <activity
-            android:name=".activity.LoginActivityNew"
+            android:name=".views.activity.RunActivity"
+            android:screenOrientation="landscape"
+            android:theme="@style/AppTheme.NoActionBar" />
+
+        <activity
+            android:name=".views.activity.LoginActivityNew"
             android:screenOrientation="landscape"
             android:windowSoftInputMode="stateAlwaysHidden"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".activity.SelectRouteActivityNew"
+            android:name=".views.activity.SelectRouteActivityNew"
             android:screenOrientation="landscape"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".activity.EmergencyActivity"
+            android:name=".views.activity.EmergencyActivity"
             android:screenOrientation="landscape"
             android:theme="@style/AppTheme.NoActionBar" />
 
