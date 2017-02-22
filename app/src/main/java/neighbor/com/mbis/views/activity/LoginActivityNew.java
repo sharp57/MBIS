@@ -1,4 +1,4 @@
-package neighbor.com.mbis.activity;
+package neighbor.com.mbis.views.activity;
 
 import android.Manifest;
 import android.annotation.TargetApi;
@@ -46,10 +46,8 @@ import neighbor.com.mbis.util.Setter;
 
 import neighbor.com.mbis.network.NetworkIntentService;
 import neighbor.com.mbis.util.MbisUtil;
-import neighbor.com.mbis.views.activity.MessageHandler;
-import neighbor.com.mbis.views.activity.SelectMenuActivity;
 import neighbor.com.mbis.views.maputil.Data;
-import neighbor.com.mbis.views.maputil.OPUtil;
+import neighbor.com.mbis.network.OPUtil;
 import neighbor.com.mbis.views.maputil.Util;
 
 import static java.lang.String.format;

@@ -52,9 +52,9 @@ import neighbor.com.mbis.views.adapter.MyArrayAdapter;
 import neighbor.com.mbis.network.BytePosition;
 import neighbor.com.mbis.views.maputil.Data;
 import neighbor.com.mbis.views.maputil.HandlerPosition;
-import neighbor.com.mbis.views.maputil.OPUtil;
-import neighbor.com.mbis.views.maputil.OP_code;
-import neighbor.com.mbis.views.maputil.Receive_OP;
+import neighbor.com.mbis.network.OPUtil;
+import neighbor.com.mbis.network.OP_code;
+import neighbor.com.mbis.network.Receive_OP;
 import neighbor.com.mbis.views.maputil.thread.BusTimer;
 import neighbor.com.mbis.models.value.LogicBuffer;
 import neighbor.com.mbis.models.value.MapVal;
@@ -64,7 +64,6 @@ import neighbor.com.mbis.models.value.StationSubBuffer_1;
 import neighbor.com.mbis.models.value.StationSubBuffer_2;
 import neighbor.com.mbis.network.NetworkIntentService;
 import neighbor.com.mbis.R;
-import neighbor.com.mbis.util.MbisUtil;
 import neighbor.com.mbis.views.googlemap.AddMarker;
 
 public class MapActivity extends AppCompatActivity implements OnMapReadyCallback, LocationSource.OnLocationChangedListener {

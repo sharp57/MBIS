@@ -55,7 +55,7 @@ import neighbor.com.mbis.util.csv.RouteUtil;
 import neighbor.com.mbis.util.csv.StationUtil;
 import neighbor.com.mbis.views.maputil.Data;
 import neighbor.com.mbis.views.maputil.LocationWrapper;
-import neighbor.com.mbis.views.maputil.Receive_OP;
+import neighbor.com.mbis.network.Receive_OP;
 import neighbor.com.mbis.views.maputil.Util;
 
 import static neighbor.com.mbis.common.SocketHanderMessageDfe.ERROR_BOOTING;
