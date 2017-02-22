@@ -1,6 +1,7 @@
 package neighbor.com.mbis.activity;
 
 import android.Manifest;
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.ComponentName;
@@ -25,22 +26,35 @@ import android.widget.Toast;
 
 import org.apache.log4j.Logger;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.TimeZone;
 
 import neighbor.com.mbis.R;
+import neighbor.com.mbis.common.SettingsStore;
+import neighbor.com.mbis.common.SocketHanderMessageDfe;
 import neighbor.com.mbis.managers.FileManager;
+import neighbor.com.mbis.models.form.Form_Header;
+import neighbor.com.mbis.models.value.MapVal;
+import neighbor.com.mbis.network.BytePosition;
+import neighbor.com.mbis.network.RecvDataUtil;
 import neighbor.com.mbis.util.Func;
 import neighbor.com.mbis.util.Setter;
-import neighbor.com.mbis.maputil.BytePosition;
-import neighbor.com.mbis.maputil.Data;
-import neighbor.com.mbis.maputil.OPUtil;
-import neighbor.com.mbis.maputil.Util;
-import neighbor.com.mbis.maputil.form.Form_Header;
-import neighbor.com.mbis.maputil.value.MapVal;
+
 import neighbor.com.mbis.network.NetworkIntentService;
 import neighbor.com.mbis.util.MbisUtil;
+import neighbor.com.mbis.views.activity.MessageHandler;
+import neighbor.com.mbis.views.activity.SelectMenuActivity;
+import neighbor.com.mbis.views.maputil.Data;
+import neighbor.com.mbis.views.maputil.OPUtil;
+import neighbor.com.mbis.views.maputil.Util;
+
+import static java.lang.String.format;
+import static neighbor.com.mbis.common.SocketHanderMessageDfe.ERROR_LOGIN;
+import static neighbor.com.mbis.common.SocketHanderMessageDfe.SUCCESS_LOGIN;
 
 
 /**
@@ -453,7 +467,7 @@ public class LoginActivityNew extends Activity implements View.OnClickListener, 
         byte[] bus = Util.byteReverse(Func.integerToByte(Integer.parseInt(busNumButton.getText().toString()), 2));
         byte[] res = Util.byteReverse(Func.integerToByte(mv.getReservation(), 4));
 
-        return Func.mergyByte(Func.mergyByte(dt, phone), Func.mergyByte(bus, res));
+        return Func.mergeByte(Func.mergeByte(dt, phone), Func.mergeByte(bus, res));
     }
 
     private byte[] makeBodyBusBootingInfo() {
@@ -477,7 +491,7 @@ public class LoginActivityNew extends Activity implements View.OnClickListener, 
 //        byte[] bus = Func.integerToByte(Integer.parseInt(busNumButton.getText().toString()), 2);
 //        byte[] res = Func.integerToByte(mv.getReservation(), 4);
 
-        return Func.mergyByte(Func.mergyByte(Func.mergyByte(Func.mergyByte(Func.mergyByte(dt, dt2), Func.mergyByte(gpsx, gpsy)), Func.mergyByte(angle, speed)), Func.mergyByte(busnum, route)), dev);
+        return Func.mergeByte(Func.mergeByte(Func.mergeByte(Func.mergeByte(Func.mergeByte(dt, dt2), Func.mergeByte(gpsx, gpsy)), Func.mergeByte(angle, speed)), Func.mergeByte(busnum, route)), dev);
     }
 
 
