@@ -300,7 +300,7 @@ public class LoginActivityNew extends Activity implements View.OnClickListener, 
                         Toast.makeText(getApplicationContext(), "차량번호를 다시 한 번 확인 해 주세요.", Toast.LENGTH_SHORT).show();
                     }
                 } else {
-                    Toast.makeText(getApplicationContext(), "전화번호를 다시 한 번 확인 해 주세요.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "사원번호를 다시 한 번 확인 해 주세요.", Toast.LENGTH_SHORT).show();
                 }
                 break;
             case R.id.key01:
@@ -611,8 +611,15 @@ public class LoginActivityNew extends Activity implements View.OnClickListener, 
             case SUCCESS_LOGIN:
                 byte[] bytes = new byte[0];
                 try {
-                    bytes = serialize(message.obj);
-                } catch (IOException e) {
+//                    bytes = serialize(message.obj);   // 앞에 불필요한 byte array가 더 생겨버림.
+                    bytes = (byte[])(message.obj);
+
+                    String dd = "";
+                    for (byte aData : bytes) {
+                        dd = dd + format("%02x ", aData);
+                    }
+                    Log.e(TAG, "network : login bytes data read success: " + dd);
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
                 // 파일 저장

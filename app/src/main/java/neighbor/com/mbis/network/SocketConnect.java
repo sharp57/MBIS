@@ -19,6 +19,8 @@ import neighbor.com.mbis.common.SocketHanderMessageDfe;
 import neighbor.com.mbis.util.Func;
 import neighbor.com.mbis.views.maputil.Util;
 
+import static java.lang.String.format;
+
 /**
  * Created by ts.ha on 2017-02-17.
  */
@@ -76,16 +78,28 @@ public class SocketConnect extends Thread {
             byte[] headerData = new byte[BytePosition.HEADER_SIZE];
             dis.read(headerData);
 
+            String dd = "";
+            for (byte aData : headerData) {
+                dd = dd + format("%02x ", aData);
+            }
+            Log.e(TAG, "network : header data read success: " + dd);
+
             byte[] dataLengthBuf = new byte[4];
             System.arraycopy(headerData, 14, dataLengthBuf, 0, 4);
             int dataLength = Func.byteToInteger(Util.byteReverse(dataLengthBuf), 4);
-//            Util.log(tag, "read length." + dataLength);
+            Util.log(TAG, "read length." + dataLength);
             byte[] bodyData = new byte[dataLength];
             dis.read(bodyData);
 
             if (dataLength > 0) {
                 //정상적인 데이터 수신
                 byte[] responseData = Func.mergeByte(headerData, bodyData);
+
+                 dd = "";
+                for (byte aData : responseData) {
+                    dd = dd + format("%02x ", aData);
+                }
+                Log.e(TAG, "network : responseData data read success: " + dd);
 
                 Log.e(TAG, "network : data read success: " + String.format("%02d", headerData[BytePosition.HEADER_OPCODE]));
                 Message message = new Message();

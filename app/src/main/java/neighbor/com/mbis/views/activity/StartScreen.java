@@ -353,7 +353,7 @@ public class StartScreen extends AppCompatActivity implements MessageHandler.Sma
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            Util.sqliteExport(StartScreen.this);
+//                            Util.sqliteExport(StartScreen.this);
                             pb.setVisibility(View.GONE);
                             startActivity(new Intent(StartScreen.this, LoginActivityNew.class));
                             finish();
@@ -437,7 +437,7 @@ public class StartScreen extends AppCompatActivity implements MessageHandler.Sma
                 MbisUtil.setPreferencesInt(this, MbisUtil.version_routestop, Integer.parseInt(version));
             }
 
-//            file.delete();    // 이 주석 풀면 다운로드후 scv 파일 삭제
+            file.delete();    // 이 주석 풀면 다운로드후 scv 파일 삭제
 
 //            recreate();
 //            runOnUiThread(new Runnable() {
@@ -481,16 +481,17 @@ public class StartScreen extends AppCompatActivity implements MessageHandler.Sma
                 r.setRoute_name(rowData[1]);
                 r.setRoute_form(Integer.parseInt(rowData[2]));
                 r.setRoute_type(Integer.parseInt(rowData[3]));
-                r.setRoute_first_start_time(Integer.parseInt(rowData[4]));
-                r.setRoute_last_start_time(Integer.parseInt(rowData[5]));
-                r.setRoute_average_interval(Integer.parseInt(rowData[6]));
-                r.setRoute_average_time(Integer.parseInt(rowData[7]));
-                r.setRoute_length(Float.parseFloat(rowData[8]));
-                r.setRoute_station_num(Integer.parseInt(rowData[9]));
-                r.setRoute_start_station(rowData[10]);
-                r.setRoute_important_station1(rowData[11]);
-                r.setRoute_important_station2(rowData[12]);
-                r.setRoute_last_station(rowData[13]);
+                r.setRoute_brt_type(Integer.parseInt(rowData[4]));
+                r.setRoute_first_start_time(Integer.parseInt(rowData[5]));
+                r.setRoute_last_start_time(Integer.parseInt(rowData[6]));
+                r.setRoute_average_interval(Integer.parseInt(rowData[7]));
+                r.setRoute_average_time(Integer.parseInt(rowData[8]));
+                r.setRoute_length(Float.parseFloat(rowData[9]));
+                r.setRoute_station_num(Integer.parseInt(rowData[10]));
+                r.setRoute_start_station(rowData[11]);
+                r.setRoute_important_station1(rowData[12]);
+                r.setRoute_important_station2(rowData[13]);
+                r.setRoute_last_station(rowData[14]);
 
                 addRouteUtil(r);
             }
@@ -582,6 +583,7 @@ public class StartScreen extends AppCompatActivity implements MessageHandler.Sma
         values.put("route_name", ru.getRoute_name());
         values.put("route_form", ru.getRoute_form());
         values.put("route_type", ru.getRoute_type());
+        values.put("route_brt_type", ru.getRoute_brt_type());
         values.put("route_first_start_time", ru.getRoute_first_start_time());
         values.put("route_last_start_time", ru.getRoute_last_start_time());
         values.put("route_average_interval", ru.getRoute_average_interval());

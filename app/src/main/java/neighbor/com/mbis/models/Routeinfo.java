@@ -9,6 +9,7 @@ public class RouteInfo {
     private String category;
     private String busNum;
     private String direction;
+    private String brt_type;
     private String start_station;
     private String last_station;
 
@@ -34,6 +35,14 @@ public class RouteInfo {
 
     public void setDirection(String direction) {
         this.direction = direction;
+    }
+
+    public String getBrt_type() {
+        return brt_type;
+    }
+
+    public void setBrt_type(String brt_type) {
+        this.brt_type = brt_type;
     }
 
     public String getStart_station() {

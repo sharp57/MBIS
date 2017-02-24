@@ -8,7 +8,7 @@
         android:layout_height="50dp"
         android:gravity="center_vertical">
         <TextView
-            android:id="@+id/number"
+            android:id="@android:id/text1"
             android:layout_width="80dp"
             android:layout_height="match_parent"
             android:layout_weight="0"

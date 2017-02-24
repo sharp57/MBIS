@@ -59,7 +59,7 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="153dp"
+            android:layout_height="203dp"
             android:layout_marginTop="25dp"
             android:orientation="horizontal">
             <!--노선번호-->
@@ -76,19 +76,19 @@
                     <TextView
                         android:id="@+id/selectedBusNumberLabel"
                         android:layout_width="wrap_content"
-                        android:layout_height="45dp"
+                        android:layout_height="35dp"
                         android:gravity="center_vertical"
                         android:textColor="#777777"
-                        android:textSize="18dp"
+                        android:textSize="15dp"
                         android:text="@string/selected_route"/>
                     <TextView
                         android:id="@+id/selectedBusNumber"
                         android:layout_width="match_parent"
-                        android:layout_height="45dp"
+                        android:layout_height="35dp"
                         android:layout_marginLeft="2dp"
                         android:gravity="center_vertical"
                         android:textColor="#000000"
-                        android:textSize="18dp"
+                        android:textSize="15dp"
                         android:text=""/>
                  </LinearLayout>
                 <AutoCompleteTextView
@@ -101,12 +101,58 @@
                     android:completionHint="@string/select_route"
                     android:completionThreshold="1"
                     android:background="@drawable/bg_form"/>
+            <!--운행 종류-->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginTop="5dp"
+                    android:orientation="horizontal">
+                    <Button
+                        android:id="@+id/run_menu01"
+                        android:layout_width="wrap_content"
+                        android:layout_height="35dp"
+                        android:layout_weight="1"
+                        android:text="@string/run_menu01"
+                        android:textColor="#ffffff"
+                        android:background="@drawable/sel_select_meu_mode"
+                        android:visibility="visible"/>
+                    <View
+                        android:layout_width="1dp"
+                        android:layout_height="1dp"/>
+
+                    <Button
+                        android:id="@+id/run_menu02"
+                        android:layout_width="wrap_content"
+                        android:layout_height="35dp"
+                        android:layout_weight="1"
+                        android:text="@string/run_menu02"
+                        android:textColor="#ffffff"
+                        android:background="@drawable/sel_select_meu_mode"
+                        android:visibility="visible"/>
+                    <View
+                        android:layout_width="1dp"
+                        android:layout_height="1dp"/>
+
+                    <Button
+                        android:id="@+id/run_menu03"
+                        android:layout_width="wrap_content"
+                        android:layout_height="35dp"
+                        android:layout_weight="1"
+                        android:text="@string/run_menu03"
+                        android:textColor="#ffffff"
+                        android:background="@drawable/sel_select_meu_mode"
+                        android:visibility="visible"/>
+                 </LinearLayout>
                 <Button
                     android:id="@+id/testButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_marginTop="5dp"
                     android:text="선택"
-                    android:visibility="gone"/>
+                    android:textColor="#ffffff"
+                    android:background="@drawable/sel_select_meu_route"
+                    android:visibility="visible"/>
             </LinearLayout>
 
             <!--번호키-->
@@ -114,6 +160,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
+                android:layout_marginTop="14dp"
                 android:orientation="vertical">
 
                 <include

@@ -32,6 +32,9 @@
     <string name="input_route">노선입력</string>
     <string name="selected_route">선택: </string>
     <string name="select_route">노선을 선택하세요</string>
+    <string name="run_menu01">정상운행</string>
+    <string name="run_menu02">공차</string>
+    <string name="run_menu03">막차</string>
 
 
 

@@ -9,6 +9,7 @@ public class RouteUtil {
     private String route_name;
     private int route_form;
     private int route_type;
+    private int route_brt_type;
     private int route_first_start_time;
 
     private int route_last_start_time;
@@ -52,6 +53,14 @@ public class RouteUtil {
 
     public void setRoute_type(int route_type) {
         this.route_type = route_type;
+    }
+
+    public int getRoute_brt_type() {
+        return route_brt_type;
+    }
+
+    public void setRoute_brt_type(int route_brt_type) {
+        this.route_brt_type = route_brt_type;
     }
 
     public int getRoute_first_start_time() {

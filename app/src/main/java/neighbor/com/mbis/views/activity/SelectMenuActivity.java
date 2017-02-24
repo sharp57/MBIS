@@ -8,6 +8,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import neighbor.com.mbis.R;
+import neighbor.com.mbis.views.maputil.BackPressCloseHandler;
 
 /**
  * Created by 권오철 on 2017-02-08.
@@ -18,6 +19,7 @@ public class SelectMenuActivity extends Activity implements View.OnClickListener
     ImageView selectRoute, selectAuth, selectMode;
     ImageView selectRouteIcon, selectAuthIcon;
     TextView selectRouteLabel, selectAuthLabel;
+    private BackPressCloseHandler backPressCloseHandler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +40,9 @@ public class SelectMenuActivity extends Activity implements View.OnClickListener
 
         selectRoute.setOnClickListener(this);
         selectAuth.setOnClickListener(this);
+
+        backPressCloseHandler = new BackPressCloseHandler(this);
+
     }
 
     @Override
@@ -52,5 +57,12 @@ public class SelectMenuActivity extends Activity implements View.OnClickListener
                 finish();
                 break;
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+//        super.onBackPressed();
+        backPressCloseHandler.onBackPressed();
+
     }
 }

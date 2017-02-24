@@ -38,6 +38,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.EmptyStackException;
 import java.util.TimeZone;
 
 import neighbor.com.mbis.R;
@@ -74,6 +75,17 @@ public class SelectRouteActivityNew extends Activity implements View.OnClickList
     private ArrayList<RouteInfo> listRoute;
     private TextView selectedBusNumber;
     private String tempBusNumber = "";
+    private Button select_route_menu01, select_route_menu02, select_route_menu03, select_route_menu04;
+    private Button run_menu01, run_menu02, run_menu03;
+    private final String ROUTE_MENU_11 = DBManager.route_brt_type + "=11";
+    private final String ROUTE_MENU_12 = DBManager.route_brt_type + "=12";
+    private final String ROUTE_MENU_13 = DBManager.route_brt_type + "=13";
+    private final String ROUTE_MENU_20_30 = DBManager.route_brt_type + "=20" + " or " + DBManager.route_brt_type + "=30";
+    private String SELECT_ROUTE_MENU = "";
+    private final int RUN_MENU_01 = 1;
+    private final int RUN_MENU_02 = 2;
+    private final int RUN_MENU_03 = 3;
+    private int RUN_MENU = RUN_MENU_01;
 
 
     @Override
@@ -82,16 +94,9 @@ public class SelectRouteActivityNew extends Activity implements View.OnClickList
         setContentView(R.layout.actrivity_select_route_new);
 
         setInit();
-
-
 //        isHasVisited(this);
-
-
         setTodayLong();
 //        checkData();
-
-        // 2017.02.06 db test
-//        Util.sqliteExport(this);
 
     }
     private void setInit(){
@@ -99,7 +104,13 @@ public class SelectRouteActivityNew extends Activity implements View.OnClickList
         testButton = (Button) findViewById(R.id.testButton);
         busNumber = (AutoCompleteTextView ) findViewById(R.id.busNumber);
         selectedBusNumber = (TextView) findViewById(R.id.selectedBusNumber);
-
+        select_route_menu01 = (Button) findViewById(R.id.select_route_menu01);
+        select_route_menu02 = (Button) findViewById(R.id.select_route_menu02);
+        select_route_menu03 = (Button) findViewById(R.id.select_route_menu03);
+        select_route_menu04 = (Button) findViewById(R.id.select_route_menu04);
+        run_menu01 = (Button) findViewById(R.id.run_menu01);
+        run_menu02 = (Button) findViewById(R.id.run_menu02);
+        run_menu03 = (Button) findViewById(R.id.run_menu03);
         key12 = (ImageView) findViewById(R.id.key12);
         key01 = (Button) findViewById(R.id.key01);
         key02 = (Button) findViewById(R.id.key02);
@@ -113,7 +124,15 @@ public class SelectRouteActivityNew extends Activity implements View.OnClickList
         key10 = (Button) findViewById(R.id.key10);
         key11 = (Button) findViewById(R.id.key11);
 
+
         busNumber.setOnClickListener(this);
+        run_menu01.setOnClickListener(this);
+        run_menu02.setOnClickListener(this);
+        run_menu03.setOnClickListener(this);
+        select_route_menu01.setOnClickListener(this);
+        select_route_menu02.setOnClickListener(this);
+        select_route_menu03.setOnClickListener(this);
+        select_route_menu04.setOnClickListener(this);
         key01.setOnClickListener(this);
         key02.setOnClickListener(this);
         key03.setOnClickListener(this);
@@ -126,6 +145,11 @@ public class SelectRouteActivityNew extends Activity implements View.OnClickList
         key10.setOnClickListener(this);
         key11.setOnClickListener(this);
         key12.setOnClickListener(this);
+
+
+        // default 로 정상운행 선택
+        run_menu01.setBackgroundResource(R.drawable.menu_bg_press);
+        RUN_MENU = RUN_MENU_01;
 
         busNumber.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -142,6 +166,8 @@ public class SelectRouteActivityNew extends Activity implements View.OnClickList
 //                                noButton.setSelection(noButton.length());
                                 Logger.getLogger (TAG).error("noButton focus:");
                                 imm.hideSoftInputFromWindow(busNumber.getWindowToken(), 0);
+                                busNumber.setText(busNumber.getText().toString());
+                                busNumber.setSelection(busNumber.getText().length());
                             }
                         }, 0);
                         break;
@@ -150,34 +176,7 @@ public class SelectRouteActivityNew extends Activity implements View.OnClickList
             }
         });
         testButton.setOnClickListener(this);
-
-        listRoute = new ArrayList<RouteInfo>();
-        db = DBManager.getInstance(this);
-        Cursor cursor = db.queryRoute(new String[]{DBManager.route_name, DBManager.route_form, DBManager.route_start_station, DBManager.route_last_station},null, null, null, null, null);
-        while(cursor.moveToNext()){
-            RouteInfo route = new RouteInfo();
-            route.setBusNum(cursor.getString(0));
-            route.setDirection(cursor.getString(1));
-            route.setStart_station(cursor.getString(2));
-            route.setLast_station(cursor.getString(3));
-            listRoute.add(route);
-        }
-        Logger.getLogger(TAG).error("listRoute.size: " + listRoute.size());
-
-        RouteAdapter adapter = new RouteAdapter(this, R.layout
-                .row_route_info,listRoute);
-        busNumber.setAdapter(adapter);
-
-
-        final String[] arrStr = new String[listRoute.size()];
-
-        for(int i = 0; i < listRoute.size() ; i++){
-            arrStr[i] = listRoute.get(i).getBusNum();// + " " + /*listRoute.get(i).getDirection() + " " +*/ listRoute.get(i).getStart_station() + " - " + listRoute.get(i).getLast_station();
-            Logger.getLogger(TAG).error("arrStr: [" + i + "] " + arrStr[i]
-            );
-        }
-        busNumber.setAdapter(new ArrayAdapter<String>(this,
-                android.R.layout.simple_dropdown_item_1line, arrStr));
+        setAutoText();
 
         busNumber.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -187,6 +186,7 @@ public class SelectRouteActivityNew extends Activity implements View.OnClickList
 //                Logger.getLogger(TAG).error("선택노선: " + splits[0]);
                 busNumber.setText(tempBusNumber);
                 selectedBusNumber.setText(((TextView)view).getText().toString());
+                busNumber.setSelection(busNumber.getText().length());
             }
         });
     }
@@ -202,7 +202,7 @@ public class SelectRouteActivityNew extends Activity implements View.OnClickList
                 }else{
                     startActivity(new Intent(SelectRouteActivityNew.this,MapActivity.class));
                 }
-                finish();
+//                finish();
                 break;
             case R.id.key01:
                 setInputKey("1");
@@ -240,8 +240,129 @@ public class SelectRouteActivityNew extends Activity implements View.OnClickList
             case R.id.key12:
                 setInputDel();
                 break;
+            case R.id.select_route_menu01:
+                setSelectBRT_TYPE(v);
+                break;
+            case R.id.select_route_menu02:
+                setSelectBRT_TYPE(v);
+                break;
+            case R.id.select_route_menu03:
+                setSelectBRT_TYPE(v);
+                break;
+            case R.id.select_route_menu04:
+                setSelectBRT_TYPE(v);
+                break;
+            case R.id.run_menu01:
+                setRunMenu(v);
+                break;
+            case R.id.run_menu02:
+                setRunMenu(v);
+                break;
+            case R.id.run_menu03:
+                setRunMenu(v);
+                break;
         }
     }
+
+    @Override
+    public void onBackPressed() {
+        startActivity(new Intent(SelectRouteActivityNew.this,SelectMenuActivity.class));
+        finish();
+
+//        super.onBackPressed();
+    }
+    private void setSelectBRT_TYPE(View view){
+        select_route_menu01.setBackgroundResource(R.drawable.menu_bg01);
+        select_route_menu02.setBackgroundResource(R.drawable.menu_bg01);
+        select_route_menu03.setBackgroundResource(R.drawable.menu_bg01);
+        select_route_menu04.setBackgroundResource(R.drawable.menu_bg01);
+        switch (view.getId()){
+            case R.id.select_route_menu01:
+                if(SELECT_ROUTE_MENU.equals(ROUTE_MENU_11)) {
+                    SELECT_ROUTE_MENU = "";
+                }else{
+                    select_route_menu01.setBackgroundResource(R.drawable.menu_bg_press);
+                    SELECT_ROUTE_MENU = ROUTE_MENU_11;
+                }
+                break;
+            case R.id.select_route_menu02:
+                if(SELECT_ROUTE_MENU.equals(ROUTE_MENU_12)) {
+                    SELECT_ROUTE_MENU = "";
+                }else {
+                    select_route_menu02.setBackgroundResource(R.drawable.menu_bg_press);
+                    SELECT_ROUTE_MENU = ROUTE_MENU_12;
+                }
+                break;
+            case R.id.select_route_menu03:
+                if(SELECT_ROUTE_MENU.equals(ROUTE_MENU_13)) {
+                    SELECT_ROUTE_MENU = "";
+                }else {
+                    select_route_menu03.setBackgroundResource(R.drawable.menu_bg_press);
+                    SELECT_ROUTE_MENU = ROUTE_MENU_13;
+                }
+                break;
+            case R.id.select_route_menu04:
+                if(SELECT_ROUTE_MENU.equals(ROUTE_MENU_20_30)) {
+                    SELECT_ROUTE_MENU = "";
+                }else {
+                    select_route_menu04.setBackgroundResource(R.drawable.menu_bg_press);
+                    SELECT_ROUTE_MENU = ROUTE_MENU_20_30;
+                }
+                break;
+        }
+        setAutoText();
+
+    }
+    private void setAutoText(){
+
+        listRoute = new ArrayList<RouteInfo>();
+        db = DBManager.getInstance(this);
+        Cursor cursor = db.queryRoute(new String[]{DBManager.route_name, DBManager.route_form, DBManager.route_brt_type,  DBManager.route_start_station, DBManager.route_last_station},
+                SELECT_ROUTE_MENU, null, null, null, null);
+        while(cursor.moveToNext()){
+            RouteInfo route = new RouteInfo();
+            route.setBusNum(cursor.getString(0));
+            route.setDirection(cursor.getString(1));
+            route.setBrt_type(cursor.getString(2));
+            route.setStart_station(cursor.getString(3));
+            route.setLast_station(cursor.getString(4));
+            listRoute.add(route);
+        }
+        Logger.getLogger(TAG).error("listRoute.size: " + listRoute.size());
+
+        final String[] arrStr = new String[listRoute.size()];
+
+        for(int i = 0; i < listRoute.size() ; i++){
+            arrStr[i] = listRoute.get(i).getBusNum();// + " / " +  listRoute.get(i).getBrt_type();// + " " + /*listRoute.get(i).getDirection() + " " +*/ listRoute.get(i).getStart_station() + " - " + listRoute.get(i).getLast_station();
+            Logger.getLogger(TAG).error("arrStr: [" + i + "] " + arrStr[i]);
+        }
+//        busNumber.setAdapter(new ArrayAdapter<String>(this,
+//                android.R.layout.simple_dropdown_item_1line, arrStr));
+
+        busNumber.setAdapter(new ArrayAdapter<String>(this,
+                R.layout.row_route_info_in_textview, arrStr));
+    }
+    private void setRunMenu(View view){
+        run_menu01.setBackgroundResource(R.drawable.sel_select_meu_mode);
+        run_menu02.setBackgroundResource(R.drawable.sel_select_meu_mode);
+        run_menu03.setBackgroundResource(R.drawable.sel_select_meu_mode);
+
+        switch (view.getId()){
+            case R.id.run_menu01:
+                run_menu01.setBackgroundResource(R.drawable.menu_bg_press);
+                RUN_MENU = RUN_MENU_01;
+                break;
+            case R.id.run_menu02:
+                run_menu02.setBackgroundResource(R.drawable.menu_bg_press);
+                RUN_MENU = RUN_MENU_02;
+                break;
+            case R.id.run_menu03:
+                run_menu03.setBackgroundResource(R.drawable.menu_bg_press);
+                RUN_MENU = RUN_MENU_03;
+                break;
+        }
+    }
+
 
     private void setInputKey(String key) {
 
