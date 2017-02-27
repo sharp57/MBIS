@@ -1,4 +1,4 @@
-package neighbor.com.mbis.views.maputil;
+package neighbor.com.mbis.managers;
 
 import android.Manifest;
 import android.content.Context;

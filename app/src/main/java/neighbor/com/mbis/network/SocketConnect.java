@@ -115,7 +115,7 @@ public class SocketConnect extends Thread {
                     message.obj = SocketHanderMessageDfe.ERROR_READ_SERVER_DISCONNECT;
                     mHandler.sendMessage(message);
                 } else {
-                    message.obj = mSuccessCode;
+                    message.obj = mFailCode;
                     mHandler.sendMessage(message);
                 }
             }
@@ -123,7 +123,7 @@ public class SocketConnect extends Thread {
             e.printStackTrace();
             Message message = new Message();
             message.what = mFailCode;
-            message.obj = mSuccessCode;
+            message.obj = mFailCode;
             mHandler.sendMessage(message);
         } finally {
             try {

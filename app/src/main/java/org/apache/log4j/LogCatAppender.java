@@ -47,7 +47,6 @@ public class LogCatAppender extends AppenderSkeleton {
         if (BuildConfig.DEBUG) {
             switch (le.getLevel().toInt()) {
                 case Level.TRACE_INT:
-
                     if (le.getThrowableInformation() != null) {
                         Log.v(getTagLayout().format(le), getLayout().format(le), le.getThrowableInformation().getThrowable());
                     } else {

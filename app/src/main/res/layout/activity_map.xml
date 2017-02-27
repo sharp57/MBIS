@@ -1,103 +1,112 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical">
 
     <LinearLayout
-        android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:weightSum="1">
+        android:orientation="horizontal"
+        android:weightSum="1"
+        tools:ignore="UselessParent">
 
         <LinearLayout
-            android:orientation="vertical"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:layout_weight="1">
 
             <LinearLayout
-                android:orientation="vertical"
-                android:layout_width="100dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_margin="2dp"
                 android:background="@drawable/my_border"
-                android:padding="3dp"
-                android:layout_margin="2dp">
+                android:orientation="vertical"
+                android:padding="3dp">
 
                 <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
                     android:id="@+id/emergencyBtn"
-                    android:text="Location"
-                    android:textSize="20dp"
-                    android:textColor="#a000"
-                    android:layout_marginTop="2dp"
-                    android:layout_marginLeft="2dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_marginBottom="2dp"
+                    android:layout_marginLeft="2dp"
                     android:layout_marginRight="5dp"
+                    android:layout_marginTop="2dp"
                     android:background="@drawable/my_border"
-                    android:padding="4dp"/>
+                    android:padding="4dp"
+                    android:text="Location"
+                    android:textColor="#a000"
+                    android:textSize="20dp"
+                    tools:ignore="HardcodedText"/>
 
                 <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Lat :"
                     android:id="@+id/curlat"
-                    android:layout_weight="0.28" />
-
-                <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Lng :"
+                    android:layout_weight="0.28"
+                    android:text="Lat :"
+                    tools:ignore="HardcodedText"/>
+
+                <TextView
                     android:id="@+id/curlon"
-                    android:layout_weight="0.28" />
-        />
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.28"
+                    android:text="Lng :"
+                    tools:ignore="HardcodedText"/>
+
             </LinearLayout>
 
             <LinearLayout
-                android:orientation="vertical"
-                android:layout_width="100dp"
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_margin="3dp"
                 android:background="@drawable/my_border"
-                android:padding="5dp"
-                android:layout_margin="3dp">
+                android:orientation="vertical"
+                android:padding="5dp">
 
-                <LinearLayout
-                    android:orientation="vertical"
+                <View
                     android:layout_width="match_parent"
                     android:layout_height="2dp"
-                    android:layout_marginTop="2dp"
                     android:layout_marginBottom="2dp"
-                    android:background="#a0000000"></LinearLayout>
+                    android:layout_marginTop="2dp"
+                    android:background="#a0000000"
+                    android:orientation="vertical"/>
 
                 <LinearLayout
-                    android:orientation="vertical"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="0.5">
+                    android:layout_height="0dp"
+                    android:layout_weight="0.5"
+                    android:orientation="vertical">
 
                     <LinearLayout
-                        android:orientation="horizontal"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
 
                         <TextView
+                            android:id="@+id/textView4"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textColor="#000"
                             android:text="Device Log"
-                            android:id="@+id/textView4" />
+                            android:textColor="#000"
+                            tools:ignore="HardcodedText"/>
 
                     </LinearLayout>
 
                     <ScrollView
+                        android:id="@+id/eventscroll"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:id="@+id/eventscroll" >
+                        android:layout_height="match_parent">
 
                         <TextView
+                            android:id="@+id/devicetext"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text=" "
-                            android:id="@+id/devicetext" />
+                            tools:ignore="HardcodedText"/>
                     </ScrollView>
                 </LinearLayout>
 
@@ -105,9 +114,9 @@
         </LinearLayout>
 
         <LinearLayout
-            android:orientation="vertical"
             android:layout_width="300dp"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -115,274 +124,284 @@
                 android:orientation="horizontal">
 
                 <!--<ScrollView-->
-                    <!--android:layout_width="300dp"-->
-                    <!--android:layout_height="100dp"-->
-                    <!--android:id="@+id/readScroll">-->
+                <!--android:layout_width="300dp"-->
+                <!--android:layout_height="100dp"-->
+                <!--android:id="@+id/readScroll">-->
 
-                    <!--<TextView-->
-                        <!--android:layout_width="wrap_content"-->
-                        <!--android:layout_height="wrap_content"-->
-                        <!--android:text=" "-->
-                        <!--android:id="@+id/readText" />-->
+                <!--<TextView-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:text=" "-->
+                <!--android:id="@+id/readText" />-->
                 <!--</ScrollView>-->
 
                 <LinearLayout
-                    android:orientation="vertical"
-                    android:layout_margin="2dp"
                     android:layout_width="96dp"
                     android:layout_height="match_parent"
+                    android:layout_margin="2dp"
                     android:background="@drawable/my_border"
+                    android:orientation="vertical"
                     >
 
                     <TextView
-                        android:text="앞 차"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_margin="3dp"
-                        android:textSize="20dp"
+                        android:gravity="center"
+                        android:text="앞 차"
                         android:textColor="#000"
-                        android:gravity="center" />
-                    <LinearLayout
-                        android:orientation="vertical"
+                        android:textSize="20dp"/>
+
+                    <View
                         android:layout_width="match_parent"
                         android:layout_height="2dp"
-                        android:layout_marginTop="2dp"
                         android:layout_marginBottom="2dp"
-                        android:background="#a0000000"></LinearLayout>
+                        android:layout_marginTop="2dp"
+                        android:background="#a0000000"
+                        android:orientation="vertical"/>
 
                     <LinearLayout
-                        android:orientation="vertical"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_margin="5dp"
-                        android:padding="5dp"
-                        android:background="@drawable/my_border">
+                        android:background="@drawable/my_border"
+                        android:orientation="vertical"
+                        android:padding="5dp">
 
                         <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
                             android:text="정류소 간격"
-                            android:textColor="#000"
-                            android:gravity="center"
+                            android:textColor="#000"/>
+
+                        <TextView
+                            android:id="@+id/beforeBusDistanceText"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content" />
+                            android:layout_height="wrap_content"
+                            android:gravity="center"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="5dp"
+                        android:background="@drawable/my_border"
+                        android:orientation="vertical"
+                        android:padding="5dp">
 
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:gravity="center"
-                            android:id="@+id/beforeBusDistanceText" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:orientation="vertical"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="5dp"
-                        android:padding="5dp"
-                        android:background="@drawable/my_border">
-
-                        <TextView
                             android:text="이격 시간"
-                            android:textColor="#000"
-                            android:gravity="center"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content" />
+                            android:textColor="#000"/>
 
                         <TextView
+                            android:id="@+id/beforeBusTimeText"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:gravity="center"
-                            android:id="@+id/beforeBusTimeText" />
+                            android:gravity="center"/>
                     </LinearLayout>
 
                     <LinearLayout
-                        android:orientation="vertical"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_margin="5dp"
-                        android:padding="5dp"
-                        android:background="@drawable/my_border">
-
-                        <TextView
-                            android:text="차량 번호"
-                            android:textColor="#000"
-                            android:gravity="center"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content" />
+                        android:background="@drawable/my_border"
+                        android:orientation="vertical"
+                        android:padding="5dp">
 
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:gravity="center"
-                            android:id="@+id/beforeBusNumText" />
+                            android:text="차량 번호"
+                            android:textColor="#000"/>
+
+                        <TextView
+                            android:id="@+id/beforeBusNumText"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"/>
                     </LinearLayout>
                 </LinearLayout>
 
                 <LinearLayout
-                    android:orientation="vertical"
-                    android:background="@drawable/my_border"
-                    android:layout_margin="2dp"
                     android:layout_width="96dp"
-                    android:layout_height="match_parent">
+                    android:layout_height="match_parent"
+                    android:layout_margin="2dp"
+                    android:background="@drawable/my_border"
+                    android:orientation="vertical">
+
                     <TextView
-                        android:text="내 차"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_margin="3dp"
-                        android:textSize="20dp"
+                        android:gravity="center"
+                        android:text="내 차"
                         android:textColor="#000"
-                        android:gravity="center" />
-                    <LinearLayout
-                        android:orientation="vertical"
+                        android:textSize="20dp"
+                        tools:ignore="HardcodedText"/>
+
+                    <View
                         android:layout_width="match_parent"
                         android:layout_height="2dp"
-                        android:layout_marginTop="2dp"
                         android:layout_marginBottom="2dp"
-                        android:background="#a0000000"></LinearLayout>
+                        android:layout_marginTop="2dp"
+                        android:background="#a0000000"
+                        android:orientation="vertical"/>
 
                     <LinearLayout
-                        android:orientation="vertical"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_margin="5dp"
-                        android:padding="5dp"
-                        android:background="@drawable/my_border">
+                        android:background="@drawable/my_border"
+                        android:orientation="vertical"
+                        android:padding="5dp">
 
                         <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
                             android:text="운행상태"
-                            android:textColor="#000"
-                            android:gravity="center"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content" />
+                            android:textColor="#000"/>
 
                         <TextView
+                            android:id="@+id/driveState"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:gravity="center"
-                            android:id="@+id/driveState" />
+                            android:gravity="center"/>
+
                         <TextView
+                            android:id="@+id/ascending_descending"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:gravity="center"
-                            android:id="@+id/ascending_descending" />
+                            android:gravity="center"/>
                     </LinearLayout>
 
                     <LinearLayout
-                        android:orientation="vertical"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_margin="5dp"
-                        android:padding="5dp"
-                        android:background="@drawable/my_border">
+                        android:background="@drawable/my_border"
+                        android:orientation="vertical"
+                        android:padding="5dp">
 
                         <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
                             android:text="버스 정보"
                             android:textColor="#000"
-                            android:gravity="center"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content" />
+                            tools:ignore="HardcodedText"/>
 
                         <TextView
+                            android:id="@+id/myBusNum"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:gravity="center"
-                            android:id="@+id/myBusNum" />
+                            android:gravity="center"/>
+
                         <TextView
+                            android:id="@+id/routeID"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:gravity="center"
-                            android:id="@+id/routeID" />
+                            android:gravity="center"/>
                     </LinearLayout>
 
 
                 </LinearLayout>
 
                 <LinearLayout
-                    android:orientation="vertical"
-                    android:background="@drawable/my_border"
-                    android:layout_margin="2dp"
                     android:layout_width="96dp"
-                    android:layout_height="match_parent">
+                    android:layout_height="match_parent"
+                    android:layout_margin="2dp"
+                    android:background="@drawable/my_border"
+                    android:orientation="vertical">
+
                     <TextView
-                        android:text="뒷 차"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_margin="3dp"
-                        android:textSize="20dp"
+                        android:gravity="center"
+                        android:text="뒷 차"
                         android:textColor="#000"
-                        android:gravity="center"/>
-                    <LinearLayout
-                        android:orientation="vertical"
+                        android:textSize="20dp"
+                        tools:ignore="HardcodedText"/>
+
+                    <View
                         android:layout_width="match_parent"
                         android:layout_height="2dp"
-                        android:layout_marginTop="2dp"
                         android:layout_marginBottom="2dp"
-                        android:background="#a0000000"></LinearLayout>
+                        android:layout_marginTop="2dp"
+                        android:background="#a0000000"
+                        android:orientation="vertical"/>
 
                     <LinearLayout
-                        android:orientation="vertical"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_margin="5dp"
-                        android:padding="5dp"
-                        android:background="@drawable/my_border">
+                        android:background="@drawable/my_border"
+                        android:orientation="vertical"
+                        android:padding="5dp">
 
                         <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
                             android:text="정류소 간격"
-                            android:textColor="#000"
-                            android:gravity="center"
+                            android:textColor="#000"/>
+
+                        <TextView
+                            android:id="@+id/afterBusDistanceText"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content" />
+                            android:layout_height="wrap_content"
+                            android:gravity="center"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="5dp"
+                        android:background="@drawable/my_border"
+                        android:orientation="vertical"
+                        android:padding="5dp">
 
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:gravity="center"
-                            android:id="@+id/afterBusDistanceText" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:orientation="vertical"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="5dp"
-                        android:padding="5dp"
-                        android:background="@drawable/my_border">
-
-                        <TextView
                             android:text="이격 시간"
-                            android:textColor="#000"
-                            android:gravity="center"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content" />
+                            android:textColor="#000"/>
 
                         <TextView
+                            android:id="@+id/afterBusTimeText"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:gravity="center"
-                            android:id="@+id/afterBusTimeText" />
+                            android:gravity="center"/>
                     </LinearLayout>
 
                     <LinearLayout
-                        android:orientation="vertical"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_margin="5dp"
-                        android:padding="5dp"
-                        android:background="@drawable/my_border">
+                        android:background="@drawable/my_border"
+                        android:orientation="vertical"
+                        android:padding="5dp">
 
                         <TextView
+                            android:id="@+id/textView3"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
                             android:text="차량 번호"
-                            android:layout_width="match_parent"
-                            android:textColor="#000"
-                            android:gravity="center"
-                            android:layout_height="wrap_content"
-                            android:id="@+id/textView3" />
+                            android:textColor="#000"/>
 
                         <TextView
+                            android:id="@+id/afterBusNumText"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:gravity="center"
-                            android:id="@+id/afterBusNumText" />
+                            android:gravity="center"/>
                     </LinearLayout>
 
                 </LinearLayout>
@@ -394,30 +413,31 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_margin="3dp"
-                android:padding="5dp"
+                android:layout_weight="1"
                 android:background="@drawable/my_border"
-                android:layout_weight="1">
+                android:padding="5dp">
             </com.google.android.gms.maps.MapView>
 
         </LinearLayout>
 
         <FrameLayout
-            android:orientation="horizontal"
             android:layout_width="170dp"
-            android:layout_margin="3dp"
             android:layout_height="match_parent"
-            android:background="@drawable/my_border">
+            android:layout_margin="3dp"
+            android:background="@drawable/my_border"
+            android:orientation="horizontal">
 
             <ListView
+                android:id="@+id/movingStationList"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:id="@+id/movingStationList"
                 android:layout_alignParentTop="true"
-                android:layout_gravity="center" />
+                android:layout_gravity="center"
+                tools:ignore="ObsoleteLayoutParam"/>
 
             <include
-                layout="@layout/focus_item"
                 android:id="@+id/lockImage"
+                layout="@layout/focus_item"
                 />
         </FrameLayout>
 

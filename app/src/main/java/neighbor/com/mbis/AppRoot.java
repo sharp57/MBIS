@@ -4,12 +4,11 @@ import android.app.Application;
 import android.support.multidex.MultiDex;
 import android.util.Log;
 
-import com.google.android.gms.analytics.Tracker;
 import com.google.firebase.crash.FirebaseCrash;
 
 import org.apache.log4j.Logger;
 
-import neighbor.com.mbis.common.SettingsStore;
+import neighbor.com.mbis.managers.SettingsStore;
 import neighbor.com.mbis.util.LogUtils;
 
 /**

@@ -34,7 +34,7 @@ import java.util.Calendar;
 import java.util.TimeZone;
 
 import neighbor.com.mbis.R;
-import neighbor.com.mbis.common.SettingsStore;
+import neighbor.com.mbis.managers.SettingsStore;
 import neighbor.com.mbis.common.SocketHanderMessageDfe;
 import neighbor.com.mbis.managers.FileManager;
 import neighbor.com.mbis.models.form.Form_Header;
@@ -42,7 +42,7 @@ import neighbor.com.mbis.models.value.MapVal;
 import neighbor.com.mbis.network.BytePosition;
 import neighbor.com.mbis.network.RecvDataUtil;
 import neighbor.com.mbis.util.Func;
-import neighbor.com.mbis.util.Setter;
+import neighbor.com.mbis.models.Setter;
 
 import neighbor.com.mbis.network.NetworkIntentService;
 import neighbor.com.mbis.util.MbisUtil;

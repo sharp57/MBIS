@@ -26,7 +26,7 @@ import java.util.TimeZone;
 import neighbor.com.mbis.R;
 import neighbor.com.mbis.managers.FileManager;
 import neighbor.com.mbis.util.Func;
-import neighbor.com.mbis.util.Setter;
+import neighbor.com.mbis.models.Setter;
 import neighbor.com.mbis.network.BytePosition;
 import neighbor.com.mbis.views.maputil.Data;
 import neighbor.com.mbis.views.maputil.HandlerPosition;

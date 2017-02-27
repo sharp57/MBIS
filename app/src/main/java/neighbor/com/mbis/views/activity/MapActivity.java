@@ -8,7 +8,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
-import android.location.GpsSatellite;
 import android.location.GpsStatus;
 import android.location.Location;
 import android.location.LocationListener;
@@ -41,13 +40,12 @@ import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.util.Calendar;
-import java.util.Iterator;
 import java.util.TimeZone;
 
 import neighbor.com.mbis.managers.FileManager;
 import neighbor.com.mbis.util.Func;
-import neighbor.com.mbis.util.Setter;
-import neighbor.com.mbis.views.maputil.LocationWrapper;
+import neighbor.com.mbis.models.Setter;
+import neighbor.com.mbis.managers.LocationWrapper;
 import neighbor.com.mbis.views.adapter.MyArrayAdapter;
 import neighbor.com.mbis.network.BytePosition;
 import neighbor.com.mbis.views.maputil.Data;
@@ -107,6 +105,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
     static byte[] op;
 
     BusTimer busTimer;
+    private LocationWrapper locationWrapper;
 
 
 //    private NetworkIntentService mService = neighbor.com.mbis.activity.LoginActivityNew.mService;
@@ -118,7 +117,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         setContentView(R.layout.activity_map);
         NetworkIntentService.mHandler = mHandler;
 
-        LocationWrapper locationWrapper = new LocationWrapper(this);
+        locationWrapper = new LocationWrapper(this);
         locationWrapper.setAccuracyFilterEnabled(true, 100);
         locationWrapper.registerOnLocationChangedListener(this);
         locationWrapper.requestUpdates();
@@ -200,7 +199,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         LocationListener locationListener = new LocationListener() {
             public void onLocationChanged(Location location) {
 
-                addUtilDefault(location, gpsStatus);
+//                addUtilDefault(location, gpsStatus);
 
                 driving();
             }
@@ -228,8 +227,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, locationListener);
-        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 0, locationListener);
+//        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, locationListener);
+//        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 0, locationListener);
     }
 
     @Override
@@ -254,19 +253,8 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         mapView.onDestroy();
 
         busTimer.cancel();
-//        cTimer.cancel();
+        locationWrapper.cancelUpdates();
 
-        // 2017.02.10
-//        if(mService != null){
-//            mService.close();   // 2017.02.10
-//            mService.stopSelf();
-//        }
-//        sNetwork.close();
-
-//        sBuf.clearAll();
-//        ssBuf.clearAll();
-//        sssBuf.clearAll();
-//        lBuf.getStationListBuf().clear();
 
     }
 
@@ -295,8 +283,6 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         for (int i = 0; i < sBuf.getReferenceLatPosition().size(); i++) {
             busMarker = mAddMarker.getMark(sBuf.getReferenceLatPosition().get(i), sBuf.getReferenceLngPosition().get(i), getApplicationContext());
         }
-
-
     }
 
     private void sendData() {
@@ -317,7 +303,7 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         busTimer.start();
     }
 
-    private void addUtilDefault(Location location, GpsStatus gpsStatus) {
+    private void addUtilDefault(Location location) {
         TimeZone jst = TimeZone.getTimeZone("JST");
         Calendar cal = Calendar.getInstance(jst);
 
@@ -371,25 +357,25 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
         double bufY = location.getLongitude() * 100000;
         mv.setLocationX((int) bufX);
         mv.setLocationY((int) bufY);
-        mv.setBearing(Func.getBearingAtoB(LogicBuffer.locationXBuf, LogicBuffer.locationYBuf, latD, lngD));
-        mv.setSpeed(Func.getSpeed(LogicBuffer.locationXBuf, LogicBuffer.locationYBuf, latD, lngD));
+        mv.setBearing((int) location.getBearing());
+        mv.setSpeed((int) location.getSpeed());
 
         LogicBuffer.locationXBuf = latD;
         LogicBuffer.locationYBuf = lngD;
 
-        //기기상태
-        int i = 0;
-        final Iterator<GpsSatellite> iter = gpsStatus.getSatellites().iterator();
-
-        while (iter.hasNext()) {
-            GpsSatellite satellite = iter.next();
-            if (satellite.usedInFix()) {
-                i++;
-            }
-        }
-        if (i >= 3) {
-            mv.setGpsState(0);
-        } else mv.setGpsState(128);
+//        //기기상태
+//        int i = 0;
+//        final Iterator<GpsSatellite> iter = gpsStatus.getSatellites().iterator();
+//
+//        while (iter.hasNext()) {
+//            GpsSatellite satellite = iter.next();
+//            if (satellite.usedInFix()) {
+//                i++;
+//            }
+//        }
+//        if (i >= 3) {
+//            mv.setGpsState(0);
+//        } else mv.setGpsState(128);
 
         locationFileManager.saveData("#" + latD + "," + lngD);
     }
@@ -1144,6 +1130,11 @@ public class MapActivity extends AppCompatActivity implements OnMapReadyCallback
 
     @Override
     public void onLocationChanged(Location location) {
+//        currentlatView.setText("위도 : " + String.format("%.5f", location.getLatitude()));
+//        currentlonView.setText("경도 :" + String.format("%.5f", location.getLongitude()));
 
+        addUtilDefault(location);
+
+        driving();
     }
 }

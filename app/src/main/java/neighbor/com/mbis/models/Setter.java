@@ -1,4 +1,4 @@
-package neighbor.com.mbis.util;
+package neighbor.com.mbis.models;
 
 import neighbor.com.mbis.models.form.Form_Body_ArriveStation;
 import neighbor.com.mbis.models.form.Form_Body_BusLocation;
