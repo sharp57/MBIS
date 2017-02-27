@@ -198,7 +198,23 @@ public class SelectRouteActivityNew extends Activity implements View.OnClickList
         switch(v.getId()){
             case R.id.testButton:
                 if(MbisUtil.getPreferencesBoolean(this,"mode") == false){
-                    startActivity(new Intent(SelectRouteActivityNew.this,RunActivity.class));
+
+                    try {
+                        db = DBManager.getInstance(this);
+                        Logger.getLogger(TAG).error("selectedBusNumber: " + selectedBusNumber.getText().toString());
+                        Cursor cursor = db.queryRoute(new String[]{DBManager.route_id},
+                                DBManager.route_name + "='" + selectedBusNumber.getText().toString() + "'", null, null, null, null);
+                        String busId = "";
+                        while(cursor.moveToNext()) {
+                            busId = cursor.getString(0);
+                        }
+                        Logger.getLogger(TAG).error("busId: " + busId);
+                        Intent intent = new Intent(SelectRouteActivityNew.this, RunActivity.class);
+                        intent.putExtra("busId", busId);
+                        startActivity(intent);
+                    } catch (Exception e){
+                        e.printStackTrace();
+                    }
                 }else{
                     startActivity(new Intent(SelectRouteActivityNew.this,MapActivity.class));
                 }
@@ -319,6 +335,7 @@ public class SelectRouteActivityNew extends Activity implements View.OnClickList
         db = DBManager.getInstance(this);
         Cursor cursor = db.queryRoute(new String[]{DBManager.route_name, DBManager.route_form, DBManager.route_brt_type,  DBManager.route_start_station, DBManager.route_last_station},
                 SELECT_ROUTE_MENU, null, null, null, null);
+
         while(cursor.moveToNext()){
             RouteInfo route = new RouteInfo();
             route.setBusNum(cursor.getString(0));

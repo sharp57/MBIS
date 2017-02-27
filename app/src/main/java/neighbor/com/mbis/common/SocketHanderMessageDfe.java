@@ -12,6 +12,9 @@ public class SocketHanderMessageDfe {
     public final static int ERROR_LOGIN = 102;
     public final static int SUCCESS_BOOTING = 103;
     public final static int ERROR_BOOTING = 104;
+    public final static int SUCCESS_BUS_LOCATION_INFO = 105;
+    public final static int SUCCESS_STATION_START = 106;
+    public final static int SUCCESS_STATION_ARRIVE = 107;
 
 
 }
